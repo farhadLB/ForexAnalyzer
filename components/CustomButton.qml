@@ -1,15 +1,21 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 
 Button{
-    width: 70
-    height: 50
+    id: root
+    implicitWidth: 70
+    implicitHeight: 40
+    flat: true
+
     background: Rectangle{
-        id: innerRec
         anchors.fill: parent
-        color: "red"
         radius: 10
+        color: root.hovered ? "blue" : root.pressed ? "green" : root.clicked ? "grey" : root.down ? "red" : "black"
+    }
+    contentItem: Text {
+        id: title
+        anchors.centerIn: parent
+        text: "hello"
+        font.pixelSize: 15
     }
 }
-
