@@ -12,6 +12,13 @@ qt_add_executable(appForexAnalyzer
     main.cpp
 )
 
+qt_add_resources(appForexAnalyzer "app_images"
+    PREFIX "/"
+    FILES
+        images/copy.jpg
+        images/Percentage.xlsx
+)
+
 qt_add_qml_module(appForexAnalyzer
     URI ForexAnalyzer
     VERSION 1.0
@@ -20,6 +27,7 @@ qt_add_qml_module(appForexAnalyzer
         qml/ChartPage.qml
         qml/LeftBar.qml
         components/CustomButton.qml
+        SOURCES CsvLoader.h CsvLoader.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
