@@ -1,21 +1,29 @@
 import QtQuick
 import QtQuick.Controls
 
-Button{
+Button {
     id: root
-    implicitWidth: 70
+    implicitWidth: 100
     implicitHeight: 40
+    text: "Custom"
     flat: true
+    hoverEnabled: true
 
-    background: Rectangle{
+    background: Rectangle {
         anchors.fill: parent
         radius: 10
-        color: root.hovered ? "blue" : root.pressed ? "green" : root.clicked ? "grey" : root.down ? "red" : "black"
+        color: root.pressed ? "green"
+               : root.hovered ? "blue"
+               : root.down ? "red"
+               : "black"
+        border.color: "white"
+        border.width: 1
     }
+
     contentItem: Text {
-        id: title
         anchors.centerIn: parent
-        text: "hello"
-        font.pixelSize: 15
+        text: root.text
+        font.pixelSize: 16
+        color: "white"
     }
 }
