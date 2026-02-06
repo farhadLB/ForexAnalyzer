@@ -30,6 +30,9 @@ qt_add_qml_module(appForexAnalyzer
         SOURCES CsvLoader.h CsvLoader.cpp
         QML_FILES components/CandleChart.qml
         SOURCES TimeframeAggregator.h TimeframeAggregator.cpp
+        SOURCES ChartObjects.h
+        SOURCES ChartObjecctModel.h ChartObjecctModel.cpp
+        SOURCES LevelDetector.h LevelDetector.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

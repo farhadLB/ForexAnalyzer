@@ -10,6 +10,7 @@ Rectangle {
     color: "#0b0b17"
 
     property var rawCandles: []
+    property double backdrop: 50
 
     ColumnLayout{
         anchors.fill: parent
@@ -42,9 +43,47 @@ Rectangle {
                 text: "toggle crosshair"
                 onClicked: chart.crossVisible = !chart.crossVisible
             }
+            Button {
+                text: "Add test trendline"
+                onClicked: {
+                    chartObjects.addTrendline(50, 1.0800, 120, 1.0950)
+                }
+            }
+
+            Button {
+                text: "Auto Levels"
+                onClicked: {
+                    var start = chart.firstVisibleIndex
+                    var end   = Math.min(chart.candles.length, start + chart.visibleCount)
+
+                    var visibleCandles = []
+                    for(var i=start;i<end;i++)
+                        visibleCandles.push(chart.candles[i])
+
+                    var levels = levelDetector.detectLocalLevels(visibleCandles,backdrop)
+
+                    chartObjects.clearAutoLevels()
+                    chartObjects.setAutoLevels(levels)
+                }
+            }
+            Button {
+                text: "Clear Levels"
+                onClicked: {
+                    chartObjects.clearAutoLevels()
+                }
+            }
+
+            Slider{
+                from: 10
+                to: 200
+                value: 50
+                snapMode: Slider.SnapAlways
+                onValueChanged: {
+                    backdrop = value
+                }
+            }
         }
     }
-
 
     Connections {
         target: csvLoader

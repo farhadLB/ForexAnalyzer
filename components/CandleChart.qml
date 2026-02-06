@@ -27,6 +27,15 @@ Item {
     property real crossY: 0
     property bool crossVisible: true
 
+    property real basePaddingPercent: 0.55     // padding حالت zoom-out
+    property real minPaddingPercent: 0.13      // حداقل padding در zoom-in
+
+    property int rightOffsetCandles: 20   // تعداد کندل فضای خالی انتها
+
+    property real chartWidth
+    property real chartHeight
+    property real leftMargin: 60
+    property real topMargin: 10
 
     onCandlesChanged: {
         if (candles.length > 0) {
@@ -39,18 +48,47 @@ Item {
     function recalcPriceRange() {
         if (candles.length === 0) return
 
-        var end = Math.min(firstVisibleIndex + visibleCount, candles.length)
+        var start = firstVisibleIndex
+        var end   = Math.min(candles.length, start + visibleCount)
 
-        var min = 999999999
-        var max = -999999999
+        var minP = 1e20
+        var maxP = -1e20
 
-        for (var i = firstVisibleIndex; i < end; ++i) {
-            min = Math.min(min, candles[i].low)
-            max = Math.max(max, candles[i].high)
+        for (var i = start; i < end; ++i) {
+            var c = candles[i]
+            if (c.low < minP)  minP = c.low
+            if (c.high > maxP) maxP = c.high
         }
 
-        visibleMinPrice = min
-        visibleMaxPrice = max
+        var range = maxP - minP
+        if (range <= 0) range = 1
+
+        // ---- padding وابسته به zoom ----
+        var zoomRatio = visibleCount / candles.length
+        var dynamicPaddingPercent =
+                minPaddingPercent +
+                (basePaddingPercent - minPaddingPercent) * zoomRatio
+
+        var padding = range * dynamicPaddingPercent
+
+        visibleMinPrice = minP - padding
+        visibleMaxPrice = maxP + padding
+    }
+
+    function indexToX(index)
+    {
+        var totalVisible = visibleCount + rightOffsetCandles
+        var candleW = chartWidth / totalVisible
+        return leftMargin + (index - firstVisibleIndex) * candleW + candleW * 0.5
+    }
+
+    function priceToY(price)
+    {
+        var range = visibleMaxPrice - visibleMinPrice
+        if (range <= 0) range = 1
+
+        return topMargin + chartHeight -
+               (price - visibleMinPrice) / range * chartHeight
     }
 
     Canvas {
@@ -111,7 +149,9 @@ Item {
             var endIndex = Math.min(firstVisibleIndex + visibleCount,
                                     candles.length)
 
-            var candlePixel = chartW / visibleCount
+            // var candlePixel = chartW / visibleCount
+            var totalVisible = visibleCount + rightOffsetCandles
+            var candlePixel = chartW / totalVisible
 
             for (var i = firstVisibleIndex; i < endIndex; ++i) {
 
@@ -189,6 +229,45 @@ Item {
 
                 ctx.setLineDash([])
             }
+
+            //Trendlines
+            var lines = chartObjects.trendlines()
+            ctx.strokeStyle = "yellow"
+            ctx.lineWidth = 2
+
+            for(var i=0;i<lines.length;i++){
+                var t = lines[i]
+
+                var x1 = indexToX(t.startIndex)
+                var x2 = indexToX(t.endIndex)
+                var y1 = priceToY(t.startPrice)
+                var y2 = priceToY(t.endPrice)
+
+                ctx.beginPath()
+                ctx.moveTo(x1,y1)
+                ctx.lineTo(x2,y2)
+                ctx.stroke()
+            }
+
+            //Horizantal Static Levels
+            var levels = chartObjects.allLevels()
+            ctx.strokeStyle = "#00ffaa"
+            ctx.setLineDash([6,4])
+
+            for(var i=0;i<levels.length;i++){
+                var price = levels[i].price
+
+                if(price < visibleMinPrice || price > visibleMaxPrice) continue
+
+                var y = priceToY(price)
+                ctx.beginPath()
+                ctx.moveTo(leftMargin, y)
+                ctx.lineTo(width, y)
+                ctx.stroke()
+            }
+
+            ctx.setLineDash([])
+
         }
     }
 

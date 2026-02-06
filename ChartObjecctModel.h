@@ -1,0 +1,47 @@
+#pragma once
+#include <QObject>
+#include <QVariantList>
+#include <QVector>
+
+struct Trendline {
+    int startIndex;
+    int endIndex;
+    double startPrice;
+    double endPrice;
+};
+
+struct HorizontalLevel {
+    double price;
+};
+
+class ChartObjectModel : public QObject
+{
+    Q_OBJECT
+public:
+    explicit ChartObjectModel(QObject *parent = nullptr);
+
+    // --- Manual objects ---
+    Q_INVOKABLE void addTrendline(int sIdx, double sPrice, int eIdx, double ePrice);
+    Q_INVOKABLE void addHorizontalLevel(double price);
+
+    // --- Auto objects ---
+    Q_INVOKABLE void clearAutoLevels();
+    Q_INVOKABLE void setAutoLevels(const QVariantList &levels);
+
+    // --- Accessors ---
+    Q_INVOKABLE QVariantList trendlines() const;           // manual + auto trendlines (در صورت نیاز)
+    Q_INVOKABLE QVariantList horizontalLevels() const;     // فقط manual
+    Q_INVOKABLE QVariantList allLevels() const;            // manual + auto
+
+signals:
+    void objectsChanged();
+
+private:
+    // --- Manual ---
+    QVector<Trendline> m_manualTrendlines;
+    QVector<HorizontalLevel> m_manualLevels;
+
+    // --- Auto ---
+    QVector<Trendline> m_autoTrendlines;     // اگر بخواهیم auto trendline هم اضافه کنیم
+    QVector<HorizontalLevel> m_autoLevels;
+};
