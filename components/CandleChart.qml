@@ -30,10 +30,8 @@ Item {
     property real basePaddingPercent: 0.55     // padding حالت zoom-out
     property real minPaddingPercent: 0.13      // حداقل padding در zoom-in
 
-    property int rightOffsetCandles: 20   // تعداد کندل فضای خالی انتها
+    property int rightOffsetCandles: 0   // تعداد کندل فضای خالی انتها
 
-    property real chartWidth
-    property real chartHeight
     property real leftMargin: 60
     property real topMargin: 10
 
@@ -75,22 +73,6 @@ Item {
         visibleMaxPrice = maxP + padding
     }
 
-    function indexToX(index)
-    {
-        var totalVisible = visibleCount + rightOffsetCandles
-        var candleW = chartWidth / totalVisible
-        return leftMargin + (index - firstVisibleIndex) * candleW + candleW * 0.5
-    }
-
-    function priceToY(price)
-    {
-        var range = visibleMaxPrice - visibleMinPrice
-        if (range <= 0) range = 1
-
-        return topMargin + chartHeight -
-               (price - visibleMinPrice) / range * chartHeight
-    }
-
     Canvas {
         id: canvas
         anchors.fill: parent
@@ -103,16 +85,23 @@ Item {
             if (candles.length === 0)
                 return
 
-            var leftMargin = 60
+            // var leftMargin = 60
             var bottomMargin = 20
 
-            var chartW = width - leftMargin
+            var chartW = width - root.leftMargin
             var chartH = height - bottomMargin
 
             function priceToY(price) {
-                return chartH - (price - visibleMinPrice)
-                       / (visibleMaxPrice - visibleMinPrice)
-                       * chartH
+                var range = visibleMaxPrice - visibleMinPrice
+                if(range <= 0) range = 1
+                return root.topMargin + chartH - ((price - visibleMinPrice)/range)*chartH
+            }
+
+            function indexToX(index)
+            {
+                var totalVisible = visibleCount + rightOffsetCandles
+                var candleW = chartW / totalVisible
+                return root.leftMargin + (index - firstVisibleIndex) * candleW + candleW * 0.5
             }
 
             // Y axis
@@ -157,7 +146,7 @@ Item {
 
                 var c = candles[i]
                 var localIndex = i - firstVisibleIndex
-                var x = leftMargin + localIndex * candlePixel + candlePixel/2
+                var x = root.leftMargin + localIndex * candlePixel + candlePixel/2
 
                 var yOpen  = priceToY(c.open)
                 var yClose = priceToY(c.close)
@@ -196,12 +185,12 @@ Item {
 
                 var c = candles[idx]
 
-                var x = leftMargin +
+                var x = root.leftMargin +
                         (idx-firstVisibleIndex)*candlePixel +
                         candlePixel/2
 
                 var d = new Date(c.time)
-                var txt = (d.getMonth()+1)+"/"+d.getDate()
+                var txt = (d.getHours())+":"+d.getMinutes()
 
                 ctx.beginPath()
                 ctx.moveTo(x,chartH)
@@ -284,11 +273,17 @@ Item {
         onPositionChanged: function(mouse) {
             // drag
             if (pressed) {
+
+                var chartW = width - root.leftMargin
+                var totalVisible = visibleCount + rightOffsetCandles
+                var candlesPerPixel = totalVisible / chartW
+
                 var dx = mouse.x - dragStartX
-                var candlesPerPixel = visibleCount / width
                 var shift = Math.round(-dx * candlesPerPixel)
+
                 var newIndex = dragStartIndex + shift
                 newIndex = Math.max(0, Math.min(candles.length - visibleCount, newIndex))
+
                 if (newIndex !== firstVisibleIndex) {
                     firstVisibleIndex = newIndex
                     recalcPriceRange()
@@ -318,18 +313,23 @@ Item {
                 newVisibleCount = Math.min(maxVisibleCount, visibleCount * wheelFactor)
             }
 
-            // محاسبه مرکز zoom: ایندکس کندل زیر ماوس
-            var leftMargin = 60
-            var chartW = width - leftMargin
-            var xRelative = wheel.x - leftMargin
+            var chartW = width - root.leftMargin
+            var xRelative = wheel.x - root.leftMargin
             xRelative = Math.max(0, Math.min(chartW, xRelative))
 
-            var candlePixel = chartW / visibleCount
+            var totalVisible = visibleCount + rightOffsetCandles
+            var candlePixel = chartW / totalVisible
+
             var mouseIndex = firstVisibleIndex + Math.floor(xRelative / candlePixel)
 
-            // با zoom، firstVisibleIndex جدید را طوری تغییر می‌دهیم که mouseIndex ثابت بماند
-            var newFirstIndex = mouseIndex - Math.floor((xRelative / chartW) * newVisibleCount)
-            newFirstIndex = Math.max(0, Math.min(candles.length - newVisibleCount, newFirstIndex))
+            var newFirstIndex =
+                    mouseIndex -
+                    Math.floor((xRelative / chartW) * totalVisible)
+
+            newFirstIndex = Math.max(0,
+                                     Math.min(candles.length - newVisibleCount,
+                                              newFirstIndex))
+
 
             visibleCount = Math.floor(newVisibleCount)
             firstVisibleIndex = newFirstIndex

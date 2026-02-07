@@ -19,15 +19,17 @@ Rectangle {
             id: chart
             Layout.fillHeight: true
             Layout.fillWidth: true
+            crossVisible: crossToggle.checked
         }
 
         RowLayout{
             spacing: 10
+            Layout.margins: 10
 
             Repeater {
                 model: ["1m", "5m", "15m", "1h", "4h", "Daily"]
 
-                Button {
+                CustomButton{
                     text: modelData
                     onClicked: {
                         if (!rawCandles || rawCandles.length === 0) return;
@@ -37,20 +39,15 @@ Rectangle {
                     }
                 }
             }
-            Button {
+            CustomToggle {
+                id: crossToggle
                 Layout.alignment: Qt.AlignHCenter
                 Layout.margins: 10
-                text: "toggle crosshair"
-                onClicked: chart.crossVisible = !chart.crossVisible
-            }
-            Button {
-                text: "Add test trendline"
-                onClicked: {
-                    chartObjects.addTrendline(50, 1.0800, 120, 1.0950)
-                }
+                text: "crosshair"
+                // onClicked: chart.crossVisible = !chart.crossVisible
             }
 
-            Button {
+            CustomButton {
                 text: "Auto Levels"
                 onClicked: {
                     var start = chart.firstVisibleIndex
@@ -66,10 +63,28 @@ Rectangle {
                     chartObjects.setAutoLevels(levels)
                 }
             }
-            Button {
+
+            CustomButton {
+                text:"Auto Trendlines"
+                onClicked:{
+                    var start = chart.firstVisibleIndex
+                    var end   = Math.min(chart.candles.length, start + chart.visibleCount)
+
+                    var visibleCandles = []
+                    for(var i=start;i<end;i++)
+                        visibleCandles.push(chart.candles[i])
+
+                    var lines = trendlineDetector.detectTrendlines(visibleCandles)
+                    chartObjects.clearAutoTrendlines()
+                    chartObjects.setAutoTrendlines(lines)
+                }
+            }
+
+            CustomButton {
                 text: "Clear Levels"
                 onClicked: {
                     chartObjects.clearAutoLevels()
+                    chartObjects.clearAutoTrendlines()
                 }
             }
 

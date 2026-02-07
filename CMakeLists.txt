@@ -4,7 +4,7 @@ project(ForexAnalyzer VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Core Charts)
+find_package(Qt6 REQUIRED COMPONENTS Quick Core Charts QuickControls2)
 
 qt_standard_project_setup(REQUIRES 6.8)
 
@@ -33,6 +33,9 @@ qt_add_qml_module(appForexAnalyzer
         SOURCES ChartObjects.h
         SOURCES ChartObjecctModel.h ChartObjecctModel.cpp
         SOURCES LevelDetector.h LevelDetector.cpp
+        SOURCES TrendlineDetector.h TrendlineDetector.cpp
+        QML_FILES
+        QML_FILES components/CustomToggle.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -50,6 +53,7 @@ target_link_libraries(appForexAnalyzer
     PRIVATE Qt6::Quick
     Qt6::Core
     Qt6::Charts
+    Qt6::QuickControls2
 )
 
 include(GNUInstallDirs)

@@ -19,30 +19,14 @@ Rectangle {
             csvLoader.loadFile(fileDialog.selectedFile)
         }
     }
-    Column {
+    ColumnLayout{
         anchors.fill: parent
         spacing: 20
 
-        Button {
+        CustomButton{
+            Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
             text: "Load CSV File"
             onClicked: fileDialog.open()
-        }
-
-        Text {
-            id: statusText
-            text: "No file loaded"
-            color: "white"
-        }
-    }
-    Connections {
-        target: csvLoader
-
-        function onFileLoaded(count) {
-            statusText.text = "Loaded candles: " + count
-        }
-
-        function onError(message) {
-            statusText.text = "Error: " + message
         }
     }
 }
