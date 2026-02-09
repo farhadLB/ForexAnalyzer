@@ -2,7 +2,7 @@
 #include <QObject>
 #include <QVariantList>
 #include <QVector>
-#include <ChartObjects.h>
+#include <include/ChartObjects.h>
 
 class ChartObjectModel : public QObject
 {
@@ -18,7 +18,7 @@ public:
     Q_INVOKABLE void clearAutoLevels();
     Q_INVOKABLE void clearAutoTrendlines();
     Q_INVOKABLE void setAutoLevels(const QVariantList &levels);
-    Q_INVOKABLE void setAutoTrendlines(const QVariantList &lines);
+    Q_INVOKABLE void setAutoTrendlines(const QVariantList &lines, const int start);
 
     // --- Accessors ---
     Q_INVOKABLE QVariantList trendlines() const;           // manual + auto trendlines (در صورت نیاز)

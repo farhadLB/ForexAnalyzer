@@ -9,7 +9,7 @@ Button {
     text: "Custom"
     hoverEnabled: true
     checkable: true
-    checked: true
+    checked: false
     Material.background: checked ? Material.LightBlue : Material.BlueGrey
     Material.elevation: 10
 

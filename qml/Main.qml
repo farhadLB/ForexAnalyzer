@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "qml"
 
 Window {
     width: 1920
@@ -13,13 +12,27 @@ Window {
         SplitView {
             anchors.fill: parent
             handle: Rectangle {
-                implicitWidth: 8
+                implicitWidth: 6
                 implicitHeight: 2
+                radius: 2
                 color: SplitHandle.pressed ? "grey"
                                            : (SplitHandle.hovered ? "darkgrey" : "grey")
+
+                Rectangle {
+                    width: parent.width - 4
+                    height: parent.height
+                    radius: 2
+                    color: "#0b0b17"
+                    anchors.centerIn: parent
+                }
             }
-            LeftBar{}
-            ChartPage{}
+            LeftBar{
+                id: leftBar
+                chartRef: chartPage
+            }
+            ChartPage{
+                id: chartPage
+            }
         }
     }
 }

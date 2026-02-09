@@ -35,6 +35,20 @@ Item {
     property real leftMargin: 60
     property real topMargin: 10
 
+    Connections {
+        target: chartObjects
+        function onObjectsChanged() {
+            canvas.requestPaint()
+        }
+    }
+
+    Connections {
+        target: trendlineDetector
+        function onTrendlinesFound() {
+            canvas.requestPaint()
+        }
+    }
+
     onCandlesChanged: {
         if (candles.length > 0) {
             firstVisibleIndex = 0
@@ -167,11 +181,11 @@ Item {
                 if (bodyHeight < 1) bodyHeight = 1
 
                 ctx.fillRect(
-                    x - candlePixel*0.35,
-                    bodyTop,
-                    candlePixel*0.7,
-                    bodyHeight
-                )
+                            x - candlePixel*0.35,
+                            bodyTop,
+                            candlePixel*0.7,
+                            bodyHeight
+                            )
             }
 
             // time labels

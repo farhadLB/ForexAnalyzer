@@ -1,4 +1,4 @@
-#include <TrendlineDetector.h>
+#include <include/TrendlineDetector.h>
 #include <QVariantMap>
 #include <QtMath>
 #include <QObject>
@@ -77,4 +77,5 @@ QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
     }
 
     return trendlines;
+    emit trendlinesFound();
 }

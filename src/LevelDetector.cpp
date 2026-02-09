@@ -1,4 +1,4 @@
-#include <LevelDetector.h>
+#include <include/LevelDetector.h>
 
 QVariantList LevelDetector::detectLocalLevels(const QVariantList &candles,int lookback)
 {

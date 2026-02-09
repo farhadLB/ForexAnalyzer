@@ -2,7 +2,7 @@
 #include <QObject>
 #include <QVariant>
 #include <QDateTime>
-#include "CsvLoader.h"  // برای struct Candle
+#include <include/CsvLoader.h>  // برای struct Candle
 
 class TimeframeAggregator : public QObject {
     Q_OBJECT

@@ -1,7 +1,7 @@
 #pragma once
 #include <QObject>
 #include <QVariantList>
-#include <ChartObjects.h>
+#include <include/ChartObjects.h>
 
 class TrendlineDetector : public QObject
 {
@@ -25,6 +25,7 @@ public:
 signals:
     void lookbackChanged();
     void useShadowsChanged();
+    void trendlinesFound();
 
 private:
     int m_lookback = 20;    // فاصله برای پیدا کردن local high/low

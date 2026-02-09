@@ -1,4 +1,4 @@
-#include <ChartObjecctModel.h>
+#include <include/ChartObjecctModel.h>
 #include <QDebug>
 
 // ---------------- Constructor ----------------
@@ -51,13 +51,13 @@ void ChartObjectModel::setAutoLevels(const QVariantList &levels)
     emit objectsChanged();
 }
 
-void ChartObjectModel::setAutoTrendlines(const QVariantList &lines) {
+void ChartObjectModel::setAutoTrendlines(const QVariantList &lines, const int start) {
     m_autoTrendlines.clear();
     for(const QVariant &l : lines){
         QVariantMap m = l.toMap();
         Trendline t;
-        t.startIndex = m["startIndex"].toInt();
-        t.endIndex   = m["endIndex"].toInt();
+        t.startIndex = m["startIndex"].toInt() + start;
+        t.endIndex   = m["endIndex"].toInt() + start;
         t.startPrice = m["startPrice"].toDouble();
         t.endPrice   = m["endPrice"].toDouble();
         m_autoTrendlines.append(t);

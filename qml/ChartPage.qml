@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../components"
+import "components"
 
 Rectangle {
     id: centerItem
@@ -44,7 +44,6 @@ Rectangle {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.margins: 10
                 text: "crosshair"
-                // onClicked: chart.crossVisible = !chart.crossVisible
             }
 
             CustomButton {
@@ -76,7 +75,7 @@ Rectangle {
 
                     var lines = trendlineDetector.detectTrendlines(visibleCandles)
                     chartObjects.clearAutoTrendlines()
-                    chartObjects.setAutoTrendlines(lines)
+                    chartObjects.setAutoTrendlines(lines, start)
                 }
             }
 
@@ -85,16 +84,6 @@ Rectangle {
                 onClicked: {
                     chartObjects.clearAutoLevels()
                     chartObjects.clearAutoTrendlines()
-                }
-            }
-
-            Slider{
-                from: 10
-                to: 200
-                value: 50
-                snapMode: Slider.SnapAlways
-                onValueChanged: {
-                    backdrop = value
                 }
             }
         }
@@ -108,5 +97,4 @@ Rectangle {
             chart.candles = list
         }
     }
-
 }

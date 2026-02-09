@@ -4,38 +4,31 @@ project(ForexAnalyzer VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Core Charts QuickControls2)
+find_package(Qt6 REQUIRED COMPONENTS Quick Core QuickControls2)
 
 qt_standard_project_setup(REQUIRES 6.8)
 
 qt_add_executable(appForexAnalyzer
-    main.cpp
-)
-
-qt_add_resources(appForexAnalyzer "app_images"
-    PREFIX "/"
-    FILES
-        images/copy.jpg
-        images/Percentage.xlsx
+    src/main.cpp
 )
 
 qt_add_qml_module(appForexAnalyzer
     URI ForexAnalyzer
     VERSION 1.0
-    QML_FILES
-        Main.qml
-        qml/ChartPage.qml
-        qml/LeftBar.qml
-        components/CustomButton.qml
-        SOURCES CsvLoader.h CsvLoader.cpp
-        QML_FILES components/CandleChart.qml
-        SOURCES TimeframeAggregator.h TimeframeAggregator.cpp
-        SOURCES ChartObjects.h
-        SOURCES ChartObjecctModel.h ChartObjecctModel.cpp
-        SOURCES LevelDetector.h LevelDetector.cpp
-        SOURCES TrendlineDetector.h TrendlineDetector.cpp
-        QML_FILES
-        QML_FILES components/CustomToggle.qml
+        QML_FILES qml/Main.qml
+        QML_FILES qml/ChartPage.qml
+        QML_FILES qml/LeftBar.qml
+        QML_FILES qml/components/CustomButton.qml
+        QML_FILES qml/components/CandleChart.qml
+        QML_FILES qml/components/CustomToggle.qml
+
+
+        SOURCES include/CsvLoader.h src/CsvLoader.cpp
+        SOURCES include/TimeframeAggregator.h src/TimeframeAggregator.cpp
+        SOURCES include/ChartObjects.h
+        SOURCES include/ChartObjecctModel.h src/ChartObjecctModel.cpp
+        SOURCES include/LevelDetector.h src/LevelDetector.cpp
+        SOURCES include/TrendlineDetector.h src/TrendlineDetector.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -52,7 +45,6 @@ set_target_properties(appForexAnalyzer PROPERTIES
 target_link_libraries(appForexAnalyzer
     PRIVATE Qt6::Quick
     Qt6::Core
-    Qt6::Charts
     Qt6::QuickControls2
 )
 

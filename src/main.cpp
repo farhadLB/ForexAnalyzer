@@ -1,12 +1,12 @@
-#include <QApplication>
+#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
-#include <CsvLoader.h>
-#include <TimeframeAggregator.h>
-#include <ChartObjecctModel.h>
-#include <LevelDetector.h>
-#include <TrendlineDetector.h>
+#include <include/CsvLoader.h>
+#include <include/TimeframeAggregator.h>
+#include <include/ChartObjecctModel.h>
+#include <include/LevelDetector.h>
+#include <include/TrendlineDetector.h>
 
 
 int main(int argc, char *argv[])
@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     qputenv("QT_QUICK_CONTROLS_MATERIAL_ACCENT", "white");
     QQuickStyle::setStyle("Material");
 
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
     CsvLoader csvLoader;
     TimeframeAggregator aggregator;
     ChartObjectModel chartObjects;
