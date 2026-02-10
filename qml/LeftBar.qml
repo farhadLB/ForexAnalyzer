@@ -126,6 +126,14 @@ Rectangle {
                         }
                     }
                 }
+                CustomToggle{
+                    text: "Extend"
+                    checked: false
+                    Layout.alignment: Qt.AlignHCenter
+                    onCheckedChanged: {
+                        chartRef.extended = ! chartRef.extended
+                    }
+                }
             }
         }
 

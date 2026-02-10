@@ -11,6 +11,7 @@ Rectangle {
 
     property var rawCandles: []
     property double backdrop: 50
+    property bool extended: false
 
     ColumnLayout{
         anchors.fill: parent
@@ -20,6 +21,7 @@ Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
             crossVisible: crossToggle.checked
+            tlineExtended: centerItem.extended
         }
 
         RowLayout{

@@ -35,6 +35,8 @@ Item {
     property real leftMargin: 60
     property real topMargin: 10
 
+    property bool tlineExtended: false
+
     Connections {
         target: chartObjects
         function onObjectsChanged() {
@@ -47,6 +49,10 @@ Item {
         function onTrendlinesFound() {
             canvas.requestPaint()
         }
+    }
+
+    function onTlineExtendedChanged() {
+        canvas.requestPaint()
     }
 
     onCandlesChanged: {
@@ -241,10 +247,31 @@ Item {
             for(var i=0;i<lines.length;i++){
                 var t = lines[i]
 
-                var x1 = indexToX(t.startIndex)
-                var x2 = indexToX(t.endIndex)
-                var y1 = priceToY(t.startPrice)
-                var y2 = priceToY(t.endPrice)
+                if(!tlineExtended){
+
+                    var x1 = indexToX(t.startIndex)
+                    var x2 = indexToX(t.endIndex)
+                    var y1 = priceToY(t.startPrice)
+                    var y2 = priceToY(t.endPrice)
+                }
+
+                else{
+
+                    var x1 = indexToX(t.startIndex)
+                    var y1 = priceToY(t.startPrice)
+
+                    var lastIndex = firstVisibleIndex + visibleCount
+                    var slope = (t.endPrice - t.startPrice) /
+                            (t.endIndex - t.startIndex)
+
+                    var extendedPrice =
+                            t.startPrice +
+                            slope * (lastIndex - t.startIndex)
+
+                    var x2 = indexToX(lastIndex)
+                    var y2 = priceToY(extendedPrice)
+                }
+
 
                 ctx.beginPath()
                 ctx.moveTo(x1,y1)
