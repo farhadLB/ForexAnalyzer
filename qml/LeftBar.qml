@@ -118,8 +118,8 @@ Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         from: 1
-                        to: 50
-                        value: 20
+                        to: 30
+                        value: 10
                         stepSize: 1
                         snapMode: Slider.SnapAlways
                         onValueChanged: {
@@ -127,15 +127,26 @@ Rectangle {
                         }
                     }
                 }
-                CustomToggle{
-                    text: "Extend"
-                    checked: false
+                RowLayout{
+                    Layout.fillWidth: true
+                    Layout.minimumHeight: 80
+                    Layout.maximumHeight: 100
                     Layout.alignment: Qt.AlignHCenter
-                    onCheckedChanged: {
-                        chartRef.extended = ! chartRef.extended
+                    CustomToggle{
+                        text: "Extend"
+                        checked: false
+                        onCheckedChanged: {
+                            chartRef.extended = ! chartRef.extended
+                        }
+                    }
+                    CustomToggle{
+                        text: "Strict"
+                        checked: true
+                        onCheckedChanged: {
+                            trendlineDetector.strict = !trendlineDetector.strict
+                        }
                     }
                 }
-
                 TextField{
                     Layout.alignment: Qt.AlignHCenter
                     Layout.margins: 10
@@ -148,7 +159,6 @@ Rectangle {
                 }
             }
         }
-
         CustomButton{
             Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
             Layout.margins: 10

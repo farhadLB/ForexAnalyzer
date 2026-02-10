@@ -1,86 +1,4 @@
-// #include <include/TrendlineDetector.h>
-// #include <QVariantMap>
-// #include <QtMath>
-// #include <QObject>
-
-// TrendlineDetector::TrendlineDetector(QObject *parent)
-//     : QObject(parent)
-// {
-// }
-
-// QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
-// {
-//     QVariantList trendlines;
-
-//     if(candles.size() < 2) return trendlines;
-
-//     // --- اول، پیدا کردن local highs/lows ---
-//     QList<QPair<int,double>> localHighs;
-//     QList<QPair<int,double>> localLows;
-
-//     for(int i = m_lookback; i < candles.size()-m_lookback; ++i)
-//     {
-//         double high = m_useShadows ? candles[i].toMap()["high"].toDouble()
-//                                    : candles[i].toMap()["close"].toDouble();
-//         double low  = m_useShadows ? candles[i].toMap()["low"].toDouble()
-//                                    : candles[i].toMap()["close"].toDouble();
-
-//         bool isHigh = true;
-//         bool isLow  = true;
-
-//         for(int j=1; j<=m_lookback; ++j){
-//             double prevHigh = m_useShadows ? candles[i-j].toMap()["high"].toDouble()
-//                                           : candles[i-j].toMap()["close"].toDouble();
-//             double nextHigh = m_useShadows ? candles[i+j].toMap()["high"].toDouble()
-//                                           : candles[i+j].toMap()["close"].toDouble();
-//             if(prevHigh > high || nextHigh > high) isHigh=false;
-
-//             double prevLow = m_useShadows ? candles[i-j].toMap()["low"].toDouble()
-//                                          : candles[i-j].toMap()["close"].toDouble();
-//             double nextLow = m_useShadows ? candles[i+j].toMap()["low"].toDouble()
-//                                          : candles[i+j].toMap()["close"].toDouble();
-//             if(prevLow < low || nextLow < low) isLow=false;
-//         }
-
-//         if(isHigh) localHighs.append({i, high});
-//         if(isLow)  localLows.append({i, low});
-//     }
-
-//     // --- حالا خطوط روند صعودی (connect lows) ---
-//     for(int i=0; i<localLows.size()-1; ++i){
-//         Trendline t;
-//         t.startIndex = localLows[i].first;
-//         t.startPrice = localLows[i].second;
-//         t.endIndex   = localLows[i+1].first;
-//         t.endPrice   = localLows[i+1].second;
-//         trendlines.append(QVariantMap{
-//             {"startIndex", t.startIndex},
-//             {"endIndex", t.endIndex},
-//             {"startPrice", t.startPrice},
-//             {"endPrice", t.endPrice}
-//         });
-//     }
-
-//     // --- خطوط روند نزولی (connect highs) ---
-//     for(int i=0; i<localHighs.size()-1; ++i){
-//         Trendline t;
-//         t.startIndex = localHighs[i].first;
-//         t.startPrice = localHighs[i].second;
-//         t.endIndex   = localHighs[i+1].first;
-//         t.endPrice   = localHighs[i+1].second;
-//         trendlines.append(QVariantMap{
-//             {"startIndex", t.startIndex},
-//             {"endIndex", t.endIndex},
-//             {"startPrice", t.startPrice},
-//             {"endPrice", t.endPrice}
-//         });
-//     }
-
-//     return trendlines;
-//     emit trendlinesFound();
-// }
-
-#include "include/TrendlineDetector.h"
+#include <include/TrendlineDetector.h>
 #include <QVariantMap>
 #include <QtMath>
 
@@ -130,29 +48,57 @@ QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
     }
 
     // --------- 2. Uptrend lines (Low -> Higher Low) ----------
-    for(int i=0;i<lows.size();++i)
+    for(int i=0;i<lows.size()-1;++i)
     {
         for(int j=i+1;j<lows.size();++j)
         {
-            if(lows[j].second <= lows[i].second)
-                continue; // باید higher low باشد
-
             int sIdx = lows[i].first;
             int eIdx = lows[j].first;
+
             double sPrice = lows[i].second;
             double ePrice = lows[j].second;
 
-            double slope = (ePrice - sPrice) / (eIdx - sIdx);
+            // Higher Low
+            if(ePrice <= sPrice)
+                continue;
+
+            // ---------- STRICT MODE ----------
+            if(m_strict)
+            {
+                // highest high بین دو low
+                double midHigh = -1e20;
+                for(int k=sIdx;k<=eIdx;++k)
+                {
+                    double h = candles[k].toMap()["high"].toDouble();
+                    if(h > midHigh) midHigh = h;
+                }
+
+                // آیا بعد از low دوم breakout رخ داده؟
+                bool breakout = false;
+                for(int k=eIdx+1;k<candles.size();++k)
+                {
+                    double h = candles[k].toMap()["high"].toDouble();
+                    if(h > midHigh)
+                    {
+                        breakout = true;
+                        break;
+                    }
+                }
+
+                if(!breakout)
+                    continue;
+            }
+
+
+            double slope = (ePrice - sPrice)/(eIdx - sIdx);
 
             bool valid=true;
 
-            for(int k=sIdx; k<candles.size(); ++k)
+            for(int k=sIdx;k<candles.size();++k)
             {
                 double linePrice = sPrice + slope*(k-sIdx);
 
-                double actualLow = m_useShadows ?
-                                       candles[k].toMap()["low"].toDouble() :
-                                       candles[k].toMap()["close"].toDouble();
+                double actualLow = candles[k].toMap()["low"].toDouble();
 
                 if(actualLow < linePrice*(1.0 - m_penetrationThreshold))
                 {
@@ -161,42 +107,71 @@ QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
                 }
             }
 
-            if(valid){
+            if(valid)
+            {
                 result.append(QVariantMap{
                     {"startIndex", sIdx},
                     {"endIndex", eIdx},
                     {"startPrice", sPrice},
-                    {"endPrice", ePrice},
-                    {"type", "up"}
+                    {"endPrice", ePrice}
                 });
             }
         }
     }
 
+
     // --------- 3. Downtrend lines (High -> Lower High) ----------
-    for(int i=0;i<highs.size();++i)
+    for(int i=0;i<highs.size()-1;++i)
     {
         for(int j=i+1;j<highs.size();++j)
         {
-            if(highs[j].second >= highs[i].second)
-                continue; // باید lower high باشد
-
             int sIdx = highs[i].first;
             int eIdx = highs[j].first;
+
             double sPrice = highs[i].second;
             double ePrice = highs[j].second;
 
-            double slope = (ePrice - sPrice) / (eIdx - sIdx);
+            // Lower High
+            if(ePrice >= sPrice)
+                continue;
+
+            // ---------- STRICT MODE ----------
+            if(m_strict)
+            {
+                // lowest low بین دو high
+                double midLow = 1e20;
+                for(int k=sIdx;k<=eIdx;++k)
+                {
+                    double l = candles[k].toMap()["low"].toDouble();
+                    if(l < midLow) midLow = l;
+                }
+
+                // breakout بعد از high دوم
+                bool breakout = false;
+                for(int k=eIdx+1;k<candles.size();++k)
+                {
+                    double l = candles[k].toMap()["low"].toDouble();
+                    if(l < midLow)
+                    {
+                        breakout = true;
+                        break;
+                    }
+                }
+
+                if(!breakout)
+                    continue;
+            }
+
+
+            double slope = (ePrice - sPrice)/(eIdx - sIdx);
 
             bool valid=true;
 
-            for(int k=sIdx; k<candles.size(); ++k)
+            for(int k=sIdx;k<candles.size();++k)
             {
                 double linePrice = sPrice + slope*(k-sIdx);
 
-                double actualHigh = m_useShadows ?
-                                        candles[k].toMap()["high"].toDouble() :
-                                        candles[k].toMap()["close"].toDouble();
+                double actualHigh = candles[k].toMap()["high"].toDouble();
 
                 if(actualHigh > linePrice*(1.0 + m_penetrationThreshold))
                 {
@@ -205,19 +180,19 @@ QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
                 }
             }
 
-
-            if(valid){
+            if(valid)
+            {
                 result.append(QVariantMap{
                     {"startIndex", sIdx},
                     {"endIndex", eIdx},
                     {"startPrice", sPrice},
-                    {"endPrice", ePrice},
-                    {"type", "down"}
+                    {"endPrice", ePrice}
                 });
             }
         }
     }
-    emit trendlinesFound(result);
+
+    emit resultFound(result);
     return result;
 }
 
