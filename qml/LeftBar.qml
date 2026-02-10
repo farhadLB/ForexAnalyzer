@@ -6,8 +6,8 @@ import "components"
 
 
 Rectangle {
-    implicitWidth: 200
-    SplitView.maximumWidth: 300
+    implicitWidth: 300
+    SplitView.maximumWidth: 400
     color: "#0b0b17"
 
     property var chartRef
@@ -27,7 +27,6 @@ Rectangle {
         Rectangle{
             id: hLevelBox
             Layout.minimumWidth: 180
-            Layout.maximumWidth: 280
             Layout.preferredHeight: 80
             Layout.maximumHeight: 80
             Layout.fillWidth: true
@@ -57,21 +56,32 @@ Rectangle {
                     Layout.margins: 5
 
                     Text{
+                        id: levelLabel
                         text: "Sensitivity"
                         font.pixelSize: 14
                         color: "grey"
                     }
 
                     Slider{
+                        id: levelSlider
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         from: 10
                         to: 200
                         value: 50
+                        stepSize: 1
                         snapMode: Slider.SnapAlways
                         onValueChanged: {
                             chartRef.backdrop = value
                         }
+                    }
+                    Text {
+                        id: levelValue
+                        Layout.minimumWidth: 30
+                        Layout.alignment: Qt.AlignRight
+                        text: levelSlider.value
+                        font.pixelSize: 14
+                        color: "grey"
                     }
                 }
             }
@@ -80,9 +90,8 @@ Rectangle {
         Rectangle{
             id: tlineBox
             Layout.minimumWidth: 180
-            Layout.maximumWidth: 280
-            Layout.preferredHeight: 280
-            Layout.maximumHeight: 280
+            Layout.preferredHeight: 220
+            Layout.maximumHeight: 220
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.margins: 5
@@ -109,12 +118,14 @@ Rectangle {
                     Layout.margins: 5
 
                     Text{
+                        id: trendLabel
                         text: "Sensitivity"
                         font.pixelSize: 14
                         color: "grey"
                     }
 
                     Slider{
+                        id: trendSlider
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         from: 1
@@ -125,6 +136,14 @@ Rectangle {
                         onValueChanged: {
                             trendlineDetector.lookback = value
                         }
+                    }
+                    Text {
+                        id: trendValue
+                        Layout.minimumWidth: 10
+                        Layout.alignment: Qt.AlignRight
+                        text: trendSlider.value
+                        font.pixelSize: 14
+                        color: "grey"
                     }
                 }
                 RowLayout{
@@ -150,6 +169,7 @@ Rectangle {
                 TextField{
                     Layout.alignment: Qt.AlignHCenter
                     Layout.margins: 10
+                    Layout.maximumHeight: 40
                     placeholderText: "threshold"
                     placeholderTextColor: "white"
                     Material.theme: Material.Dark
