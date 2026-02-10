@@ -22,10 +22,10 @@ Rectangle {
         }
     }
     ColumnLayout{
-        width: parent.width
-        height: 360
+        anchors.fill: parent
 
         Rectangle{
+            id: hLevelBox
             Layout.minimumWidth: 180
             Layout.maximumWidth: 280
             Layout.preferredHeight: 80
@@ -78,10 +78,11 @@ Rectangle {
         }
 
         Rectangle{
+            id: tlineBox
             Layout.minimumWidth: 180
             Layout.maximumWidth: 280
-            Layout.preferredHeight: 180
-            Layout.maximumHeight: 180
+            Layout.preferredHeight: 280
+            Layout.maximumHeight: 280
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.margins: 5
@@ -134,9 +135,19 @@ Rectangle {
                         chartRef.extended = ! chartRef.extended
                     }
                 }
+
+                TextField{
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.margins: 10
+                    placeholderText: "threshold"
+                    placeholderTextColor: "white"
+                    Material.theme: Material.Dark
+                    onAccepted: {
+                        trendlineDetector.penetrationThreshold = parseFloat(text)
+                    }
+                }
             }
         }
-
 
         CustomButton{
             Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
