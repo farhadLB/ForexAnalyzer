@@ -146,9 +146,10 @@ QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
 
             bool valid=true;
 
-            for(int k=sIdx;k<=eIdx;++k)
+            for(int k=sIdx; k<candles.size(); ++k)
             {
                 double linePrice = sPrice + slope*(k-sIdx);
+
                 double actualLow = m_useShadows ?
                                        candles[k].toMap()["low"].toDouble() :
                                        candles[k].toMap()["close"].toDouble();
@@ -189,9 +190,10 @@ QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
 
             bool valid=true;
 
-            for(int k=sIdx;k<=eIdx;++k)
+            for(int k=sIdx; k<candles.size(); ++k)
             {
                 double linePrice = sPrice + slope*(k-sIdx);
+
                 double actualHigh = m_useShadows ?
                                         candles[k].toMap()["high"].toDouble() :
                                         candles[k].toMap()["close"].toDouble();
@@ -202,6 +204,7 @@ QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
                     break;
                 }
             }
+
 
             if(valid){
                 result.append(QVariantMap{
