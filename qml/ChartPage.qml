@@ -12,6 +12,7 @@ Rectangle {
     property var rawCandles: []
     property double backdrop: 50
     property bool extended: false
+    property int timeframe: 0
 
     ColumnLayout{
         anchors.fill: parent
@@ -22,6 +23,7 @@ Rectangle {
             Layout.fillWidth: true
             crossVisible: crossToggle.checked
             tlineExtended: centerItem.extended
+            currentTimeframe: centerItem.timeframe
         }
 
         RowLayout{
@@ -38,6 +40,7 @@ Rectangle {
                         var tf = aggregator.getTimeframe(modelData);
                         var newCandles = aggregator.aggregate(rawCandles, tf)
                         chart.candles = newCandles
+                        centerItem.timeframe = tf
                     }
                 }
             }

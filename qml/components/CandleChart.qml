@@ -37,6 +37,8 @@ Item {
 
     property bool tlineExtended: false
 
+    property int currentTimeframe: 0
+
     Connections {
         target: chartObjects
         function onObjectsChanged() {
@@ -93,6 +95,56 @@ Item {
         visibleMaxPrice = maxP + padding
     }
 
+    function formatTimeForTimeframe(d, tf)
+    {
+        function pad(v){ return ("0"+v).slice(-2) }
+
+        var days  = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
+        var months= ["Jan","Feb","Mar","Apr","May","Jun",
+                     "Jul","Aug","Sep","Oct","Nov","Dec"]
+
+        // ---- minute timeframes ----
+        if(tf === 0 ||
+                tf === 1 ||
+                tf === 2)
+        {
+            var yy = d.getFullYear().toString().slice(-2)
+
+            return days[d.getDay()] + " " +
+                    pad(d.getDate()) + " " +
+                    months[d.getMonth()] + " " +
+                    yy + " " +
+                    pad(d.getHours()) + ":" +
+                    pad(d.getMinutes())
+        }
+
+        // ---- H1 / H4 ----
+        if(tf === 3 ||
+                tf === 4)
+        {
+            var yy = d.getFullYear().toString().slice(-2)
+
+            return days[d.getDay()] + " " +
+                    pad(d.getDate()) + " " +
+                    months[d.getMonth()] + " " +
+                    yy + " " +
+                    pad(d.getHours()) + ":00"
+        }
+
+        // ---- D1 ----
+        if(tf === 5)
+        {
+            var yy = d.getFullYear().toString().slice(-2)
+
+            return days[d.getDay()] + " " +
+                    pad(d.getDate()) + " " +
+                    months[d.getMonth()] + " " +
+                    yy
+        }
+
+        return ""
+    }
+
     Canvas {
         id: canvas
         anchors.fill: parent
@@ -130,6 +182,20 @@ Item {
                         return i
                 }
                 return candles.length-1
+            }
+
+            function yToPrice(y){
+                var range = visibleMaxPrice - visibleMinPrice
+                if(range <= 0) range = 1
+                return visibleMinPrice +
+                        (1 - (y - root.topMargin)/chartH) * range
+            }
+
+            function xToIndex(x){
+                var totalVisible = visibleCount + rightOffsetCandles
+                var candlePixel = chartW / totalVisible
+                return firstVisibleIndex +
+                        Math.floor((x - root.leftMargin)/candlePixel)
             }
 
             // visible candles
@@ -171,6 +237,7 @@ Item {
                             )
             }
 
+            // crosshair
             if (crossVisible) {
                 ctx.strokeStyle = "white"
                 ctx.setLineDash([4,4])
@@ -324,6 +391,46 @@ Item {
                 // ---- text ----
                 ctx.fillStyle = "white"
                 ctx.fillText(txt, 2, y+3)
+            }
+
+            if (crossVisible)
+            {
+                // ---- price label (Y axis) ----
+                var price = yToPrice(crossY)
+                var priceTxt = price.toFixed(5)
+
+                var labelH = 18
+                var labelW = root.leftMargin - 2
+
+                var py = Math.max(0,
+                                  Math.min(chartH - labelH,
+                                           crossY - labelH/2))
+
+                ctx.fillStyle = "red"
+                ctx.fillRect(0, py, labelW, labelH)
+
+                ctx.fillStyle = "white"
+                ctx.fillText(priceTxt, 4, py + 12)
+
+
+                // ---- time label (X axis) ----
+                var idx = xToIndex(crossX)
+                if(idx >= 0 && idx < candles.length)
+                {
+                    var d = new Date(candles[idx].time)
+                    var txt = root.formatTimeForTimeframe(d, root.currentTimeframe)
+
+                    var labelW2 = 100
+                    var tx = Math.max(root.leftMargin,
+                                      Math.min(width-labelW2,
+                                               crossX-labelW2/2))
+
+                    ctx.fillStyle = "#202030"
+                    ctx.fillRect(tx, chartH, labelW2, 18)
+
+                    ctx.fillStyle = "white"
+                    ctx.fillText(txt, tx+6, chartH+12)
+                }
             }
         }
     }

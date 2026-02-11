@@ -54,6 +54,5 @@ QVariantList TimeframeAggregator::aggregate(const QVariantList &rawCandles, Time
 
         index = endIndex;
     }
-
     return result;
 }
