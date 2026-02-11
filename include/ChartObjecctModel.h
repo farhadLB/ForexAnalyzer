@@ -11,7 +11,7 @@ public:
     explicit ChartObjectModel(QObject *parent = nullptr);
 
     // --- Manual objects ---
-    Q_INVOKABLE void addTrendline(int sIdx, double sPrice, int eIdx, double ePrice);
+    Q_INVOKABLE void addTrendline(qint64 sTime, double sPrice, qint64 eTime, double ePrice);
     Q_INVOKABLE void addHorizontalLevel(double price);
 
     // --- Auto objects ---

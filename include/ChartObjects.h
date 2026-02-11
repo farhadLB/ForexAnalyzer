@@ -1,12 +1,13 @@
 #pragma once
-#include <QVector>
+#include <QtGlobal>
 
 struct Trendline {
-    int startIndex;
-    int endIndex;
+    qint64 startTime;
+    qint64 endTime;
     double startPrice;
     double endPrice;
 };
+
 
 struct HorizontalLevel {
     double price;

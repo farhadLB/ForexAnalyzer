@@ -105,7 +105,6 @@ Item {
             if (candles.length === 0)
                 return
 
-            // var leftMargin = 60
             var bottomMargin = 20
 
             var chartW = width - root.leftMargin
@@ -122,6 +121,15 @@ Item {
                 var totalVisible = visibleCount + rightOffsetCandles
                 var candleW = chartW / totalVisible
                 return root.leftMargin + (index - firstVisibleIndex) * candleW + candleW * 0.5
+            }
+
+            function timeToIndex(time)
+            {
+                for(var i=0;i<candles.length;i++){
+                    if(candles[i].time >= time)
+                        return i
+                }
+                return candles.length-1
             }
 
             // Y axis
@@ -158,7 +166,6 @@ Item {
             var endIndex = Math.min(firstVisibleIndex + visibleCount,
                                     candles.length)
 
-            // var candlePixel = chartW / visibleCount
             var totalVisible = visibleCount + rightOffsetCandles
             var candlePixel = chartW / totalVisible
 
@@ -244,34 +251,36 @@ Item {
             ctx.strokeStyle = "yellow"
             ctx.lineWidth = 2
 
-            for(var i=0;i<lines.length;i++){
+            for(var i=0;i<lines.length;i++)
+            {
                 var t = lines[i]
 
-                if(!tlineExtended){
+                var sIdx = timeToIndex(t.startTime)
+                var eIdx = timeToIndex(t.endTime)
 
-                    var x1 = indexToX(t.startIndex)
-                    var x2 = indexToX(t.endIndex)
-                    var y1 = priceToY(t.startPrice)
+                var x1 = indexToX(sIdx)
+                var y1 = priceToY(t.startPrice)
+
+                if(!tlineExtended)
+                {
+                    var x2 = indexToX(eIdx)
                     var y2 = priceToY(t.endPrice)
                 }
+                else
+                {
+                    var lastIndex = firstVisibleIndex + visibleCount + rightOffsetCandles
 
-                else{
-
-                    var x1 = indexToX(t.startIndex)
-                    var y1 = priceToY(t.startPrice)
-
-                    var lastIndex = firstVisibleIndex + visibleCount
-                    var slope = (t.endPrice - t.startPrice) /
-                            (t.endIndex - t.startIndex)
+                    var slope =
+                            (t.endPrice - t.startPrice) /
+                            (eIdx - sIdx)
 
                     var extendedPrice =
                             t.startPrice +
-                            slope * (lastIndex - t.startIndex)
+                            slope * (lastIndex - sIdx)
 
                     var x2 = indexToX(lastIndex)
                     var y2 = priceToY(extendedPrice)
                 }
-
 
                 ctx.beginPath()
                 ctx.moveTo(x1,y1)

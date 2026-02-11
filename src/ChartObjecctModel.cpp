@@ -8,13 +8,15 @@ ChartObjectModel::ChartObjectModel(QObject *parent)
 }
 
 // ---------------- Manual objects ----------------
-void ChartObjectModel::addTrendline(int sIdx, double sPrice, int eIdx, double ePrice)
+void ChartObjectModel::addTrendline(qint64 sTime,double sPrice,
+                                    qint64 eTime,double ePrice)
 {
     Trendline t;
-    t.startIndex = sIdx;
-    t.endIndex   = eIdx;
+    t.startTime  = sTime;
+    t.endTime    = eTime;
     t.startPrice = sPrice;
     t.endPrice   = ePrice;
+
     m_manualTrendlines.append(t);
     emit objectsChanged();
 }
@@ -56,8 +58,8 @@ void ChartObjectModel::setAutoTrendlines(const QVariantList &lines, const int st
     for(const QVariant &l : lines){
         QVariantMap m = l.toMap();
         Trendline t;
-        t.startIndex = m["startIndex"].toInt() + start;
-        t.endIndex   = m["endIndex"].toInt() + start;
+        t.startTime  = m["startTime"].toLongLong();
+        t.endTime    = m["endTime"].toLongLong();
         t.startPrice = m["startPrice"].toDouble();
         t.endPrice   = m["endPrice"].toDouble();
         m_autoTrendlines.append(t);
@@ -71,17 +73,16 @@ QVariantList ChartObjectModel::trendlines() const
     QVariantList list;
     for (const auto &t : m_manualTrendlines) {
         QVariantMap m;
-        m["startIndex"] = t.startIndex;
-        m["endIndex"]   = t.endIndex;
+        m["startTime"] = t.startTime;
+        m["endTime"]   = t.endTime;
         m["startPrice"] = t.startPrice;
         m["endPrice"]   = t.endPrice;
-        qDebug() << "startIndex " << t.startIndex << "endIndex " << t.endIndex  << "startPrice " << t.startPrice << "endPrice " << t.endPrice ;
         list.append(m);
     }
     for (const auto &t : m_autoTrendlines) {
         QVariantMap m;
-        m["startIndex"] = t.startIndex;
-        m["endIndex"]   = t.endIndex;
+        m["startTime"] = t.startTime;
+        m["endTime"]   = t.endTime;
         m["startPrice"] = t.startPrice;
         m["endPrice"]   = t.endPrice;
         list.append(m);
@@ -122,16 +123,16 @@ QVariantList ChartObjectModel::allTrendlines() const {
     QVariantList list;
     for(const auto &t : m_manualTrendlines){
         QVariantMap m;
-        m["startIndex"] = t.startIndex;
-        m["endIndex"]   = t.endIndex;
+        m["startTime"] = t.startTime;
+        m["endTime"]   = t.endTime;
         m["startPrice"] = t.startPrice;
         m["endPrice"]   = t.endPrice;
         list.append(m);
     }
     for(const auto &t : m_autoTrendlines){
         QVariantMap m;
-        m["startIndex"] = t.startIndex;
-        m["endIndex"]   = t.endIndex;
+        m["startTime"] = t.startTime;
+        m["endTime"]   = t.endTime;
         m["startPrice"] = t.startPrice;
         m["endPrice"]   = t.endPrice;
         list.append(m);
