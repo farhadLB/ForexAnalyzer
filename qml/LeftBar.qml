@@ -155,7 +155,7 @@ Rectangle {
                         text: "Extend"
                         checked: false
                         onCheckedChanged: {
-                            chartRef.extended = ! chartRef.extended
+                            chartRef.extended = !chartRef.extended
                         }
                     }
                     CustomToggle{

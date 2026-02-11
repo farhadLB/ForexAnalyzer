@@ -132,36 +132,6 @@ Item {
                 return candles.length-1
             }
 
-            // Y axis
-            ctx.strokeStyle = "#888"
-            ctx.beginPath()
-            ctx.moveTo(leftMargin,0)
-            ctx.lineTo(leftMargin,chartH)
-            ctx.stroke()
-
-            ctx.fillStyle = "white"
-            ctx.font = "10px sans-serif"
-
-            var steps = 12
-            for (var i=0;i<=steps;i++) {
-                var p = visibleMinPrice +
-                        (visibleMaxPrice-visibleMinPrice)*i/steps
-                var y = priceToY(p)
-
-                ctx.beginPath()
-                ctx.moveTo(leftMargin-5,y)
-                ctx.lineTo(leftMargin,y)
-                ctx.stroke()
-
-                ctx.fillText(p.toFixed(5),2,y+3)
-            }
-
-            // X axis
-            ctx.beginPath()
-            ctx.moveTo(leftMargin,chartH)
-            ctx.lineTo(width,chartH)
-            ctx.stroke()
-
             // visible candles
             var endIndex = Math.min(firstVisibleIndex + visibleCount,
                                     candles.length)
@@ -199,32 +169,6 @@ Item {
                             candlePixel*0.7,
                             bodyHeight
                             )
-            }
-
-            // time labels
-            var labelCount = 10
-            var stepIndex = Math.floor(visibleCount/labelCount)
-
-            for (var i=0;i<=labelCount;i++) {
-
-                var idx = firstVisibleIndex + i*stepIndex
-                if (idx >= candles.length) break
-
-                var c = candles[idx]
-
-                var x = root.leftMargin +
-                        (idx-firstVisibleIndex)*candlePixel +
-                        candlePixel/2
-
-                var d = new Date(c.time)
-                var txt = (d.getHours())+":"+d.getMinutes()
-
-                ctx.beginPath()
-                ctx.moveTo(x,chartH)
-                ctx.lineTo(x,chartH+5)
-                ctx.stroke()
-
-                ctx.fillText(txt,x-15,chartH+15)
             }
 
             if (crossVisible) {
@@ -307,6 +251,80 @@ Item {
 
             ctx.setLineDash([])
 
+            // Y axis
+            ctx.strokeStyle = "#888"
+            ctx.beginPath()
+            ctx.moveTo(leftMargin,0)
+            ctx.lineTo(leftMargin,chartH)
+            ctx.stroke()
+
+            ctx.fillStyle = "white"
+            ctx.font = "10px sans-serif"
+
+            // X axis
+            ctx.beginPath()
+            ctx.moveTo(leftMargin,chartH)
+            ctx.lineTo(width,chartH)
+            ctx.stroke()
+
+            // axis backgrounds
+            ctx.fillStyle = "#0b0b17"
+            ctx.fillRect(0, 0, root.leftMargin, chartH)
+            ctx.fillStyle = "#0b0b17"
+            ctx.fillRect(0, chartH, width, height - chartH)
+
+            // time labels
+            var labelCount = 10
+            var stepIndex = Math.floor(visibleCount/labelCount)
+
+            for (var i=0;i<=labelCount;i++)
+            {
+                var idx = firstVisibleIndex + i*stepIndex
+                if (idx >= candles.length) break
+
+                var c = candles[idx]
+
+                var x = root.leftMargin +
+                        (idx-firstVisibleIndex)*candlePixel +
+                        candlePixel/2
+
+                var d = new Date(c.time)
+                var txt = (d.getHours()) + ":" + d.getMinutes()
+
+                // ---- tick ----
+                ctx.strokeStyle = "#888"
+                ctx.beginPath()
+                ctx.moveTo(x,chartH)
+                ctx.lineTo(x,chartH+5)
+                ctx.stroke()
+
+                // ---- text ----
+                ctx.fillStyle = "white"
+                ctx.fillText(txt,x-20,chartH+13)
+            }
+
+            // Y labels
+            var steps = 12
+            ctx.font = "10px sans-serif"
+            for (var i=0;i<=steps;i++)
+            {
+                var p = visibleMinPrice +
+                        (visibleMaxPrice-visibleMinPrice)*i/steps
+
+                var y = priceToY(p)
+                var txt = p.toFixed(5)
+
+                // ---- tick ----
+                ctx.strokeStyle = "#888"
+                ctx.beginPath()
+                ctx.moveTo(leftMargin-5,y)
+                ctx.lineTo(leftMargin,y)
+                ctx.stroke()
+
+                // ---- text ----
+                ctx.fillStyle = "white"
+                ctx.fillText(txt, 2, y+3)
+            }
         }
     }
 
