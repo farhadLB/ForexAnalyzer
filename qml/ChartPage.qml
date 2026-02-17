@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "components"
+import ForexAnalyzer 1.0
 
 Rectangle {
     id: centerItem
@@ -37,10 +38,11 @@ Rectangle {
                     text: modelData
                     onClicked: {
                         if (!rawCandles || rawCandles.length === 0) return;
-                        var tf = aggregator.getTimeframe(modelData);
-                        var newCandles = aggregator.aggregate(rawCandles, tf)
+                        var tf = Aggregator.getTimeframe(modelData);
+                        var newCandles = Aggregator.aggregate(rawCandles, tf)
                         chart.candles = newCandles
                         centerItem.timeframe = tf
+                        Aggregator.setTimeframe(modelData);
                     }
                 }
             }
@@ -79,7 +81,7 @@ Rectangle {
                         visibleCandles.push(chart.candles[i])
 
                     var lines = trendlineDetector.detectTrendlines(visibleCandles)
-                    chartObjects.clearAutoTrendlines()
+                    // chartObjects.clearAutoTrendlines()
                     chartObjects.setAutoTrendlines(lines, start)
                 }
             }

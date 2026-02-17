@@ -54,7 +54,6 @@ void ChartObjectModel::setAutoLevels(const QVariantList &levels)
 }
 
 void ChartObjectModel::setAutoTrendlines(const QVariantList &lines, const int start) {
-    m_autoTrendlines.clear();
     for(const QVariant &l : lines){
         QVariantMap m = l.toMap();
         Trendline t;
@@ -62,6 +61,7 @@ void ChartObjectModel::setAutoTrendlines(const QVariantList &lines, const int st
         t.endTime    = m["endTime"].toLongLong();
         t.startPrice = m["startPrice"].toDouble();
         t.endPrice   = m["endPrice"].toDouble();
+        t.timeframe  = m["timeframe"].toString();
         m_autoTrendlines.append(t);
     }
     emit objectsChanged();
@@ -77,6 +77,7 @@ QVariantList ChartObjectModel::trendlines() const
         m["endTime"]   = t.endTime;
         m["startPrice"] = t.startPrice;
         m["endPrice"]   = t.endPrice;
+        m["timeframe"]   = t.timeframe;
         list.append(m);
     }
     for (const auto &t : m_autoTrendlines) {
@@ -85,6 +86,7 @@ QVariantList ChartObjectModel::trendlines() const
         m["endTime"]   = t.endTime;
         m["startPrice"] = t.startPrice;
         m["endPrice"]   = t.endPrice;
+        m["timeframe"]   = t.timeframe;
         list.append(m);
     }
     return list;

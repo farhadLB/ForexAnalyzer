@@ -2,11 +2,6 @@
 #include <QVariantMap>
 #include <QtMath>
 
-TrendlineDetector::TrendlineDetector(QObject *parent)
-    : QObject(parent)
-{
-}
-
 QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
 {
     QVariantList result;
@@ -99,7 +94,7 @@ QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
                 m["endTime"]    = candles[eIdx].toMap()["time"].toLongLong();
                 m["startPrice"] = sPrice;
                 m["endPrice"]   = ePrice;
-
+                m["timeframe"]  = m_agg->timeframeGetter();
                 result.append(m);
             }
         }
@@ -155,7 +150,7 @@ QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
                 m["endTime"]    = candles[eIdx].toMap()["time"].toLongLong();
                 m["startPrice"] = sPrice;
                 m["endPrice"]   = ePrice;
-
+                m["timeframe"]  = m_agg->timeframeGetter();
                 result.append(m);
             }
         }

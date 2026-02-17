@@ -56,3 +56,16 @@ QVariantList TimeframeAggregator::aggregate(const QVariantList &rawCandles, Time
     }
     return result;
 }
+
+void TimeframeAggregator::setTimeframe(const QString &newTimeframe)
+{
+    if (m_timeframe == newTimeframe)
+        return;
+    m_timeframe = newTimeframe;
+    emit timeframeChanged();
+}
+
+QString TimeframeAggregator::timeframeGetter()
+{
+    return m_timeframe;
+}

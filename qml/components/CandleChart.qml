@@ -259,12 +259,23 @@ Item {
 
             //Trendlines
             var lines = chartObjects.trendlines()
-            ctx.strokeStyle = "yellow"
             ctx.lineWidth = 2
 
             for(var i=0;i<lines.length;i++)
             {
                 var t = lines[i]
+                var tf = t.timeframe
+                if(tf === "1m"){
+                    ctx.strokeStyle = "skyblue"
+                }
+                else if(tf === "5m"){
+                    ctx.strokeStyle = "orange"
+                }
+                else if(tf === "15m"){
+                    ctx.strokeStyle = "blue"
+                }
+                else
+                    ctx.strokeStyle = "yellow"
 
                 var sIdx = timeToIndex(t.startTime)
                 var eIdx = timeToIndex(t.endTime)

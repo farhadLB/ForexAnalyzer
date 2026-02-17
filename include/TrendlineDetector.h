@@ -1,12 +1,13 @@
 #pragma once
 #include <QObject>
 #include <QVariantList>
+#include <include/TimeframeAggregator.h>
 
 class TrendlineDetector : public QObject
 {
     Q_OBJECT
 public:
-    explicit TrendlineDetector(QObject *parent = nullptr);
+    TrendlineDetector(TimeframeAggregator* agg, QObject *parent = nullptr): QObject(parent), m_agg(agg){}
 
     Q_INVOKABLE QVariantList detectTrendlines(const QVariantList &candles);
 
@@ -40,4 +41,5 @@ private:
     bool m_strict = true;
     bool m_useShadows = true;
     double m_penetrationThreshold = 0.0001;
+    TimeframeAggregator* m_agg;
 };

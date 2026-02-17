@@ -20,8 +20,7 @@ int main(int argc, char *argv[])
     TimeframeAggregator aggregator;
     ChartObjectModel chartObjects;
     LevelDetector levelDetector;
-    TrendlineDetector trendlineDetector;
-
+    TrendlineDetector trendlineDetector(&aggregator);
     QQmlApplicationEngine engine;
     QObject::connect(
         &engine,
@@ -30,11 +29,18 @@ int main(int argc, char *argv[])
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
     engine.rootContext()->setContextProperty("csvLoader", &csvLoader);
-    engine.rootContext()->setContextProperty("aggregator", &aggregator);
     engine.rootContext()->setContextProperty("chartObjects",&chartObjects);
     engine.rootContext()->setContextProperty("levelDetector",&levelDetector);
     engine.rootContext()->setContextProperty("trendlineDetector",&trendlineDetector);
     engine.loadFromModule("ForexAnalyzer", "Main");
+
+    //defining time aggregator as a singleton
+    qmlRegisterSingletonInstance(
+        "ForexAnalyzer",
+        1, 0,
+        "Aggregator",
+        &aggregator
+        );
 
     return app.exec();
 }

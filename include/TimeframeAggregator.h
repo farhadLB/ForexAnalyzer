@@ -6,6 +6,7 @@
 
 class TimeframeAggregator : public QObject {
     Q_OBJECT
+    Q_PROPERTY(QString timeframe READ timeframeGetter WRITE setTimeframe NOTIFY timeframeChanged FINAL)
 public:
     explicit TimeframeAggregator(QObject *parent = nullptr) : QObject(parent) {}
 
@@ -23,4 +24,12 @@ public:
         if (tf == "Daily") return D1;
         return M1;
     }
+    Q_INVOKABLE void setTimeframe(const QString &newTimeframe);
+    QString timeframeGetter();
+
+signals:
+    void timeframeChanged();
+
+private:
+    QString m_timeframe = "1m";
 };

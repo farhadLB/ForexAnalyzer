@@ -6,6 +6,7 @@ struct Trendline {
     qint64 endTime;
     double startPrice;
     double endPrice;
+    QString timeframe;
 };
 
 
