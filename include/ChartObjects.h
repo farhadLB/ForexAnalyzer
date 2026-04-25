@@ -1,5 +1,16 @@
 #pragma once
 #include <QtGlobal>
+#include <QDateTime>
+
+struct Candle {
+    QDateTime time;
+    double open;
+    double high;
+    double low;
+    double close;
+    double volume;
+};
+
 
 struct Trendline {
     qint64 startTime;

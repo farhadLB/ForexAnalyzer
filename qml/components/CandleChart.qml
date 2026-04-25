@@ -258,7 +258,7 @@ Item {
             }
 
             //Trendlines
-            var lines = chartObjects.trendlines()
+            var lines = chartObjects.allTrendlines()
             ctx.lineWidth = 2
 
             for(var i=0;i<lines.length;i++)

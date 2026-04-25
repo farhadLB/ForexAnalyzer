@@ -17,7 +17,6 @@ Rectangle {
         title: "Select Forex CSV"
         nameFilters: ["CSV files (*.csv)"]
         onAccepted: {
-            // تبدیل URL به path واقعی
             csvLoader.loadFile(fileDialog.selectedFile)
         }
     }

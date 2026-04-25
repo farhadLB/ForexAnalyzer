@@ -26,7 +26,7 @@ qt_add_qml_module(appForexAnalyzer
         SOURCES include/CsvLoader.h src/CsvLoader.cpp
         SOURCES include/TimeframeAggregator.h src/TimeframeAggregator.cpp
         SOURCES include/ChartObjects.h
-        SOURCES include/ChartObjecctModel.h src/ChartObjecctModel.cpp
+        SOURCES include/ChartObjectModel.h src/ChartObjectModel.cpp
         SOURCES include/LevelDetector.h src/LevelDetector.cpp
         SOURCES include/TrendlineDetector.h src/TrendlineDetector.cpp
 )

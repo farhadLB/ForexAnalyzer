@@ -1,4 +1,4 @@
-#include <include/ChartObjecctModel.h>
+#include <include/ChartObjectModel.h>
 #include <QDebug>
 
 // ---------------- Constructor ----------------
@@ -68,7 +68,7 @@ void ChartObjectModel::setAutoTrendlines(const QVariantList &lines, const int st
 }
 
 // ---------------- Accessors ----------------
-QVariantList ChartObjectModel::trendlines() const
+QVariantList ChartObjectModel::allTrendlines() const
 {
     QVariantList list;
     for (const auto &t : m_manualTrendlines) {
@@ -92,16 +92,6 @@ QVariantList ChartObjectModel::trendlines() const
     return list;
 }
 
-QVariantList ChartObjectModel::horizontalLevels() const
-{
-    QVariantList list;
-    for (const auto &l : m_manualLevels) {
-        QVariantMap m;
-        m["price"] = l.price;
-        list.append(m);
-    }
-    return list;
-}
 
 QVariantList ChartObjectModel::allLevels() const
 {
@@ -121,23 +111,36 @@ QVariantList ChartObjectModel::allLevels() const
     return list;
 }
 
-QVariantList ChartObjectModel::allTrendlines() const {
-    QVariantList list;
-    for(const auto &t : m_manualTrendlines){
-        QVariantMap m;
-        m["startTime"] = t.startTime;
-        m["endTime"]   = t.endTime;
-        m["startPrice"] = t.startPrice;
-        m["endPrice"]   = t.endPrice;
-        list.append(m);
-    }
-    for(const auto &t : m_autoTrendlines){
-        QVariantMap m;
-        m["startTime"] = t.startTime;
-        m["endTime"]   = t.endTime;
-        m["startPrice"] = t.startPrice;
-        m["endPrice"]   = t.endPrice;
-        list.append(m);
-    }
-    return list;
-}
+
+// QVariantList ChartObjectModel::horizontalLevels() const
+// {
+//     QVariantList list;
+//     for (const auto &l : m_manualLevels) {
+//         QVariantMap m;
+//         m["price"] = l.price;
+//         list.append(m);
+//     }
+//     return list;
+// }
+
+
+// QVariantList ChartObjectModel::manualTrendlines() const {
+//     QVariantList list;
+//     for(const auto &t : m_manualTrendlines){
+//         QVariantMap m;
+//         m["startTime"] = t.startTime;
+//         m["endTime"]   = t.endTime;
+//         m["startPrice"] = t.startPrice;
+//         m["endPrice"]   = t.endPrice;
+//         list.append(m);
+//     }
+//     for(const auto &t : m_autoTrendlines){
+//         QVariantMap m;
+//         m["startTime"] = t.startTime;
+//         m["endTime"]   = t.endTime;
+//         m["startPrice"] = t.startPrice;
+//         m["endPrice"]   = t.endPrice;
+//         list.append(m);
+//     }
+//     return list;
+// }

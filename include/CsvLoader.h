@@ -3,15 +3,7 @@
 #include <QObject>
 #include <QVector>
 #include <QDateTime>
-
-struct Candle {
-    QDateTime time;
-    double open;
-    double high;
-    double low;
-    double close;
-    double volume;
-};
+#include <include/ChartObjects.h>
 
 class CsvLoader : public QObject
 {
@@ -20,7 +12,6 @@ public:
     explicit CsvLoader(QObject *parent = nullptr);
 
     Q_INVOKABLE bool loadFile(const QString &filePath);
-    Q_INVOKABLE void printCsv();
 
 signals:
     void fileLoaded(int candleCount);

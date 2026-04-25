@@ -8,25 +8,8 @@
 CsvLoader::CsvLoader(QObject *parent)
     : QObject(parent)
 {
-    QLocale::setDefault(QLocale::c());
 }
 
-inline QDebug operator<<(QDebug dbg, const Candle &c)
-{
-    QDebugStateSaver saver(dbg);
-
-    dbg.nospace()
-        << "Candle("
-        << c.time.toString("yyyy.MM.dd HH:mm") << ", "
-        << "O=" << c.open << ", "
-        << "H=" << c.high << ", "
-        << "L=" << c.low << ", "
-        << "C=" << c.close << ", "
-        << "V=" << c.volume
-        << ")";
-
-    return dbg;
-}
 
 bool CsvLoader::loadFile(const QString &fileUrl)
 {
@@ -47,7 +30,7 @@ bool CsvLoader::loadFile(const QString &fileUrl)
         if (line.isEmpty())
             continue;
 
-        QStringList f = line.split(',', Qt::SkipEmptyParts);
+        QStringList f = line.split(',');
         if (f.size() != 7)
             continue;
 
@@ -95,11 +78,4 @@ bool CsvLoader::loadFile(const QString &fileUrl)
 
 
     return true;
-}
-
-void CsvLoader::printCsv()
-{
-    for(const Candle &c : m_data){
-        qInfo() << c;
-    }
 }

@@ -4,7 +4,7 @@
 #include <QQuickStyle>
 #include <include/CsvLoader.h>
 #include <include/TimeframeAggregator.h>
-#include <include/ChartObjecctModel.h>
+#include <include/ChartObjectModel.h>
 #include <include/LevelDetector.h>
 #include <include/TrendlineDetector.h>
 
