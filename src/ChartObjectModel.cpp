@@ -48,6 +48,7 @@ void ChartObjectModel::setAutoLevels(const QVariantList &levels)
         QVariantMap m = l.toMap();
         HorizontalLevel h;
         h.price = m["price"].toDouble();
+        h.isResistance = m["isResistance"].toBool();
         m_autoLevels.append(h);
     }
     emit objectsChanged();
@@ -100,12 +101,14 @@ QVariantList ChartObjectModel::allLevels() const
     for (const auto &l : m_manualLevels) {
         QVariantMap m;
         m["price"] = l.price;
+        m["isResistance"] = l.isResistance;
         list.append(m);
     }
     // Auto
     for (const auto &l : m_autoLevels) {
         QVariantMap m;
         m["price"] = l.price;
+        m["isResistance"] = l.isResistance;
         list.append(m);
     }
     return list;

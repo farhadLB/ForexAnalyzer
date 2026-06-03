@@ -23,13 +23,17 @@ QVariantList LevelDetector::detectLocalLevels(const QVariantList &candles,int lo
         if(isHigh){
             QVariantMap m;
             m["price"]=high;
+            m["isResistance"]= false;
             levels.append(m);
+            qInfo() << "false";
         }
 
         if(isLow){
             QVariantMap m;
             m["price"]=low;
+            m["isResistance"]= true;
             levels.append(m);
+            qInfo() << "true";
         }
     }
 

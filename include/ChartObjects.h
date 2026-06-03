@@ -23,4 +23,5 @@ struct Trendline {
 
 struct HorizontalLevel {
     double price;
+    bool isResistance;
 };

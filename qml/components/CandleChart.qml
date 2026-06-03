@@ -312,11 +312,17 @@ Item {
 
             //Horizantal Static Levels
             var levels = chartObjects.allLevels()
-            ctx.strokeStyle = "#00ffaa"
             ctx.setLineDash([6,4])
 
             for(var i=0;i<levels.length;i++){
                 var price = levels[i].price
+                var myBool = levels[i].isResistance
+                if(myBool){
+                    ctx.strokeStyle = "#00ffaa"
+                }
+                else{
+                    ctx.strokeStyle = "red"
+                }
 
                 if(price < visibleMinPrice || price > visibleMaxPrice) continue
 
@@ -378,7 +384,7 @@ Item {
 
                 // ---- text ----
                 ctx.fillStyle = "white"
-                ctx.fillText(txt,x-20,chartH+13)
+                ctx.fillText(txt,x,chartH+13)
             }
 
             // Y labels
@@ -401,7 +407,7 @@ Item {
 
                 // ---- text ----
                 ctx.fillStyle = "white"
-                ctx.fillText(txt, 2, y+3)
+                ctx.fillText(txt, root.leftMargin - 2, y+3)
             }
 
             if (crossVisible)
@@ -421,7 +427,7 @@ Item {
                 ctx.fillRect(0, py, labelW, labelH)
 
                 ctx.fillStyle = "white"
-                ctx.fillText(priceTxt, 4, py + 12)
+                ctx.fillText(priceTxt, root.leftMargin - 6, py + 12)
 
 
                 // ---- time label (X axis) ----
@@ -440,7 +446,7 @@ Item {
                     ctx.fillRect(tx, chartH, labelW2, 18)
 
                     ctx.fillStyle = "white"
-                    ctx.fillText(txt, tx+6, chartH+12)
+                    ctx.fillText(txt, tx+labelW2 - 6, chartH+12)
                 }
             }
         }
