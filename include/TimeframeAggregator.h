@@ -2,7 +2,7 @@
 #include <QObject>
 #include <QVariant>
 #include <QDateTime>
-#include <include/ChartObjects.h>
+#include <ChartObjects.h>
 
 class TimeframeAggregator : public QObject {
     Q_OBJECT

@@ -2,25 +2,25 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
-#include <include/CsvLoader.h>
-#include <include/TimeframeAggregator.h>
-#include <include/ChartObjectModel.h>
-#include <include/LevelDetector.h>
-#include <include/TrendlineDetector.h>
-
+#include <CsvLoader.h>
+#include <TimeframeAggregator.h>
+#include <ChartObjectModel.h>
+#include <LevelDetector.h>
+#include <TrendlineDetector.h>
+#include <HLevelBreaked.h>
 
 int main(int argc, char *argv[])
 {
 
     qputenv("QT_QUICK_CONTROLS_MATERIAL_ACCENT", "white");
     QQuickStyle::setStyle("Material");
-
     QGuiApplication app(argc, argv);
-    CsvLoader csvLoader;
     TimeframeAggregator aggregator;
     ChartObjectModel chartObjects;
     LevelDetector levelDetector;
     TrendlineDetector trendlineDetector(&aggregator);
+    CsvLoader *csvLoader = new CsvLoader();
+    HLevelBreaked hLevelBreakd(csvLoader);
     QQmlApplicationEngine engine;
     QObject::connect(
         &engine,
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
         &app,
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
-    engine.rootContext()->setContextProperty("csvLoader", &csvLoader);
+    engine.rootContext()->setContextProperty("csvLoader", csvLoader);
     engine.rootContext()->setContextProperty("chartObjects",&chartObjects);
     engine.rootContext()->setContextProperty("levelDetector",&levelDetector);
     engine.rootContext()->setContextProperty("trendlineDetector",&trendlineDetector);

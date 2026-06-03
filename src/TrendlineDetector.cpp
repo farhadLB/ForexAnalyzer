@@ -1,4 +1,4 @@
-#include "include/TrendlineDetector.h"
+#include "TrendlineDetector.h"
 #include <QVariantMap>
 #include <QtMath>
 

@@ -1,51 +1,48 @@
 cmake_minimum_required(VERSION 3.16)
-
 project(ForexAnalyzer VERSION 0.1 LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Core QuickControls2)
-
 qt_standard_project_setup(REQUIRES 6.8)
 
-qt_add_executable(appForexAnalyzer
-    src/main.cpp
-)
+enable_testing()
+
+# Library of all your business logic
+add_subdirectory(src)
+
+add_subdirectory(tests)
+
+qt_standard_project_setup()
+
+# App target stays in root — QML paths are clean
+qt_add_executable(appForexAnalyzer src/main.cpp)
 
 qt_add_qml_module(appForexAnalyzer
     URI ForexAnalyzer
     VERSION 1.0
-        QML_FILES qml/Main.qml
-        QML_FILES qml/ChartPage.qml
-        QML_FILES qml/LeftBar.qml
-        QML_FILES qml/components/CustomButton.qml
-        QML_FILES qml/components/CandleChart.qml
-        QML_FILES qml/components/CustomToggle.qml
-
-
-        SOURCES include/CsvLoader.h src/CsvLoader.cpp
-        SOURCES include/TimeframeAggregator.h src/TimeframeAggregator.cpp
-        SOURCES include/ChartObjects.h
-        SOURCES include/ChartObjectModel.h src/ChartObjectModel.cpp
-        SOURCES include/LevelDetector.h src/LevelDetector.cpp
-        SOURCES include/TrendlineDetector.h src/TrendlineDetector.cpp
+    QML_FILES
+        qml/Main.qml
+        qml/ChartPage.qml
+        qml/LeftBar.qml
+        qml/components/CustomButton.qml
+        qml/components/CandleChart.qml
+        qml/components/CustomToggle.qml
+        qml/components/AccordionItem.qml
 )
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
+target_link_libraries(appForexAnalyzer PRIVATE
+    forexanalyzer_lib       # your classes
+    Qt6::Quick
+    Qt6::QuickControls2
+)
+
 set_target_properties(appForexAnalyzer PROPERTIES
-#    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.appForexAnalyzer
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
-)
-
-target_link_libraries(appForexAnalyzer
-    PRIVATE Qt6::Quick
-    Qt6::Core
-    Qt6::QuickControls2
 )
 
 include(GNUInstallDirs)

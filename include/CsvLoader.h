@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QVector>
 #include <QDateTime>
-#include <include/ChartObjects.h>
+#include "ChartObjects.h"
 
 class CsvLoader : public QObject
 {

@@ -1,4 +1,4 @@
-#include <include/ChartObjectModel.h>
+#include <ChartObjectModel.h>
 #include <QDebug>
 
 // ---------------- Constructor ----------------

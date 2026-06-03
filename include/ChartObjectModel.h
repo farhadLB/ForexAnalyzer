@@ -2,7 +2,7 @@
 #include <QObject>
 #include <QVariantList>
 #include <QVector>
-#include <include/ChartObjects.h>
+#include <ChartObjects.h>
 
 class ChartObjectModel : public QObject
 {

@@ -1,4 +1,4 @@
-#include "include/CsvLoader.h"
+#include "CsvLoader.h"
 #include <QFile>
 #include <QTextStream>
 #include <QLocale>
@@ -54,7 +54,7 @@ bool CsvLoader::loadFile(const QString &fileUrl)
 
     QVariantList list;
 
-    for (const Candle &c : m_data) {
+    for (const Candle &c : std::as_const(m_data)) {
         QVariantMap m;
         m["time"]  = c.time.toMSecsSinceEpoch();
         m["open"]  = c.open;
@@ -69,7 +69,7 @@ bool CsvLoader::loadFile(const QString &fileUrl)
     double minY = std::numeric_limits<double>::max();
     double maxY = std::numeric_limits<double>::lowest();
 
-    for (const Candle &c : m_data) {
+    for (const Candle &c : std::as_const(m_data)) {
         minY = std::min(minY, c.low);
         maxY = std::max(maxY, c.high);
     }

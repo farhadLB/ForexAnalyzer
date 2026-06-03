@@ -1,7 +1,7 @@
 #pragma once
 #include <QObject>
 #include <QVariantList>
-#include <include/TimeframeAggregator.h>
+#include <TimeframeAggregator.h>
 
 class TrendlineDetector : public QObject
 {

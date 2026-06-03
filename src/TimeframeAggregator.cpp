@@ -1,4 +1,4 @@
-#include "include/TimeframeAggregator.h"
+#include "TimeframeAggregator.h"
 #include <QDebug>
 #include <algorithm>
 

@@ -1,10 +1,10 @@
-#include <include/LevelDetector.h>
+#include <LevelDetector.h>
 
 QVariantList LevelDetector::detectLocalLevels(const QVariantList &candles,int lookback)
 {
     QVariantList levels;
 
-    for(int i=lookback;i<candles.size()-lookback;i++)
+    for(int i=lookback; i<candles.size()-lookback; i++)
     {
         double high = candles[i].toMap()["high"].toDouble();
         double low  = candles[i].toMap()["low"].toDouble();
