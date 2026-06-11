@@ -47,8 +47,11 @@ void ChartObjectModel::setAutoLevels(const QVariantList &levels)
     for (const QVariant &l : levels) {
         QVariantMap m = l.toMap();
         HorizontalLevel h;
-        h.price = m["price"].toDouble();
+        h.price        = m["price"].toDouble();
         h.isResistance = m["isResistance"].toBool();
+        h.idx          = m["idx"].toInt();
+        h.breakIndex   = m["breakIndex"].toInt();
+        h.breakTime    = m["breakTime"].toLongLong();
         m_autoLevels.append(h);
     }
     emit objectsChanged();
@@ -100,18 +103,49 @@ QVariantList ChartObjectModel::allLevels() const
     // Manual
     for (const auto &l : m_manualLevels) {
         QVariantMap m;
-        m["price"] = l.price;
+        m["price"]        = l.price;
         m["isResistance"] = l.isResistance;
+        m["idx"]          = l.idx;
+        m["breakIndex"]   = l.breakIndex;
+        m["breakTime"]    = l.breakTime;
         list.append(m);
     }
     // Auto
     for (const auto &l : m_autoLevels) {
         QVariantMap m;
-        m["price"] = l.price;
+        m["price"]        = l.price;
         m["isResistance"] = l.isResistance;
+        m["idx"]          = l.idx;
+        m["breakIndex"]   = l.breakIndex;
+        m["breakTime"]    = l.breakTime;
         list.append(m);
     }
     return list;
+}
+
+QVariantList ChartObjectModel::positions()
+{
+
+    QVariantList list;
+    for(const auto &p : m_positionList) {
+        QVariantMap m;
+        m["EntryPointPrice"]    = p.EntryPointPrice;
+        m["StopLossPrice"]      = p.StopLossPrice;
+        m["TakeProfitPrice"]    = p.TakeProfitPrice;
+        m["EntryIdx"]           = p.EntryIdx;
+        m["EndIdx"]             = p.EndIdx;
+        m["LevelIdx"]           = p.LevelIdx;
+        m["Timeframe"]          = p.Timeframe;
+        m["isBullish"]          = p.isBullish;
+        m["isWin"]              = p.isWin;
+        list.append(m);
+    }
+    return list;
+}
+
+void ChartObjectModel::getPositions(QList<Position> newList)
+{
+    m_positionList = newList;
 }
 
 

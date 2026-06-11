@@ -38,7 +38,7 @@ QVariantList TimeframeAggregator::aggregate(const QVariantList &rawCandles, Time
             QVariantMap c = rawCandles[i].toMap();
             high = qMax(high, c["high"].toDouble());
             low  = qMin(low, c["low"].toDouble());
-            close = c["close"].toDouble();  // آخرین کندل
+            close = c["close"].toDouble();
             volume += c["volume"].toDouble();
         }
 
@@ -54,6 +54,7 @@ QVariantList TimeframeAggregator::aggregate(const QVariantList &rawCandles, Time
 
         index = endIndex;
     }
+    emit aggReady(result);
     return result;
 }
 
@@ -68,4 +69,52 @@ void TimeframeAggregator::setTimeframe(const QString &newTimeframe)
 QString TimeframeAggregator::timeframeGetter()
 {
     return m_timeframe;
+}
+
+QMap<QString, int> TimeframeAggregator::indexAggregate(int index, Timeframe fromTimeframe, Timeframe toTimeframe)
+{
+
+    int fromCoeff = 1;
+    int toCoeff   = 1;
+
+    switch (fromTimeframe) {
+    case M1:  fromCoeff = 1; break;
+    case M5:  fromCoeff = 5; break;
+    case M15: fromCoeff = 15; break;
+    case H1:  fromCoeff = 60; break;
+    case H4:  fromCoeff = 240; break;
+    case D1:  fromCoeff = 1440; break;
+    }
+
+    switch (toTimeframe) {
+    case M1:  toCoeff = 1; break;
+    case M5:  toCoeff = 5; break;
+    case M15: toCoeff = 15; break;
+    case H1:  toCoeff = 60; break;
+    case H4:  toCoeff = 240; break;
+    case D1:  toCoeff = 1440; break;
+    }
+
+    int ratio    = static_cast<int>(std::ceil(static_cast<double>(fromCoeff) / toCoeff));
+    int newIndex = std::ceil(index * ratio);
+    QMap<QString, int> map;
+
+    map["index"] = newIndex;
+    map["ratio"] = ratio;
+
+    return map;
+}
+
+QString TimeframeAggregator::timeframeToString(Timeframe tf)
+{
+    QString strTimeframe;
+    switch (tf) {
+    case M1:  strTimeframe = "1m"; break;
+    case M5:  strTimeframe = "5m"; break;
+    case M15: strTimeframe = "15m"; break;
+    case H1:  strTimeframe = "1h"; break;
+    case H4:  strTimeframe = "4h"; break;
+    case D1:  strTimeframe = "Daily"; break;
+    }
+    return strTimeframe;
 }

@@ -11,6 +11,7 @@ Rectangle {
     color: "#0b0b17"
 
     property var chartRef
+    property var stackRef
 
     ColumnLayout{
         anchors.fill: parent
@@ -66,6 +67,41 @@ Rectangle {
                                 color: "grey"
                             }
                         }
+                        RowLayout{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.margins: 5
+
+                            Text{
+                                id: thresholdLabel
+                                text: "threshold"
+                                font.pixelSize: 14
+                                color: "grey"
+                            }
+
+                            Slider{
+                                id: thresholdSlider
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                from: 0
+                                to: 20
+                                value: 0
+                                stepSize: 1
+                                snapMode: Slider.SnapAlways
+                                onValueChanged: {
+                                    levelDetector.threshold = value
+                                }
+                            }
+                            Text {
+                                id: thresholdValue
+                                Layout.minimumWidth: 30
+                                Layout.alignment: Qt.AlignRight
+                                text: thresholdSlider.value
+                                font.pixelSize: 14
+                                color: "grey"
+                            }
+                        }
+
                     }
                 }
 
@@ -143,17 +179,51 @@ Rectangle {
                         }
                     }
                 }
+                AccordionItem {
+                    title: "Positions"
+                    content: ColumnLayout{
+                        spacing: 8
+                        RowLayout{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.margins: 5
+
+                            CustomToggle{
+                                text: "show positions"
+                                checked: false
+                                Layout.fillWidth: true
+                                onCheckedChanged: {
+                                    chartRef.showPosition = !chartRef.showPosition
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
         }
 
-        CustomButton{
-            Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
-            Layout.margins: 10
-            text: "Load CSV File"
-            onClicked: fileDialog.open()
+        RowLayout{
+            Layout.fillWidth: true
+            Layout.preferredHeight: 300
+            CustomButton{
+                Layout.alignment: Qt.AlignBottom
+                Layout.margins: 10
+                text: "Load CSV File"
+                onClicked: fileDialog.open()
+            }
+            CustomButton{
+                Layout.alignment: Qt.AlignBottom
+                Layout.margins: 10
+                text: "Result Page"
+                onClicked: {
+                    text =  (text === "Result Page") ? "Chart Page" : "Result Page"
+                    stackRef.currentIndex = (stackRef.currentIndex === 1) ? 0 : 1
+                }
+            }
         }
-
     }
+
     FileDialog {
         id: fileDialog
         title: "Select Forex CSV"
@@ -162,170 +232,4 @@ Rectangle {
             csvLoader.loadFile(fileDialog.selectedFile)
         }
     }
-
-    // ColumnLayout{
-    //     height: 250
-    //     width: 250
-
-    // Rectangle{
-    //     id: hLevelBox
-    //     Layout.minimumWidth: 180
-    //     Layout.preferredHeight: 80
-    //     Layout.maximumHeight: 80
-    //     Layout.fillWidth: true
-    //     Layout.fillHeight: true
-    //     Layout.margins: 5
-    //     Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-    //     border.width: 2
-    //     border.color: "grey"
-    //     color: "transparent"
-    //     radius: 8
-
-    //     ColumnLayout{
-    //         anchors.fill: parent
-
-    //         Text{
-    //             Layout.alignment: Qt.AlignHCenter
-    //             Layout.margins: 5
-    //             text: "Horizantal Levels"
-    //             font.bold: true
-    //             font.pixelSize: 16
-    //             color: "white"
-    //         }
-
-    //         RowLayout{
-    //             Layout.fillWidth: true
-    //             Layout.fillHeight: true
-    //             Layout.margins: 5
-
-    //             Text{
-    //                 id: levelLabel
-    //                 text: "Sensitivity"
-    //                 font.pixelSize: 14
-    //                 color: "grey"
-    //             }
-
-    //             Slider{
-    //                 id: levelSlider
-    //                 Layout.fillWidth: true
-    //                 Layout.fillHeight: true
-    //                 from: 10
-    //                 to: 200
-    //                 value: 50
-    //                 stepSize: 1
-    //                 snapMode: Slider.SnapAlways
-    //                 onValueChanged: {
-    //                     chartRef.backdrop = value
-    //                 }
-    //             }
-    //             Text {
-    //                 id: levelValue
-    //                 Layout.minimumWidth: 30
-    //                 Layout.alignment: Qt.AlignRight
-    //                 text: levelSlider.value
-    //                 font.pixelSize: 14
-    //                 color: "grey"
-    //             }
-    //         }
-    //     }
-    // }
-
-    // Rectangle{
-    //     id: tlineBox
-    //     Layout.minimumWidth: 180
-    //     Layout.preferredHeight: 220
-    //     Layout.maximumHeight: 220
-    //     Layout.fillWidth: true
-    //     Layout.fillHeight: true
-    //     Layout.margins: 5
-    //     Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-    //     border.width: 2
-    //     border.color: "grey"
-    //     color: "transparent"
-    //     radius: 8
-
-    //     ColumnLayout{
-    //         anchors.fill: parent
-    //         Text{
-    //             Layout.alignment: Qt.AlignHCenter
-    //             Layout.margins: 5
-    //             text: "Trendline Controls"
-    //             font.bold: true
-    //             font.pixelSize: 16
-    //             color: "white"
-    //         }
-    //         RowLayout{
-    //             Layout.fillWidth: true
-    //             Layout.fillHeight: true
-    //             Layout.margins: 5
-
-    //             Text{
-    //                 id: trendLabel
-    //                 text: "Sensitivity"
-    //                 font.pixelSize: 14
-    //                 color: "grey"
-    //             }
-
-    //             Slider{
-    //                 id: trendSlider
-    //                 Layout.fillWidth: true
-    //                 Layout.fillHeight: true
-    //                 from: 1
-    //                 to: 30
-    //                 value: 10
-    //                 stepSize: 1
-    //                 snapMode: Slider.SnapAlways
-    //                 onValueChanged: {
-    //                     trendlineDetector.lookback = value
-    //                 }
-    //             }
-    //             Text {
-    //                 id: trendValue
-    //                 Layout.minimumWidth: 10
-    //                 Layout.alignment: Qt.AlignRight
-    //                 text: trendSlider.value
-    //                 font.pixelSize: 14
-    //                 color: "grey"
-    //             }
-    //         }
-    //         RowLayout{
-    //             Layout.fillWidth: true
-    //             Layout.minimumHeight: 80
-    //             Layout.maximumHeight: 100
-    //             Layout.alignment: Qt.AlignHCenter
-    //             CustomToggle{
-    //                 text: "Extend"
-    //                 checked: false
-    //                 onCheckedChanged: {
-    //                     chartRef.extended = !chartRef.extended
-    //                 }
-    //             }
-    //             CustomToggle{
-    //                 text: "Strict"
-    //                 checked: true
-    //                 onCheckedChanged: {
-    //                     trendlineDetector.strict = !trendlineDetector.strict
-    //                 }
-    //             }
-    //         }
-    //         TextField{
-    //             Layout.alignment: Qt.AlignHCenter
-    //             Layout.margins: 10
-    //             Layout.maximumHeight: 40
-    //             placeholderText: "threshold"
-    //             placeholderTextColor: "white"
-    //             Material.theme: Material.Dark
-    //             onAccepted: {
-    //                 trendlineDetector.penetrationThreshold = parseFloat(text)
-    //             }
-    //         }
-    //     }
-    // }
-    // CustomButton{
-    //     Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
-    //     Layout.margins: 10
-    //     text: "Load CSV File"
-    //     onClicked: fileDialog.open()
-    // }
-    // }
 }

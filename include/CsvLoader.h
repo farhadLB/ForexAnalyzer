@@ -13,6 +13,8 @@ public:
 
     Q_INVOKABLE bool loadFile(const QString &filePath);
 
+    QVariantList getCandles();
+
 signals:
     void fileLoaded(int candleCount);
     void error(QString message);
@@ -21,4 +23,5 @@ signals:
 
 private:
     QVector<Candle> m_data;
+    QVariantList m_candles;
 };

@@ -64,6 +64,7 @@ bool CsvLoader::loadFile(const QString &fileUrl)
         list.append(m);
     }
 
+    m_candles = list;
     emit candlesReady(list);
 
     double minY = std::numeric_limits<double>::max();
@@ -78,4 +79,9 @@ bool CsvLoader::loadFile(const QString &fileUrl)
 
 
     return true;
+}
+
+QVariantList CsvLoader::getCandles()
+{
+    return m_candles;
 }

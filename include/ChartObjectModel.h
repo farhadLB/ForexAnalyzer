@@ -26,6 +26,12 @@ public:
     // Q_INVOKABLE QVariantList manualTrendlines() const;           // فقط manual
     // Q_INVOKABLE QVariantList horizontalLevels() const;           // فقط manual
 
+public slots:
+
+    // --- Positions ---
+    Q_INVOKABLE QVariantList positions();
+    void getPositions(QList<Position> newList);
+
 signals:
     void objectsChanged();
 
@@ -35,6 +41,7 @@ private:
     QVector<HorizontalLevel> m_manualLevels;
 
     // --- Auto ---
-    QVector<Trendline> m_autoTrendlines;
-    QVector<HorizontalLevel> m_autoLevels;
+    QVector<Trendline>          m_autoTrendlines;
+    QVector<HorizontalLevel>    m_autoLevels;
+    QList<Position>             m_positionList;
 };

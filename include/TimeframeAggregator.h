@@ -26,9 +26,12 @@ public:
     }
     Q_INVOKABLE void setTimeframe(const QString &newTimeframe);
     QString timeframeGetter();
+    QMap<QString, int> indexAggregate(int index, Timeframe fromTimeframe, Timeframe toTimeframe);
+    QString timeframeToString(Timeframe tf);
 
 signals:
     void timeframeChanged();
+    void aggReady(QVariantList candles);
 
 private:
     QString m_timeframe = "1m";

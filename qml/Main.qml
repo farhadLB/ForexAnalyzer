@@ -29,9 +29,19 @@ Window {
             LeftBar{
                 id: leftBar
                 chartRef: chartPage
+                stackRef: myStack
             }
-            ChartPage{
-                id: chartPage
+            StackLayout{
+                id: myStack
+                currentIndex: 0
+                SplitView.minimumWidth: 50
+                SplitView.fillWidth: true
+                ChartPage{
+                    id: chartPage
+                }
+                ResultPage{
+                    id: resultPage
+                }
             }
         }
     }

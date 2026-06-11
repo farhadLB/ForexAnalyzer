@@ -13,6 +13,7 @@ Rectangle {
     property var rawCandles: []
     property double backdrop: 50
     property bool extended: false
+    property bool showPosition: false
     property int timeframe: 0
 
     ColumnLayout{
@@ -25,6 +26,7 @@ Rectangle {
             crossVisible: crossToggle.checked
             tlineExtended: centerItem.extended
             currentTimeframe: centerItem.timeframe
+            positionVisible: centerItem.showPosition
         }
 
         RowLayout{
@@ -92,6 +94,15 @@ Rectangle {
                     chartObjects.clearAutoLevels()
                     chartObjects.clearAutoTrendlines()
                 }
+            }
+            Button {
+                text: "←"
+                Layout.fillWidth: true
+                onClicked: chart.prevPosition()
+            }
+            Button {
+                text: "→"
+                onClicked: chart.nextPosition()
             }
         }
     }

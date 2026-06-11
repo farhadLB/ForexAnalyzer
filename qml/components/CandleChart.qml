@@ -1,4 +1,5 @@
 import QtQuick
+import ForexAnalyzer 1.0
 
 Item {
     id: root
@@ -36,8 +37,11 @@ Item {
     property real topMargin: 10
 
     property bool tlineExtended: false
+    property bool positionVisible: false
 
     property int currentTimeframe: 0
+    property int currentPositionIndex: 0
+
 
     Connections {
         target: chartObjects
@@ -57,12 +61,31 @@ Item {
         canvas.requestPaint()
     }
 
+    onPositionVisibleChanged: {
+        currentPositionIndex = 0
+        canvas.requestPaint()
+    }
+
     onCandlesChanged: {
         if (candles.length > 0) {
             firstVisibleIndex = 0
             recalcPriceRange()
             canvas.requestPaint()
         }
+    }
+
+    function nextPosition() {
+        var positions = chartObjects.positions()
+        if (positions.length === 0) return
+        currentPositionIndex = (currentPositionIndex + 1) % positions.length
+        canvas.requestPaint()
+    }
+
+    function prevPosition() {
+        var positions = chartObjects.positions()
+        if (positions.length === 0) return
+        currentPositionIndex = (currentPositionIndex - 1 + positions.length) % positions.length
+        canvas.requestPaint()
     }
 
     function recalcPriceRange() {
@@ -316,13 +339,7 @@ Item {
 
             for(var i=0;i<levels.length;i++){
                 var price = levels[i].price
-                var myBool = levels[i].isResistance
-                if(myBool){
-                    ctx.strokeStyle = "#00ffaa"
-                }
-                else{
-                    ctx.strokeStyle = "red"
-                }
+                ctx.strokeStyle = levels[i].isResistance ? "#00ffaa" : "red"
 
                 if(price < visibleMinPrice || price > visibleMaxPrice) continue
 
@@ -334,6 +351,92 @@ Item {
             }
 
             ctx.setLineDash([])
+
+            //Horizantal Level Break Dots
+            for(var i=0; i< levels.length; i++){
+                var candleIdx = timeToIndex(levels[i].breakTime)
+                var breakX    = indexToX(candleIdx)
+                if(candleIdx > 0){
+                    var breakPrice = candles[candleIdx].close
+                }
+                else{
+                    var breakPrice = 0
+                }
+
+                var breakY = priceToY(breakPrice)
+                ctx.beginPath()
+                ctx.arc(breakX, breakY, 5, 0, 2 * Math.PI)
+                ctx.fillStyle = "orange"
+                ctx.fill()
+            }
+
+
+            // Positions
+            if (positionVisible)
+            {
+                var positions  = chartObjects.positions()
+                var positionTf = Aggregator.getTimeframe(positions[0].Timeframe)
+                var newCandles = Aggregator.aggregate(candles, positionTf)
+                Aggregator.setTimeframe(positions[0].Timeframe)
+                var pos        = positions[currentPositionIndex]
+                var entryY2    = pos.isBullish ? priceToY(candles[pos.LevelIdx].high) : priceToY(candles[pos.LevelIdx].low)
+                var entryX     = indexToX(pos.EntryIdx)
+                var entryX2    = indexToX(pos.LevelIdx)
+                var endX       = indexToX(pos.EndIdx)
+                var entryY     = priceToY(pos.EntryPointPrice)
+                var stopY      = priceToY(pos.StopLossPrice)
+                var profitY    = priceToY(pos.TakeProfitPrice)
+
+                var rectX      = Math.min(entryX, endX)
+                var rectW      = Math.abs(endX - entryX)
+
+                // entry price dash line
+                ctx.setLineDash([6,4])
+                ctx.strokeStyle = positions[currentPositionIndex].isBullish ? "#00ffaa" : "red"
+                ctx.beginPath()
+                ctx.moveTo(entryX2, entryY2)
+                ctx.lineTo(width, entryY2)
+                ctx.stroke()
+
+                // entry price circle
+                ctx.beginPath()
+                ctx.arc(entryX, entryY, 5, 0, 2 * Math.PI)
+                ctx.fillStyle = "orange"
+                ctx.fill()
+
+                // profit zone (green, above entry line — lower Y = higher price)
+                ctx.fillStyle  = "rgba(0, 180, 100, 0.18)"
+                ctx.fillRect(rectX, profitY, rectW, entryY - profitY)
+
+                // loss zone (red, below entry line)
+                ctx.fillStyle  = "rgba(220, 50, 50, 0.18)"
+                ctx.fillRect(rectX, entryY, rectW, stopY - entryY)
+
+                // entry line
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.85)"
+                ctx.lineWidth   = 1
+                ctx.setLineDash([])
+                ctx.beginPath()
+                ctx.moveTo(rectX, entryY)
+                ctx.lineTo(rectX + rectW, entryY)
+                ctx.stroke()
+
+                // take profit line
+                ctx.strokeStyle = "#00cc66"
+                ctx.lineWidth   = 1
+                ctx.beginPath()
+                ctx.moveTo(rectX, profitY)
+                ctx.lineTo(rectX + rectW, profitY)
+                ctx.stroke()
+
+                // stop loss line
+                ctx.strokeStyle = "#dd3333"
+                ctx.lineWidth   = 1
+                ctx.beginPath()
+                ctx.moveTo(rectX, stopY)
+                ctx.lineTo(rectX + rectW, stopY)
+                ctx.stroke()
+            }
 
             // Y axis
             ctx.strokeStyle = "#888"

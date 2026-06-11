@@ -23,19 +23,95 @@ QVariantList LevelDetector::detectLocalLevels(const QVariantList &candles,int lo
         if(isHigh){
             QVariantMap m;
             m["price"]=high;
-            m["isResistance"]= false;
+            m["isResistance"]= true;
+            m["idx"] = i;
+            m["breakIndex"] = -1;
             levels.append(m);
-            qInfo() << "false";
         }
 
         if(isLow){
             QVariantMap m;
             m["price"]=low;
-            m["isResistance"]= true;
+            m["isResistance"]= false;
+            m["idx"] = i;
+            m["breakIndex"] = -1;
             levels.append(m);
-            qInfo() << "true";
         }
     }
 
+    detectLevelBreaks(&levels, candles);
+    emit levelsReady(levels);
     return levels;
+}
+
+void LevelDetector::detectLevelBreaks(QVariantList* levels,  const QVariantList &candles)
+{
+
+    for(QVariant& v : *levels){
+        QVariantMap level = v.toMap();
+        for(int i=level["idx"].toInt() + 10; i<candles.size(); i++){
+            if(level["isResistance"].toBool()){
+                if(candles[i].toMap()["close"].toDouble() > level["price"].toDouble() + m_threshold){
+                    level["breakIndex"] = i;
+                    level["breakTime"]  = candles[i].toMap()["time"].toLongLong();
+                    break;
+                }
+            }
+            else{
+                if(candles[i].toMap()["close"].toDouble() < level["price"].toDouble() - m_threshold){
+                    level["breakIndex"] = i;
+                    level["breakTime"]  = candles[i].toMap()["time"].toLongLong();
+                    break;
+                }
+            }
+        }
+        v = level;
+    }
+}
+
+double LevelDetector::stopLossLevel(const QVariantList &candles ,const QVariantList &levels, int backdrop)
+{
+    double stopLossPrice    = 0;
+
+    for(QVariant v: levels){
+        QVariantMap level = v.toMap();
+        int  firstIdx     = level["idx"].toInt();
+        int  lastIdx      = level["breakIdx"].toInt();
+        bool isResistance = level["isResistance"].toBool();
+        QVariantList subCandles = candles.mid(firstIdx, lastIdx-firstIdx);
+        QVariantList SLlevels   = detectLocalLevels(subCandles, backdrop);
+        if(isResistance){
+            double high = SLlevels[0].toMap()["price"].toDouble();
+            for(int i = 1; i<SLlevels.size(); i++){
+                if(SLlevels[i].toMap()["price"].toDouble() > high){
+                    high = SLlevels[i].toMap()["price"].toDouble();
+                    stopLossPrice = SLlevels[i].toMap()["price"].toDouble();
+                }
+            }
+        }
+        else{
+            double low = SLlevels[0].toMap()["price"].toDouble();
+            for(int i = 1; i<SLlevels.size(); i++){
+                if(SLlevels[i].toMap()["price"].toDouble() < low){
+                    low = SLlevels[i].toMap()["price"].toDouble();
+                    stopLossPrice = SLlevels[i].toMap()["price"].toDouble();
+                }
+            }
+        }
+    }
+    return stopLossPrice;
+}
+
+
+double LevelDetector::threshold() const
+{
+    return m_threshold;
+}
+
+void LevelDetector::setThreshold(double newThreshold)
+{
+    if (qFuzzyCompare(m_threshold, newThreshold))
+        return;
+    m_threshold = newThreshold;
+    emit thresholdChanged();
 }

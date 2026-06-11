@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Core QuickControls2)
+find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
 qt_standard_project_setup(REQUIRES 6.8)
 
 enable_testing()
@@ -26,6 +28,7 @@ qt_add_qml_module(appForexAnalyzer
         qml/Main.qml
         qml/ChartPage.qml
         qml/LeftBar.qml
+        qml/ResultPage.qml
         qml/components/CustomButton.qml
         qml/components/CandleChart.qml
         qml/components/CustomToggle.qml
@@ -37,6 +40,8 @@ target_link_libraries(appForexAnalyzer PRIVATE
     Qt6::Quick
     Qt6::QuickControls2
 )
+target_link_libraries(appForexAnalyzer PRIVATE Qt6::Core)
+target_link_libraries(appForexAnalyzer PRIVATE Qt6::Core)
 
 set_target_properties(appForexAnalyzer PROPERTIES
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
