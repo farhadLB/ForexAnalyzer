@@ -29,11 +29,25 @@ public slots:
                               TimeframeAggregator::Timeframe breaktf,
                               int candleCount = 1000,
                               int lookback = 10,
-                              double threshold = 1);
+                              double threshold = 1,
+                              double gap = 1);
 
-    void runEntryPoint();
+    void runEntryPoint(TimeframeAggregator::Timeframe leveltf,
+                       TimeframeAggregator::Timeframe breaktf,
+                       int candleCountForBreak,
+                       int entryLookback,
+                       double entryThreshold,
+                       double levelFilterGap,
+                       int stopLookback,
+                       int takeProfitLookback,
+                       int candleCountForTP,
+                       QString takeProfitTF
+                       );
 signals:
-    void entryPointReady();
+    void entryPointReady(int stopLookback,
+                         int takeProfitLookback,
+                         int candleCountForTP,
+                         QString takeProfitTF);
 
 private:
     QVariantList        m_candles;

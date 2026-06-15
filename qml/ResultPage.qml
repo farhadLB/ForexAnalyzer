@@ -1,14 +1,17 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import "components"
 
 Item {
-    SplitView.minimumWidth: 50
-    SplitView.fillWidth: true
+    Layout.fillHeight: true
+    Layout.fillWidth: true
+    Layout.minimumWidth: 700
+    Layout.minimumHeight: 500
 
     Rectangle {
         anchors.fill: parent
-        color: "#0b0b17"
+        color: "#111827"
 
         HorizontalHeaderView {
             id: horizontalHeader
@@ -24,7 +27,7 @@ Item {
                     anchors.centerIn: parent
                     text: model.display
                     font.bold: true
-                    font.pixelSize: 22
+                    font.pixelSize: 17
                     color: "white"
                 }
             }
@@ -42,25 +45,30 @@ Item {
             clip: true
             model: positionModel
             delegate: Rectangle {
-                color: column != 5 ? "transparent" : Win ? "#00aa55" : "#cc3333"
-                implicitWidth: 200
+                // color: column === 6
+                //        ? (Win ? "#00aa55" : "#cc3333")
+                //        : (row % 2 === 0 ? "transparent" : "#949fa8")
+
+                color: row % 2 === 0 ? "transparent" : "#2f373d"
+
+                implicitWidth:  column != 3 ? 150 : 200
                 implicitHeight: 40
-                border.color: "grey"
-                border.width: 1
                 Text {
                     anchors.centerIn: parent
                     text: {
                         switch(column) {
-                        case 0: return EntryPrice
-                        case 1: return StopLoss
-                        case 2: return TakeProfit
-                        case 3: return Timeframe
-                        case 4: return Type
-                        case 5: return (Win) ? "win" : "fail"
+                        case 0: return Idx + 1
+                        case 1: return EntryPrice
+                        case 2: return StopLoss
+                        case 3: return TakeProfit.toFixed(3)
+                        case 4: return Timeframe
+                        case 5: return Type
+                        case 6: return (Win) ? "success" : "fail"
                         }
                     }
                     font.pixelSize: 17
-                    color: "white"
+                    font.bold: column === 6 ? true : false
+                    color: column === 6 ? (Win ? "#00aa55" : "#cc3333") : "white"
                 }
             }
         }

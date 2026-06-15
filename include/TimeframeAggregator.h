@@ -24,6 +24,9 @@ public:
         if (tf == "Daily") return D1;
         return M1;
     }
+
+    Timeframe getEnumTimeframe(const QString &tf);
+
     Q_INVOKABLE void setTimeframe(const QString &newTimeframe);
     QString timeframeGetter();
     QMap<QString, int> indexAggregate(int index, Timeframe fromTimeframe, Timeframe toTimeframe);

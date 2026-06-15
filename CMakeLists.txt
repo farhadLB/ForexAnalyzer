@@ -4,9 +4,7 @@ project(ForexAnalyzer VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Core QuickControls2)
-find_package(Qt6 REQUIRED COMPONENTS Core)
-find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Quick Core QuickControls2 Charts)
 qt_standard_project_setup(REQUIRES 6.8)
 
 enable_testing()
@@ -33,15 +31,17 @@ qt_add_qml_module(appForexAnalyzer
         qml/components/CandleChart.qml
         qml/components/CustomToggle.qml
         qml/components/AccordionItem.qml
+        qml/InfographyPage.qml
+        qml/components/CircularGauge.qml
+        QML_FILES qml/components/OutcomeChart.qml
 )
 
 target_link_libraries(appForexAnalyzer PRIVATE
     forexanalyzer_lib       # your classes
     Qt6::Quick
     Qt6::QuickControls2
+    Qt6::Charts
 )
-target_link_libraries(appForexAnalyzer PRIVATE Qt6::Core)
-target_link_libraries(appForexAnalyzer PRIVATE Qt6::Core)
 
 set_target_properties(appForexAnalyzer PROPERTIES
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}

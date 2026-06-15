@@ -8,7 +8,7 @@ import "components"
 Rectangle {
     implicitWidth: 300
     SplitView.maximumWidth: 400
-    color: "#0b0b17"
+    color: "#111827"
 
     property var chartRef
     property var stackRef
@@ -42,7 +42,7 @@ Rectangle {
                                 id: levelLabel
                                 text: "Sensitivity"
                                 font.pixelSize: 14
-                                color: "grey"
+                                color: "white"
                             }
 
                             Slider{
@@ -64,7 +64,7 @@ Rectangle {
                                 Layout.alignment: Qt.AlignRight
                                 text: levelSlider.value
                                 font.pixelSize: 14
-                                color: "grey"
+                                color: "white"
                             }
                         }
                         RowLayout{
@@ -76,7 +76,7 @@ Rectangle {
                                 id: thresholdLabel
                                 text: "threshold"
                                 font.pixelSize: 14
-                                color: "grey"
+                                color: "white"
                             }
 
                             Slider{
@@ -98,10 +98,9 @@ Rectangle {
                                 Layout.alignment: Qt.AlignRight
                                 text: thresholdSlider.value
                                 font.pixelSize: 14
-                                color: "grey"
+                                color: "white"
                             }
                         }
-
                     }
                 }
 
@@ -118,7 +117,7 @@ Rectangle {
                                 id: trendLabel
                                 text: "Sensitivity"
                                 font.pixelSize: 14
-                                color: "grey"
+                                color: "white"
                             }
 
                             Slider{
@@ -140,7 +139,7 @@ Rectangle {
                                 Layout.alignment: Qt.AlignRight
                                 text: trendSlider.value
                                 font.pixelSize: 14
-                                color: "grey"
+                                color: "white"
                             }
                         }
                         RowLayout{
@@ -179,6 +178,8 @@ Rectangle {
                         }
                     }
                 }
+
+                // --- Positions Accordion ---
                 AccordionItem {
                     title: "Positions"
                     content: ColumnLayout{
@@ -195,6 +196,213 @@ Rectangle {
                                 onCheckedChanged: {
                                     chartRef.showPosition = !chartRef.showPosition
                                 }
+                            }
+                            CustomButton{
+                                Layout.fillWidth: true
+                                text: "Run"
+                                onClicked: {
+                                    positionManager.startCalculation()
+                                    stackRef.currentIndex = 1
+                                }
+                            }
+                        }
+
+                        RowLayout{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.margins: 5
+
+                            Text{
+                                id: entryLookback
+                                text: "Entry Sensetivity"
+                                font.pixelSize: 14
+                                color: "white"
+                            }
+
+                            Slider{
+                                id: entrySlider
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                from: 1
+                                to: 100
+                                value: 50
+                                stepSize: 1
+                                snapMode: Slider.SnapAlways
+                                onValueChanged: {
+                                    positionManager.entryLookback = value
+                                }
+                            }
+                            Text {
+                                id: entryValue
+                                Layout.minimumWidth: 10
+                                Layout.alignment: Qt.AlignRight
+                                text: entrySlider.value
+                                font.pixelSize: 14
+                                color: "white"
+                            }
+                        }
+
+                        RowLayout{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.margins: 5
+
+                            Text{
+                                id: entryThresholdLabel
+                                text: "Entry threshold"
+                                font.pixelSize: 14
+                                color: "white"
+                            }
+
+                            Slider{
+                                id: entryThresholdSlider
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                from: 0
+                                to: 20
+                                value: 1
+                                stepSize: 1
+                                snapMode: Slider.SnapAlways
+                                onValueChanged: {
+                                    positionManager.entryThreshold = value
+                                }
+                            }
+                            Text {
+                                id: entryThresholdValue
+                                Layout.minimumWidth: 30
+                                Layout.alignment: Qt.AlignRight
+                                text: entryThresholdSlider.value
+                                font.pixelSize: 14
+                                color: "white"
+                            }
+                        }
+
+                        RowLayout{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.margins: 5
+
+                            Text{
+                                id: entryGap
+                                text: "level gap filter"
+                                font.pixelSize: 14
+                                color: "white"
+                            }
+
+                            Slider{
+                                id: entryGapSlider
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                from: 0
+                                to: 2
+                                value: 1
+                                stepSize: 0.1
+                                snapMode: Slider.SnapAlways
+                                onValueChanged: {
+                                    positionManager.levelFilterGap = parseFloat(value.toFixed(1))
+                                }
+                            }
+                            Text {
+                                id: entryGapValue
+                                Layout.minimumWidth: 10
+                                Layout.alignment: Qt.AlignRight
+                                text: entryGapSlider.value.toFixed(1)
+                                font.pixelSize: 14
+                                color: "white"
+                            }
+                        }
+
+                        TextField{
+                            Layout.alignment: Qt.AlignHCenter
+                            Layout.margins: 10
+                            Layout.maximumHeight: 40
+                            placeholderText: "Break Candle:"
+                            placeholderTextColor: "white"
+                            Material.theme: Material.Dark
+                            onAccepted: {
+                                positionManager.candleCountForBreak = parseFloat(text)
+                            }
+                        }
+
+                        RowLayout{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.margins: 5
+
+                            Text{
+                                id: stopLookback
+                                text: "Stop Sensetivity"
+                                font.pixelSize: 14
+                                color: "white"
+                            }
+
+                            Slider{
+                                id: stopSlider
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                from: 1
+                                to: 100
+                                value: 25
+                                stepSize: 1
+                                snapMode: Slider.SnapAlways
+                                onValueChanged: {
+                                    positionManager.stopLookback = value
+                                }
+                            }
+                            Text {
+                                id: stopValue
+                                Layout.minimumWidth: 10
+                                Layout.alignment: Qt.AlignRight
+                                text: stopSlider.value
+                                font.pixelSize: 14
+                                color: "white"
+                            }
+                        }
+
+                        RowLayout{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.margins: 5
+
+                            Text{
+                                id: takeProfitLookback
+                                text: "TP Sensetivity"
+                                font.pixelSize: 14
+                                color: "white"
+                            }
+
+                            Slider{
+                                id: takeProfitSlider
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                from: 1
+                                to: 100
+                                value: 50
+                                stepSize: 1
+                                snapMode: Slider.SnapAlways
+                                onValueChanged: {
+                                    positionManager.takeProfitLookback = value
+                                }
+                            }
+                            Text {
+                                id: takeProfitValue
+                                Layout.minimumWidth: 10
+                                Layout.alignment: Qt.AlignRight
+                                text: takeProfitSlider.value
+                                font.pixelSize: 14
+                                color: "white"
+                            }
+                        }
+
+                        TextField{
+                            Layout.alignment: Qt.AlignHCenter
+                            Layout.margins: 10
+                            Layout.maximumHeight: 40
+                            placeholderText: "TP Candles:"
+                            placeholderTextColor: "white"
+                            Material.theme: Material.Dark
+                            onAccepted: {
+                                positionManager.candleCountForTP = parseFloat(text)
                             }
                         }
                     }

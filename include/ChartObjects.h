@@ -27,6 +27,7 @@ struct HorizontalLevel {
     int    idx;
     int    breakIndex;
     qint64 breakTime;
+    double breakThreshold;
 };
 
 struct Position {
@@ -39,4 +40,6 @@ struct Position {
     QString Timeframe;
     bool    isBullish;
     bool    isWin;
+    double  RewardToRisk;
+    double  outcome;
 };

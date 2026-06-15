@@ -58,6 +58,17 @@ QVariantList TimeframeAggregator::aggregate(const QVariantList &rawCandles, Time
     return result;
 }
 
+TimeframeAggregator::Timeframe TimeframeAggregator::getEnumTimeframe(const QString &tf)
+{
+    if (tf == "1m") return TimeframeAggregator::M1;
+    if (tf == "5m") return TimeframeAggregator::M5;
+    if (tf == "15m") return TimeframeAggregator::M15;
+    if (tf == "1h") return TimeframeAggregator::H1;
+    if (tf == "4h") return TimeframeAggregator::H4;
+    if (tf == "Daily") return TimeframeAggregator::D1;
+    return M1;
+}
+
 void TimeframeAggregator::setTimeframe(const QString &newTimeframe)
 {
     if (m_timeframe == newTimeframe)

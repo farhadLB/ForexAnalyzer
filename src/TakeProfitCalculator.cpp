@@ -30,6 +30,8 @@ void TakeProfitCalculator::firstPivot(int backdrop, int candleCount, QString tim
     for(int i=0; i<m_levels.size(); i++){
         QVariantMap level = m_levels[i].toMap();
         takeProfitPrice = 0;
+        double risk = std::abs(m_positionList[i].StopLossPrice - m_positionList[i].EntryPointPrice);
+        m_positionList[i].TakeProfitPrice = 0;
 
         if(level["idx"].toInt() - candleCount > 0){
             firstIdx = level["idx"].toInt() - candleCount;
@@ -42,47 +44,58 @@ void TakeProfitCalculator::firstPivot(int backdrop, int candleCount, QString tim
         bool isResistance = level["isResistance"].toBool();
         QVariantList subCandles = aggCandles.mid(firstIdx, lastIdx-firstIdx);
         QVariantList TPlevels   = levelDetector.detectLocalLevels(subCandles, backdrop);
-        // if(!TPlevels.isEmpty()){
-        //     if(isResistance){
-        //         // double high = TPlevels[0].toMap()["price"].toDouble();
-        //         double high = level["price"].toDouble();
-        //         for(int j = 1; j<TPlevels.size(); j++){
-        //             if(TPlevels[j].toMap()["price"].toDouble() > high){
-        //                 high = TPlevels[j].toMap()["price"].toDouble();
-        //                 takeProfitPrice = TPlevels[j].toMap()["price"].toDouble();
-        //             }
-        //         }
-        //     }
-        //     else{
-        //         // double low = TPlevels[0].toMap()["price"].toDouble();
-        //         double low = level["price"].toDouble();
-        //         for(int j = 1; j<TPlevels.size(); j++){
-        //             if(TPlevels[j].toMap()["price"].toDouble() < low){
-        //                 low = TPlevels[j].toMap()["price"].toDouble();
-        //                 takeProfitPrice = TPlevels[j].toMap()["price"].toDouble();
-        //             }
-        //         }
-        //     }
-        // }
-        // else{
-        //     double risk = std::abs(m_positionList[i].StopLossPrice - m_positionList[i].EntryPointPrice);
-        //     if(m_positionList[i].isBullish)
-        //         takeProfitPrice = m_positionList[i].EntryPointPrice + risk;
-        //     else
-        //         takeProfitPrice = m_positionList[i].EntryPointPrice - risk;
-        // }
-        double risk = std::abs(m_positionList[i].StopLossPrice - m_positionList[i].EntryPointPrice);
-        if(m_positionList[i].isBullish)
-            takeProfitPrice = m_positionList[i].EntryPointPrice + risk;
-        else
-            takeProfitPrice = m_positionList[i].EntryPointPrice - risk;
-        m_positionList[i].TakeProfitPrice = takeProfitPrice;
+        if(!TPlevels.isEmpty()){
+            if(isResistance){
+                // double high = level["price"].toDouble();
+                double high = aggCandles[level["breakIndex"].toDouble()].toMap()["close"].toDouble();
+                for(int j = 0; j<TPlevels.size(); j++){
+                    if(TPlevels[j].toMap()["price"].toDouble() > high){
+                        high = TPlevels[j].toMap()["price"].toDouble();
+                        takeProfitPrice = TPlevels[j].toMap()["price"].toDouble();
+                        m_positionList[i].TakeProfitPrice = takeProfitPrice;
+                    }
+                    else{
+                        takeProfitPrice = m_positionList[i].EntryPointPrice + risk;
+                        m_positionList[i].TakeProfitPrice = takeProfitPrice;
+                    }
+                }
+            }
+            else{
+                // double low = level["price"].toDouble();
+                double low = aggCandles[level["breakIndex"].toDouble()].toMap()["close"].toDouble();
+                for(int j = 0; j<TPlevels.size(); j++){
+                    if(TPlevels[j].toMap()["price"].toDouble() < low){
+                        low = TPlevels[j].toMap()["price"].toDouble();
+                        takeProfitPrice = TPlevels[j].toMap()["price"].toDouble();
+                        m_positionList[i].TakeProfitPrice = takeProfitPrice;
+                    }
+                    else{
+                        takeProfitPrice = m_positionList[i].EntryPointPrice - risk;
+                        m_positionList[i].TakeProfitPrice = takeProfitPrice;
+                    }
+                }
+            }
+        }
+        else if(TPlevels.isEmpty() || takeProfitPrice == 0){
+            if(m_positionList[i].StopLossPrice != 0){
+                if(m_positionList[i].isBullish){
+                    takeProfitPrice = m_positionList[i].EntryPointPrice + risk;
+                    m_positionList[i].TakeProfitPrice = takeProfitPrice;
+                }
+                else{
+                    takeProfitPrice = m_positionList[i].EntryPointPrice - risk;
+                    m_positionList[i].TakeProfitPrice = takeProfitPrice;
+                }
+            }
+        }
     }
     m_pos->setPositions(m_positionList);
     emit takeProfitReady();
 }
 
-void TakeProfitCalculator::runTakeProfit()
+void TakeProfitCalculator::runTakeProfit(int takeProfitLookback,
+                                         int candleCountForTP,
+                                         QString takeProfitTF)
 {
-    firstPivot(10, 800, "1m");
+    firstPivot(takeProfitLookback, candleCountForTP, takeProfitTF);
 }

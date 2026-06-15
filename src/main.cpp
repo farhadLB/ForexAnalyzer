@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
     qputenv("QT_QUICK_CONTROLS_MATERIAL_ACCENT", "white");
     QQuickStyle::setStyle("Material");
-    QGuiApplication     app(argc, argv);
+    QApplication     app(argc, argv);
     CsvLoader           csvLoader;
     TimeframeAggregator aggregator;
     ChartObjectModel    chartObjects;
@@ -46,8 +46,8 @@ int main(int argc, char *argv[])
         &PositionModel::setPositionList);
 
     QObject::connect(
-        &csvLoader,
-        &CsvLoader::candlesReady,
+        &positionManager,
+        &PositionManager::initialValues,
         &entrypoint,
         &EntryPointCalculator::runEntryPoint);
 
@@ -76,14 +76,12 @@ int main(int argc, char *argv[])
         &chartObjects,
         &ChartObjectModel::getPositions);
 
-
-    // positionManager.run();
-
     engine.rootContext()->setContextProperty("csvLoader",           &csvLoader);
     engine.rootContext()->setContextProperty("chartObjects",        &chartObjects);
     engine.rootContext()->setContextProperty("levelDetector",       &levelDetector);
     engine.rootContext()->setContextProperty("trendlineDetector",   &trendlineDetector);
     engine.rootContext()->setContextProperty("positionModel",       &positionModel);
+    engine.rootContext()->setContextProperty("positionManager",     &positionManager);
     engine.loadFromModule("ForexAnalyzer", "Main");
 
     //defining time aggregator as a singleton

@@ -15,18 +15,20 @@ void EntryPointCalculator::HorizantalLevelBreak(TimeframeAggregator::Timeframe l
                                                 TimeframeAggregator::Timeframe breaktf, // timeframe to evaluate the breaktime
                                                 int candleCount,    // number of candles to search for break
                                                 int lookback,       // level calculation lookback
-                                                double threshold)   // break calculation threshold
+                                                double threshold,   // break calculation threshold
+                                                double gap
+                                                )
 {
-    // TimeframeAggregator::Timeframe leveltf = static_cast<TimeframeAggregator::Timeframe>(levelTimeframe);
-    // TimeframeAggregator::Timeframe breaktf = static_cast<TimeframeAggregator::Timeframe>(breakTimeframe);
     m_positionList.clear();
+    m_levels.clear();
     m_candles = m_loader->getCandles();
-    QVariantList aggCandles = m_agg->aggregate(m_candles, leveltf);
-    QVariantList levels =  m_levelDetector.detectLocalLevels(aggCandles, lookback);
-    QVariantList breakCandles = m_agg->aggregate(m_candles, breaktf);
+    QVariantList aggCandles     = m_agg->aggregate(m_candles, leveltf);
+    QVariantList levels         = m_levelDetector.detectLocalLevels(aggCandles, lookback);
+    QVariantList filteredLevels = m_levelDetector.filterCloseLevels(levels, gap);
+    QVariantList breakCandles   = m_agg->aggregate(m_candles, breaktf);
 
     int searchSize;
-    for(QVariant& v : levels){
+    for(QVariant& v : filteredLevels){
         QVariantMap level = v.toMap();
         QMap<QString, int> map = m_agg->indexAggregate(level["idx"].toInt(), leveltf, breaktf);
 
@@ -48,6 +50,7 @@ void EntryPointCalculator::HorizantalLevelBreak(TimeframeAggregator::Timeframe l
                 if(breakCandles[i].toMap()["close"].toDouble() > level["price"].toDouble() + threshold){
                     level["breakIndex"] = i;
                     level["breakTime"]  = breakCandles[i].toMap()["time"].toLongLong();
+                    level["breakThreshold"] = threshold;
                     break;
                 }
             }
@@ -55,6 +58,7 @@ void EntryPointCalculator::HorizantalLevelBreak(TimeframeAggregator::Timeframe l
                 if(breakCandles[i].toMap()["close"].toDouble() < level["price"].toDouble() - threshold){
                     level["breakIndex"] = i;
                     level["breakTime"]  = breakCandles[i].toMap()["time"].toLongLong();
+                    level["breakThreshold"] = threshold;
                     break;
                 }
             }
@@ -73,12 +77,21 @@ void EntryPointCalculator::HorizantalLevelBreak(TimeframeAggregator::Timeframe l
         }
     }
     m_pos->setPositions(m_positionList);
-    emit entryPointReady();
 }
 
-void EntryPointCalculator::runEntryPoint()
+void EntryPointCalculator::runEntryPoint(TimeframeAggregator::Timeframe leveltf,
+                                         TimeframeAggregator::Timeframe breaktf,
+                                         int candleCountForBreak,
+                                         int entryLookback,
+                                         double entryThreshold,
+                                         double levelFilterGap,
+                                         int stopLookback,
+                                         int takeProfitLookback,
+                                         int candleCountForTP,
+                                         QString takeProfitTF)
 {
     if(m_strategy == LevelBreak){
-        HorizantalLevelBreak(TimeframeAggregator::M1, TimeframeAggregator::M1);
+        HorizantalLevelBreak(leveltf, breaktf, candleCountForBreak, entryLookback, entryThreshold, levelFilterGap);
+        emit entryPointReady(stopLookback, takeProfitLookback, candleCountForTP, takeProfitTF);
     }
 }

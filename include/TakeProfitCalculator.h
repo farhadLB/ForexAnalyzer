@@ -22,7 +22,9 @@ public:
     LevelDetector levelDetector;
 
 public slots:
-    void runTakeProfit();
+    void runTakeProfit(int takeProfitLookback,
+                       int candleCountForTP,
+                       QString takeProfitTF);
 
 signals:
     void takeProfitReady();

@@ -8,7 +8,7 @@ Rectangle {
     id: centerItem
     SplitView.minimumWidth: 50
     SplitView.fillWidth: true
-    color: "#0b0b17"
+    color: "#111827"
 
     property var rawCandles: []
     property double backdrop: 50

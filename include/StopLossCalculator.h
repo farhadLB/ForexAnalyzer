@@ -22,10 +22,15 @@ public:
     LevelDetector levelDetector;
 
 public slots:
-    void runStopLoss();
+    void runStopLoss(int stopLookback,
+                     int takeProfitLookback,
+                     int candleCountForTP,
+                     QString takeProfitTF);
 
 signals:
-    void stopLossReady();
+    void stopLossReady(int takeProfitLookback,
+                       int candleCountForTP,
+                       QString takeProfitTF);
 
 private:
     PositionManager*      m_pos;

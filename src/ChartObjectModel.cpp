@@ -127,7 +127,7 @@ QVariantList ChartObjectModel::positions()
 {
 
     QVariantList list;
-    for(const auto &p : m_positionList) {
+    for(const auto &p : std::as_const(m_positionList)) {
         QVariantMap m;
         m["EntryPointPrice"]    = p.EntryPointPrice;
         m["StopLossPrice"]      = p.StopLossPrice;
@@ -138,6 +138,8 @@ QVariantList ChartObjectModel::positions()
         m["Timeframe"]          = p.Timeframe;
         m["isBullish"]          = p.isBullish;
         m["isWin"]              = p.isWin;
+        m["RewardToRisk"]       = p.RewardToRisk;
+        m["outcome"]            = p.outcome;
         list.append(m);
     }
     return list;

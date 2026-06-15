@@ -44,6 +44,41 @@ QVariantList LevelDetector::detectLocalLevels(const QVariantList &candles,int lo
     return levels;
 }
 
+QVariantList LevelDetector::filterCloseLevels(QVariantList levels, double gap)
+{
+    QVariantList sorted = levels;
+
+    std::sort(sorted.begin(), sorted.end(), [](const QVariant &a, const QVariant &b) {
+        return a.toMap()["price"].toDouble() < b.toMap()["price"].toDouble();
+    });
+
+    QVariantList result;
+    for (const QVariant &v : sorted) {
+        QVariantMap current = v.toMap();
+
+        if (result.isEmpty()) {
+            result.append(current);
+            continue;
+        }
+
+        QVariantMap last = result.last().toMap();
+        double diff = qAbs(current["price"].toDouble() - last["price"].toDouble());
+
+        if (diff < gap) {
+            // keep whichever level formed earlier
+            if (current["idx"].toInt() < last["idx"].toInt()) {
+                result.removeLast();
+                result.append(current);
+            }
+            // else discard 'current', keep 'last'
+        } else {
+            result.append(current);
+        }
+    }
+
+    return result;
+}
+
 void LevelDetector::detectLevelBreaks(QVariantList* levels,  const QVariantList &candles)
 {
 

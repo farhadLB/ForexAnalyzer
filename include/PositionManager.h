@@ -13,20 +13,97 @@ public:
     explicit PositionManager(CsvLoader* loader,
                              TimeframeAggregator *agg,
                              QObject *parent = nullptr);
-    void setPositions(QList<Position> newList);
-    QList<Position> getPositions();
-    QList<Position> positionList;
+
+    void                        setPositions(QList<Position> newList);
+    QList<Position>             getPositions();
+    Q_INVOKABLE QVariantList    getPositionsForQML();
+    Q_INVOKABLE void            startCalculation();
+    Q_INVOKABLE QVariantMap     positionsInfo();
+    void                        removeStopNA(QList<Position> *positions);
+    QList<Position>             positionList;
+
+    Q_PROPERTY(QString leveltf READ leveltf WRITE setLeveltf NOTIFY leveltfChanged FINAL)
+    Q_PROPERTY(QString breaktf READ breaktf WRITE setBreaktf NOTIFY breaktfChanged FINAL)
+    Q_PROPERTY(int candleCountForBreak READ candleCountForBreak WRITE setcandleCountForBreak NOTIFY candleCountForBreakChanged FINAL)
+    Q_PROPERTY(int entryLookback READ entryLookback WRITE setEntryLookback NOTIFY entryLookbackChanged FINAL)
+    Q_PROPERTY(double entryThreshold READ entryThreshold WRITE setEntryThreshold NOTIFY entryThresholdChanged FINAL)
+    Q_PROPERTY(double levelFilterGap READ levelFilterGap WRITE setLevelFilterGap NOTIFY levelFilterGapChanged FINAL)
+    Q_PROPERTY(int stopLookback READ stopLookback WRITE setStopLookback NOTIFY stopLookbackChanged FINAL)
+    Q_PROPERTY(int takeProfitLookback READ takeProfitLookback WRITE setTakeProfitLookback NOTIFY takeProfitLookbackChanged FINAL)
+    Q_PROPERTY(int candleCountForTP READ candleCountForTP WRITE setCandleCountForTP NOTIFY candleCountForTPChanged FINAL)
+    Q_PROPERTY(QString takeProfitTF READ takeProfitTF WRITE setTakeProfitTF NOTIFY takeProfitTFChanged FINAL)
+
+
+    // ---Q_PROPERTY getters ---
+    QString leveltf() const;
+    QString breaktf() const;
+    int candleCountForBreak() const;
+    int entryLookback() const;
+    double entryThreshold() const;
+    double levelFilterGap() const;
+    int stopLookback() const;
+    int takeProfitLookback() const;
+    int candleCountForTP() const;
+    QString takeProfitTF() const;
+
+    // ---Q_PROPERTY setters ---
+    void setLeveltf(const QString &newLeveltf);
+    void setBreaktf(const QString &newBreaktf);
+    void setcandleCountForBreak(int newcandleCountForBreak);
+    void setEntryLookback(int newEntryLookback);
+    void setEntryThreshold(double newentryThreshold);
+    void setLevelFilterGap(double newLevelFilterGap);
+    void setStopLookback(int newStopLookback);
+    void setTakeProfitLookback(int newTakeProfitLookback);
+    void setCandleCountForTP(int newCandleCountForTP);
+    void setTakeProfitTF(const QString &newTakeProfitTF);
+
 
 public slots:
     void run();
 
 signals:
     void positionListReady(QList<Position> list);
+    void initialValues(TimeframeAggregator::Timeframe leveltf,
+                       TimeframeAggregator::Timeframe breaktf,
+                       int candleCountForBreak,
+                       int entryLookback,
+                       double entryThreshold,
+                       double levelFilterGap,
+                       int stopLookback,
+                       int takeProfitLookback,
+                       int candleCountForTP,
+                       QString takeProfitTF
+                       );
+
+    // ---Q_PROPERTY signals ---
+    void leveltfChanged();
+    void breaktfChanged();
+    void candleCountForBreakChanged();
+    void entryLookbackChanged();
+    void entryThresholdChanged();
+    void stopLookbackChanged();
+    void takeProfitLookbackChanged();
+    void candleCountForTPChanged();
+    void takeProfitTFChanged();
+
+    void levelFilterGapChanged();
 
 private:
     CsvLoader*              m_loader;
     TimeframeAggregator*    m_agg;
     QVariantList            m_candles;
+
+    QString                 m_leveltf               = "1m";
+    QString                 m_breaktf               = "1m";
+    int                     m_candleCountForBreak   = 1000;
+    int                     m_entryLookback         = 50;
+    double                  m_entryThreshold        = 1;
+    double                  m_levelFilterGap        = 1;
+    int                     m_stopLookback          = 30;
+    int                     m_takeProfitLookback    = 50;
+    int                     m_candleCountForTP      = 500;
+    QString                 m_takeProfitTF          = "1m";
 };
 
 #endif // POSITIONMANAGER_H

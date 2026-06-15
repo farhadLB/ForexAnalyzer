@@ -11,7 +11,8 @@ class PositionModel : public QAbstractTableModel
 public:
 
     enum roles{
-        EntryRole = Qt::DisplayRole + 1,
+        IdxRole = Qt::DisplayRole + 1,
+        EntryRole,
         StopLossRole,
         TakeProfitRole,
         TimeframeRole,
@@ -19,22 +20,19 @@ public:
         WinRole
     };
 
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     QHash<int, QByteArray> roleNames() const;
 
 public slots:
-    // TODO: connect this slot to position model
     void setPositionList(QList<Position> newList);
 
 private:
     QList<Position> m_positionList;
 
 
-    // QAbstractItemModel interface
-public:
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 };
 
 #endif // POSITIONMODEL_H

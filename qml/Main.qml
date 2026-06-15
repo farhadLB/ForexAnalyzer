@@ -39,7 +39,10 @@ Window {
                 ChartPage{
                     id: chartPage
                 }
-                ResultPage{
+                // ResultPage{
+                //     id: resultPage
+                // }
+                InfographyPage{
                     id: resultPage
                 }
             }

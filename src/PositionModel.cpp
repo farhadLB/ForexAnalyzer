@@ -7,7 +7,7 @@ int PositionModel::rowCount(const QModelIndex &parent) const
 
 int PositionModel::columnCount(const QModelIndex &parent) const
 {
-    return 6;
+    return 7;
 }
 
 QVariant PositionModel::data(const QModelIndex &index, int role) const
@@ -16,6 +16,7 @@ QVariant PositionModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
     switch (role) {
+    case IdxRole:           return index.row();
     case EntryRole:         return m_positionList[index.row()].EntryPointPrice;
     case StopLossRole:      return m_positionList[index.row()].StopLossPrice;
     case TakeProfitRole:    return m_positionList[index.row()].TakeProfitPrice;
@@ -30,6 +31,7 @@ QHash<int, QByteArray> PositionModel::roleNames() const
 {
     return {
         {Qt::DisplayRole,   "display"},
+        {IdxRole,           "Idx"},
         {EntryRole,         "EntryPrice"},
         {StopLossRole,      "StopLoss"},
         {TakeProfitRole,    "TakeProfit"},
@@ -51,12 +53,13 @@ QVariant PositionModel::headerData(int section, Qt::Orientation orientation, int
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
         switch (section) {
-        case 0: return "Entry Price";
-        case 1: return "Stop Loss";
-        case 2: return "Take Profit";
-        case 3: return "Timeframe";
-        case 4: return "Bullish";
-        case 5: return "Successful";
+        case 0: return "Position ID";
+        case 1: return "Entry Price";
+        case 2: return "Stop Loss";
+        case 3: return "Take Profit";
+        case 4: return "Timeframe";
+        case 5: return "Bullish";
+        case 6: return "Successful";
         }
     }
     return QAbstractTableModel::headerData(section, orientation, role);

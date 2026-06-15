@@ -455,9 +455,9 @@ Item {
             ctx.stroke()
 
             // axis backgrounds
-            ctx.fillStyle = "#0b0b17"
+            ctx.fillStyle = "#111827"
             ctx.fillRect(0, 0, root.leftMargin, chartH)
-            ctx.fillStyle = "#0b0b17"
+            ctx.fillStyle = "#111827"
             ctx.fillRect(0, chartH, width, height - chartH)
 
             // time labels
