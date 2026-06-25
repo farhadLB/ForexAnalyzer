@@ -1,87 +1,67 @@
 #include "CsvLoader.h"
-#include <QFile>
-#include <QTextStream>
-#include <QLocale>
-#include <QUrl>
-#include <QDebug>
 
-CsvLoader::CsvLoader(QObject *parent)
-    : QObject(parent)
+CsvLoader::CsvLoader(QObject *parent) : QObject(parent)
 {
+    m_thread = new QThread(this);
+    m_worker = new CsvWorker;          // no parent — lives on worker thread
+    m_worker->moveToThread(m_thread);
+
+    // worker → loader (cross-thread, queued automatically)
+    connect(m_worker, &CsvWorker::progressChanged, this, [this](int p) {
+        setProgress(p);
+    });
+    connect(m_worker, &CsvWorker::fileLoaded, this, [this](int count) {
+        setIsLoading(false);
+        emit fileLoaded(count);
+    });
+    connect(m_worker, &CsvWorker::candlesReady,  this, &CsvLoader::candlesReady);
+    connect(m_worker, &CsvWorker::axisRangeReady, this, &CsvLoader::axisRangeReady);
+    connect(m_worker, &CsvWorker::error, this, [this](const QString &msg) {
+        setIsLoading(false);
+        emit error(msg);
+    });
+
+    // loader → worker (triggers work on the worker thread)
+    connect(this, &CsvLoader::startWorker, m_worker, &CsvWorker::loadFile);
+
+    connect(m_worker, &CsvWorker::candlesReady, this, [this](const QVariantList &list) {
+        m_candles = list;          // cache it
+        emit candlesReady(list);   // forward to QML
+    });
+
+    m_thread->start();
 }
 
-
-bool CsvLoader::loadFile(const QString &fileUrl)
+CsvLoader::~CsvLoader()
 {
-    QUrl url(fileUrl);
-    QString path = url.isLocalFile() ? url.toLocalFile() : fileUrl;
-
-    QFile file(path);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        emit error("Cannot open file");
-        return false;
-    }
-
-    m_data.clear();
-    QTextStream in(&file);
-
-    while (!in.atEnd()) {
-        QString line = in.readLine().trimmed();
-        if (line.isEmpty())
-            continue;
-
-        QStringList f = line.split(',');
-        if (f.size() != 7)
-            continue;
-
-        QString dt = f[0] + " " + f[1];
-        QDateTime time = QDateTime::fromString(dt, "yyyy.MM.dd HH:mm");
-        if (!time.isValid())
-            continue;
-
-        Candle c;
-        c.time   = time;
-        c.open   = f[2].toDouble();
-        c.high   = f[3].toDouble();
-        c.low    = f[4].toDouble();
-        c.close  = f[5].toDouble();
-        c.volume = f[6].toDouble();
-
-        m_data.append(c);
-    }
-
-    emit fileLoaded(m_data.size());
-
-    QVariantList list;
-
-    for (const Candle &c : std::as_const(m_data)) {
-        QVariantMap m;
-        m["time"]  = c.time.toMSecsSinceEpoch();
-        m["open"]  = c.open;
-        m["high"]  = c.high;
-        m["low"]   = c.low;
-        m["close"] = c.close;
-        list.append(m);
-    }
-
-    m_candles = list;
-    emit candlesReady(list);
-
-    double minY = std::numeric_limits<double>::max();
-    double maxY = std::numeric_limits<double>::lowest();
-
-    for (const Candle &c : std::as_const(m_data)) {
-        minY = std::min(minY, c.low);
-        maxY = std::max(maxY, c.high);
-    }
-
-    emit axisRangeReady(minY, maxY);
-
-
-    return true;
+    m_thread->quit();
+    m_thread->wait();
+    delete m_worker;
 }
 
-QVariantList CsvLoader::getCandles()
+void CsvLoader::loadFile(const QString &filePath)
 {
-    return m_candles;
+    if (m_isLoading) return;   // ignore if already running
+    setProgress(0);
+    setIsLoading(true);
+    emit startWorker(filePath); // safe cross-thread signal
+}
+
+void CsvLoader::cancelLoad()
+{
+    if (m_worker) m_worker->requestCancel();
+}
+
+void CsvLoader::setIsLoading(bool v)
+{
+    if (m_isLoading == v) return;
+    m_isLoading = v;
+    emit isLoadingChanged();
+}
+
+void CsvLoader::setProgress(int v)
+{
+    if (m_progress == v) return;
+    m_progress = v;
+    emit progressChanged();
 }

@@ -15,17 +15,10 @@ QVariantList EntryPointCalculator::getLevels()
 double EntryPointCalculator::ATR(QVariantList candles)
 {
     double rangeSum = 0;
-    // int indexRange  = 0;
-
-    // if(currentIndex - candlesLookback > 0){
-    //     indexRange = currentIndex - candlesLookback;
-    // }
-
     for(int i = 0; i < candles.size(); i++){
             rangeSum += std::abs(candles[i].toMap()["high"].toDouble() - candles[i].toMap()["low"].toDouble()) ;
     }
     double atrValue = rangeSum/candles.size();
-    qDebug() << "ATR is: " << atrValue;
     return atrValue;
 }
 

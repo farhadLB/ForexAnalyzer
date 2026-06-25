@@ -508,6 +508,15 @@ Rectangle {
                 }
             }
         }
+        CustomProgressBar {
+            Layout.fillWidth: true
+            Layout.margins: 10
+            barHeight: 9
+            from: 0; to: 100
+            value: csvLoader.progress
+            visible: csvLoader.isLoading
+            onCancelClicked: csvLoader.cancelLoad()
+        }
     }
 
     FileDialog {

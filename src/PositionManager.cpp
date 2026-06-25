@@ -101,11 +101,8 @@ void PositionManager::removeSameEntries(QList<Position> *positions)
 void PositionManager::run(TimeframeAggregator::Timeframe timeframe)
 {
     m_candles           = m_loader->getCandles();
-    // QString timeframe   = "1m";
-    // int tf              = m_agg->getTimeframe(timeframe);
     QVariantList        aggCandles;
 
-    // TimeframeAggregator::Timeframe positionTf = static_cast<TimeframeAggregator::Timeframe>(tf);
     if(timeframe != TimeframeAggregator::M1){
         aggCandles = m_agg->aggregate(m_candles, timeframe);
     }

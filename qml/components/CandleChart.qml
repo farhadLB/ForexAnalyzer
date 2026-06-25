@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import ForexAnalyzer 1.0
 
 Item {
@@ -42,6 +43,8 @@ Item {
 
     property int currentTimeframe: 0
     property int currentPositionIndex: 0
+
+    property bool isLoading: false
 
 
     Connections {
@@ -229,13 +232,26 @@ Item {
                 return root.leftMargin + (index - firstVisibleIndex) * candleW + candleW * 0.5
             }
 
-            function timeToIndex(time)
-            {
-                for(var i=0;i<candles.length;i++){
-                    if(candles[i].time >= time)
-                        return i
+            // function timeToIndex(time)
+            // {
+            //     for(var i=0;i<candles.length;i++){
+            //         if(candles[i].time >= time)
+            //             return i
+            //     }
+            //     return candles.length-1
+            // }
+
+            function timeToIndex(time) {
+                var lo = 0
+                var hi = candles.length - 1
+                while (lo < hi) {
+                    var mid = (lo + hi) >> 1
+                    if (candles[mid].time < time)
+                        lo = mid + 1
+                    else
+                        hi = mid
                 }
-                return candles.length-1
+                return lo
             }
 
             function yToPrice(y){
@@ -617,6 +633,18 @@ Item {
                 ctx.fillText("Candle  Index: ", leftMargin + 50, 200)
                 ctx.fillText(xToIndex(crossX), leftMargin + 200, 200)
             }
+        }
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        color: "#80111827"
+        visible: root.isLoading
+        z: 10
+
+        BusyIndicator {
+            anchors.centerIn: parent
+            running: root.isLoading
         }
     }
 

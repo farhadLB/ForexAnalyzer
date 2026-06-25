@@ -4,7 +4,7 @@ project(ForexAnalyzer VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Core QuickControls2 Charts)
+find_package(Qt6 REQUIRED COMPONENTS Quick Core QuickControls2 Charts Concurrent)
 qt_standard_project_setup(REQUIRES 6.8)
 
 enable_testing()
@@ -33,7 +33,8 @@ qt_add_qml_module(appForexAnalyzer
         qml/components/AccordionItem.qml
         qml/InfographyPage.qml
         qml/components/CircularGauge.qml
-        QML_FILES qml/components/OutcomeChart.qml
+        qml/components/OutcomeChart.qml
+        qml/components/CustomProgressBar.qml
 )
 
 target_link_libraries(appForexAnalyzer PRIVATE
@@ -41,6 +42,7 @@ target_link_libraries(appForexAnalyzer PRIVATE
     Qt6::Quick
     Qt6::QuickControls2
     Qt6::Charts
+    Qt6::Concurrent
 )
 
 set_target_properties(appForexAnalyzer PROPERTIES

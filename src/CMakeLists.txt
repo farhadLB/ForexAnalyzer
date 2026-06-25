@@ -1,6 +1,4 @@
-find_package(Qt6 REQUIRED COMPONENTS Core)
-find_package(Qt6 REQUIRED COMPONENTS Core)
-find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core Concurrent)
 
 add_library(forexanalyzer_lib STATIC
     # Headers — MOC needs to see these
@@ -15,6 +13,8 @@ add_library(forexanalyzer_lib STATIC
     ${CMAKE_SOURCE_DIR}/include/StopLossCalculator.h
     ${CMAKE_SOURCE_DIR}/include/TakeProfitCalculator.h
     ${CMAKE_SOURCE_DIR}/include/PositionModel.h
+    ${CMAKE_SOURCE_DIR}/include/CsvWorker.h
+
 
     # Sources
     CsvLoader.cpp
@@ -27,12 +27,10 @@ add_library(forexanalyzer_lib STATIC
     StopLossCalculator.cpp
     TakeProfitCalculator.cpp
     PositionModel.cpp
+    CsvWorker.cpp
 )
 
-target_link_libraries(forexanalyzer_lib PUBLIC Qt6::Core)
-target_link_libraries(forexanalyzer_lib PRIVATE Qt6::Core)
-target_link_libraries(forexanalyzer_lib PRIVATE Qt6::Core)
-target_link_libraries(forexanalyzer_lib PRIVATE Qt6::Core)
+target_link_libraries(forexanalyzer_lib PUBLIC Qt6::Core Qt6::Concurrent)
 
 target_include_directories(forexanalyzer_lib PUBLIC
     ${CMAKE_SOURCE_DIR}/include

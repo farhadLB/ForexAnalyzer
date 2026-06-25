@@ -27,6 +27,7 @@ Rectangle {
             tlineExtended: centerItem.extended
             currentTimeframe: centerItem.timeframe
             positionVisible: centerItem.showPosition
+            isLoading: csvLoader.isLoading
         }
 
         RowLayout{
@@ -107,14 +108,29 @@ Rectangle {
         }
     }
 
+    // Connections {
+    //     target: csvLoader
+
+    //     function onCandlesReady(list) {
+    //         rawCandles = list
+    //         chart.candles = list
+    //         chart.rawCandles = list
+    //         tfCombo.currentIndex = 0
+    //     }
+    // }
     Connections {
         target: csvLoader
 
         function onCandlesReady(list) {
             rawCandles = list
-            chart.candles = list
-            chart.rawCandles = list
-            tfCombo.currentIndex = 0
+        }
+
+        function onFileLoaded(count) {
+            Qt.callLater(function() {
+                chart.candles = rawCandles
+                chart.rawCandles = rawCandles
+                tfCombo.currentIndex = 0
+            })
         }
     }
 }
