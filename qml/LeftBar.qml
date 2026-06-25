@@ -33,6 +33,7 @@ Rectangle {
                     title: "Horizantal Level"
                     content: ColumnLayout{
                         spacing: 8
+
                         RowLayout{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -201,8 +202,53 @@ Rectangle {
                                 Layout.fillWidth: true
                                 text: "Run"
                                 onClicked: {
+                                    if (!chartRef.rawCandles || chartRef.rawCandles.length === 0) return;
                                     positionManager.startCalculation()
                                     stackRef.currentIndex = 1
+                                }
+                            }
+                        }
+
+                        RowLayout{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.margins: 5
+                            Text{
+                                id: leveltf
+                                Layout.minimumWidth: 120
+                                text: "Level Timeframe: "
+                                font.pixelSize: 14
+                                color: "white"
+                            }
+                            ComboBox{
+                                id: levelCombo
+                                model: ["1m", "5m", "15m", "1h", "4h", "Daily"]
+                                Material.theme: Material.Dark
+
+                                onActivated: {
+                                    positionManager.leveltf = model[currentIndex]
+                                }
+                            }
+                        }
+
+                        RowLayout{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.margins: 5
+                            Text{
+                                id: breaktf
+                                Layout.minimumWidth: 120
+                                text: "Break Timeframe: "
+                                font.family: "Book Antiqua"
+                                font.pixelSize: 14
+                                color: "white"
+                            }
+                            ComboBox{
+                                id: breakCombo
+                                model: ["1m", "5m", "15m", "1h", "4h", "Daily"]
+                                Material.theme: Material.Dark
+                                onActivated: {
+                                    positionManager.breaktf = model[currentIndex]
                                 }
                             }
                         }
@@ -214,6 +260,7 @@ Rectangle {
 
                             Text{
                                 id: entryLookback
+                                Layout.minimumWidth: 120
                                 text: "Entry Sensetivity"
                                 font.pixelSize: 14
                                 color: "white"
@@ -249,6 +296,7 @@ Rectangle {
 
                             Text{
                                 id: entryThresholdLabel
+                                Layout.minimumWidth: 120
                                 text: "Entry threshold"
                                 font.pixelSize: 14
                                 color: "white"
@@ -258,20 +306,20 @@ Rectangle {
                                 id: entryThresholdSlider
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                from: 0
-                                to: 20
-                                value: 1
-                                stepSize: 1
-                                snapMode: Slider.SnapAlways
+                                from: 0.1
+                                to: 3.0
+                                value: 0.1
+                                stepSize: 0.1
+                                // snapMode: Slider.SnapAlways
                                 onValueChanged: {
-                                    positionManager.entryThreshold = value
+                                    positionManager.entryThreshold = parseFloat(value.toFixed(1))
                                 }
                             }
                             Text {
                                 id: entryThresholdValue
                                 Layout.minimumWidth: 30
                                 Layout.alignment: Qt.AlignRight
-                                text: entryThresholdSlider.value
+                                text: entryThresholdSlider.value.toFixed(1)
                                 font.pixelSize: 14
                                 color: "white"
                             }
@@ -284,6 +332,7 @@ Rectangle {
 
                             Text{
                                 id: entryGap
+                                Layout.minimumWidth: 120
                                 text: "level gap filter"
                                 font.pixelSize: 14
                                 color: "white"
@@ -312,15 +361,28 @@ Rectangle {
                             }
                         }
 
-                        TextField{
-                            Layout.alignment: Qt.AlignHCenter
-                            Layout.margins: 10
-                            Layout.maximumHeight: 40
-                            placeholderText: "Break Candle:"
-                            placeholderTextColor: "white"
-                            Material.theme: Material.Dark
-                            onAccepted: {
-                                positionManager.candleCountForBreak = parseFloat(text)
+                        RowLayout{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.margins: 5
+
+                            Text{
+                                id: breakCandles
+                                Layout.minimumWidth: 120
+                                text: "Break Candles:"
+                                font.pixelSize: 14
+                                color: "white"
+                            }
+
+                            TextField{
+                                Layout.alignment: Qt.AlignHCenter
+                                Layout.margins: 10
+                                Layout.maximumHeight: 40
+                                placeholderTextColor: "white"
+                                Material.theme: Material.Dark
+                                onAccepted: {
+                                    positionManager.candleCountForBreak = parseFloat(text)
+                                }
                             }
                         }
 
@@ -332,6 +394,7 @@ Rectangle {
                             Text{
                                 id: stopLookback
                                 text: "Stop Sensetivity"
+                                Layout.minimumWidth: 120
                                 font.pixelSize: 14
                                 color: "white"
                             }
@@ -342,7 +405,7 @@ Rectangle {
                                 Layout.fillHeight: true
                                 from: 1
                                 to: 100
-                                value: 25
+                                value: 30
                                 stepSize: 1
                                 snapMode: Slider.SnapAlways
                                 onValueChanged: {
@@ -366,6 +429,7 @@ Rectangle {
 
                             Text{
                                 id: takeProfitLookback
+                                Layout.minimumWidth: 120
                                 text: "TP Sensetivity"
                                 font.pixelSize: 14
                                 color: "white"
@@ -394,15 +458,28 @@ Rectangle {
                             }
                         }
 
-                        TextField{
-                            Layout.alignment: Qt.AlignHCenter
-                            Layout.margins: 10
-                            Layout.maximumHeight: 40
-                            placeholderText: "TP Candles:"
-                            placeholderTextColor: "white"
-                            Material.theme: Material.Dark
-                            onAccepted: {
-                                positionManager.candleCountForTP = parseFloat(text)
+                        RowLayout{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.margins: 5
+
+                            Text{
+                                id: tPCandles
+                                Layout.minimumWidth: 120
+                                text: "TP Candles: "
+                                font.pixelSize: 14
+                                color: "white"
+                            }
+
+                            TextField{
+                                Layout.alignment: Qt.AlignHCenter
+                                Layout.margins: 10
+                                Layout.maximumHeight: 40
+                                placeholderTextColor: "white"
+                                Material.theme: Material.Dark
+                                onAccepted: {
+                                    positionManager.candleCountForTP = parseFloat(text)
+                                }
                             }
                         }
                     }
@@ -423,6 +500,7 @@ Rectangle {
             CustomButton{
                 Layout.alignment: Qt.AlignBottom
                 Layout.margins: 10
+                Layout.minimumWidth: 120
                 text: "Result Page"
                 onClicked: {
                     text =  (text === "Result Page") ? "Chart Page" : "Result Page"

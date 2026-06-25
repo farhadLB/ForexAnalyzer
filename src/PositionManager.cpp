@@ -47,7 +47,7 @@ QVariantMap PositionManager::positionsInfo()
 {
     int total               = positionList.size();
     int successfulPosCnt    = 0;
-    int riskToRewardSum     = 0;
+    double riskToRewardSum  = 0;
     int strategyGain        = 0;
 
     for(int i=0; i<positionList.size(); i++){
@@ -77,17 +77,37 @@ void PositionManager::removeStopNA(QList<Position> *positions)
     });
 }
 
-void PositionManager::run()
+void PositionManager::removeSameEntries(QList<Position> *positions)
+{
+    const QList<Position> snapshot = *positions;
+    for(const Position &p : snapshot){
+        double entryPrice   = p.EntryPointPrice;
+        double levelPrice   = p.LevelPrice;
+        bool   isBullish    = p.isBullish;
+
+        if(isBullish){
+            positions->removeIf([entryPrice, levelPrice] (const Position &pos){
+                return pos.EntryPointPrice == entryPrice && pos.LevelPrice <levelPrice;
+            });
+        }
+        else{
+            positions->removeIf([entryPrice, levelPrice] (const Position &pos){
+                return pos.EntryPointPrice == entryPrice && pos.LevelPrice > levelPrice;
+            });
+        }
+    }
+}
+
+void PositionManager::run(TimeframeAggregator::Timeframe timeframe)
 {
     m_candles           = m_loader->getCandles();
-    // QString timeframe   = positionList[0].Timeframe;
-    QString timeframe   = "1m";
-    int tf              = m_agg->getTimeframe(timeframe);
+    // QString timeframe   = "1m";
+    // int tf              = m_agg->getTimeframe(timeframe);
     QVariantList        aggCandles;
 
-    TimeframeAggregator::Timeframe positionTf = static_cast<TimeframeAggregator::Timeframe>(tf);
-    if(positionTf != TimeframeAggregator::M1){
-        aggCandles = m_agg->aggregate(m_candles, positionTf);
+    // TimeframeAggregator::Timeframe positionTf = static_cast<TimeframeAggregator::Timeframe>(tf);
+    if(timeframe != TimeframeAggregator::M1){
+        aggCandles = m_agg->aggregate(m_candles, timeframe);
     }
     else{
         aggCandles = m_candles;
@@ -132,7 +152,7 @@ void PositionManager::run()
         }
 
         if(pos.StopLossPrice != pos.EntryPointPrice){
-            pos.RewardToRisk = std::abs(pos.TakeProfitPrice - pos.EntryPointPrice)/ std::abs(pos.StopLossPrice - pos.EntryPointPrice);
+            pos.RewardToRisk = std::abs(pos.TakeProfitPrice - pos.EntryPointPrice) / std::abs(pos.StopLossPrice - pos.EntryPointPrice);
         }
         else{
             pos.RewardToRisk = 0;
@@ -145,6 +165,7 @@ void PositionManager::run()
         }
     }
     removeStopNA(&positionList);
+    removeSameEntries(&positionList);
     emit positionListReady(positionList);
 }
 

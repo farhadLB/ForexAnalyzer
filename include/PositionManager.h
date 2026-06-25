@@ -19,8 +19,8 @@ public:
     Q_INVOKABLE QVariantList    getPositionsForQML();
     Q_INVOKABLE void            startCalculation();
     Q_INVOKABLE QVariantMap     positionsInfo();
-    void                        removeStopNA(QList<Position> *positions);
-    QList<Position>             positionList;
+    void                        removeStopNA(QList<Position> *positions);      // Removes the positions that couldn't find StopLoss
+    void                        removeSameEntries(QList<Position> *positions); // Keeps only one of the positions with same Entry price
 
     Q_PROPERTY(QString leveltf READ leveltf WRITE setLeveltf NOTIFY leveltfChanged FINAL)
     Q_PROPERTY(QString breaktf READ breaktf WRITE setBreaktf NOTIFY breaktfChanged FINAL)
@@ -58,9 +58,12 @@ public:
     void setCandleCountForTP(int newCandleCountForTP);
     void setTakeProfitTF(const QString &newTakeProfitTF);
 
+    // --- The list to keep the positions ---
+public:
+    QList<Position>             positionList;
 
 public slots:
-    void run();
+    void run(TimeframeAggregator::Timeframe timeframe);
 
 signals:
     void positionListReady(QList<Position> list);
@@ -93,12 +96,11 @@ private:
     CsvLoader*              m_loader;
     TimeframeAggregator*    m_agg;
     QVariantList            m_candles;
-
     QString                 m_leveltf               = "1m";
     QString                 m_breaktf               = "1m";
     int                     m_candleCountForBreak   = 1000;
     int                     m_entryLookback         = 50;
-    double                  m_entryThreshold        = 1;
+    double                  m_entryThreshold        = 5.0;
     double                  m_levelFilterGap        = 1;
     int                     m_stopLookback          = 30;
     int                     m_takeProfitLookback    = 50;

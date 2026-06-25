@@ -24,6 +24,9 @@ public:
 
     QVariantList getLevels();
 
+    // --- calculate the Average True Range for candles
+    double ATR(QVariantList candles);
+
 public slots:
     void HorizantalLevelBreak(TimeframeAggregator::Timeframe leveltf,
                               TimeframeAggregator::Timeframe breaktf,
@@ -40,14 +43,15 @@ public slots:
                        double levelFilterGap,
                        int stopLookback,
                        int takeProfitLookback,
-                       int candleCountForTP,
-                       QString takeProfitTF
+                       int candleCountForTP
                        );
 signals:
     void entryPointReady(int stopLookback,
                          int takeProfitLookback,
                          int candleCountForTP,
-                         QString takeProfitTF);
+                         TimeframeAggregator::Timeframe takeProfitTF,
+                         TimeframeAggregator::Timeframe breaktf
+                         );
 
 private:
     QVariantList        m_candles;

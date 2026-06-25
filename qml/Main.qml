@@ -7,6 +7,7 @@ Window {
     height: 1080
     visible: true
     title: "Forex Analyzer"
+    // flags: Qt.Window | Qt.FramelessWindowHint
     Item{
         anchors.fill: parent
         SplitView {

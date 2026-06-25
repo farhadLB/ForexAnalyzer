@@ -13,15 +13,17 @@ ColumnLayout{
     property color  textColor: "#FFFFFF"
     property int    ringWidth: 20
     property string label: "Win rate"
+    property int    itemHeight: 240
+    property int    itemWidth: 240
 
     Item {
         id: gauge
+        antialiasing: true
 
-
-        Layout.preferredHeight: 240
-        Layout.preferredWidth: 240
-        Layout.minimumHeight: 120
-        Layout.minimumWidth: 120
+        Layout.preferredHeight: root.itemHeight
+        Layout.preferredWidth: root.itemWidth
+        Layout.minimumHeight: 50
+        Layout.minimumWidth: 50
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -45,6 +47,7 @@ ColumnLayout{
         // --- Background track ---
         Shape {
             anchors.fill: parent
+            antialiasing: true
             ShapePath {
                 strokeColor:    root.trackColor
                 strokeWidth:    root.ringWidth
@@ -66,6 +69,7 @@ ColumnLayout{
         // --- Filled arc ---
         Shape {
             anchors.fill: parent
+            antialiasing: true
             visible: root.percentage > 0
 
             ShapePath {

@@ -11,6 +11,24 @@ QVariantList EntryPointCalculator::getLevels()
     return m_levels;
 }
 
+// --- Calculate the Average True Range for a range of candles ---
+double EntryPointCalculator::ATR(QVariantList candles)
+{
+    double rangeSum = 0;
+    // int indexRange  = 0;
+
+    // if(currentIndex - candlesLookback > 0){
+    //     indexRange = currentIndex - candlesLookback;
+    // }
+
+    for(int i = 0; i < candles.size(); i++){
+            rangeSum += std::abs(candles[i].toMap()["high"].toDouble() - candles[i].toMap()["low"].toDouble()) ;
+    }
+    double atrValue = rangeSum/candles.size();
+    qDebug() << "ATR is: " << atrValue;
+    return atrValue;
+}
+
 void EntryPointCalculator::HorizantalLevelBreak(TimeframeAggregator::Timeframe leveltf, // timeframe to draw the level
                                                 TimeframeAggregator::Timeframe breaktf, // timeframe to evaluate the breaktime
                                                 int candleCount,    // number of candles to search for break
@@ -26,15 +44,16 @@ void EntryPointCalculator::HorizantalLevelBreak(TimeframeAggregator::Timeframe l
     QVariantList levels         = m_levelDetector.detectLocalLevels(aggCandles, lookback);
     QVariantList filteredLevels = m_levelDetector.filterCloseLevels(levels, gap);
     QVariantList breakCandles   = m_agg->aggregate(m_candles, breaktf);
+    double  averageTrueRange = ATR(aggCandles);
 
     int searchSize;
     for(QVariant& v : filteredLevels){
         QVariantMap level = v.toMap();
-        QMap<QString, int> map = m_agg->indexAggregate(level["idx"].toInt(), leveltf, breaktf);
+        QVariantMap map = m_agg->indexAggregate(level["idx"].toInt(), leveltf, breaktf);
 
-        int levelIndex     = map["index"];
-        int ratio          = map["ratio"];
-        int newCandleCount = candleCount * ratio;
+        int     levelIndex       = map["index"].toInt();
+        int     ratio            = map["ratio"].toInt();
+        int     newCandleCount   = candleCount * ratio;
 
         // --- Specify how many candles after level index should be checked using searchSize --- //
         if(levelIndex + newCandleCount < breakCandles.size()){
@@ -47,7 +66,7 @@ void EntryPointCalculator::HorizantalLevelBreak(TimeframeAggregator::Timeframe l
         // --- calculating the break index and Time --- //
         for(int i=levelIndex + 10; i<searchSize; i++){
             if(level["isResistance"].toBool()){
-                if(breakCandles[i].toMap()["close"].toDouble() > level["price"].toDouble() + threshold){
+                if(breakCandles[i].toMap()["close"].toDouble() > level["price"].toDouble() + threshold * averageTrueRange){
                     level["breakIndex"] = i;
                     level["breakTime"]  = breakCandles[i].toMap()["time"].toLongLong();
                     level["breakThreshold"] = threshold;
@@ -55,7 +74,7 @@ void EntryPointCalculator::HorizantalLevelBreak(TimeframeAggregator::Timeframe l
                 }
             }
             else{
-                if(breakCandles[i].toMap()["close"].toDouble() < level["price"].toDouble() - threshold){
+                if(breakCandles[i].toMap()["close"].toDouble() < level["price"].toDouble() - threshold * averageTrueRange){
                     level["breakIndex"] = i;
                     level["breakTime"]  = breakCandles[i].toMap()["time"].toLongLong();
                     level["breakThreshold"] = threshold;
@@ -72,6 +91,7 @@ void EntryPointCalculator::HorizantalLevelBreak(TimeframeAggregator::Timeframe l
             pos.Timeframe       = m_agg->timeframeToString(breaktf);
             pos.isBullish       = level["isResistance"].toBool();
             pos.LevelIdx        = level["idx"].toInt();
+            pos.LevelPrice      = level["price"].toDouble();
             m_positionList.append(pos);
             m_levels.append(level);
         }
@@ -87,11 +107,10 @@ void EntryPointCalculator::runEntryPoint(TimeframeAggregator::Timeframe leveltf,
                                          double levelFilterGap,
                                          int stopLookback,
                                          int takeProfitLookback,
-                                         int candleCountForTP,
-                                         QString takeProfitTF)
+                                         int candleCountForTP)
 {
     if(m_strategy == LevelBreak){
         HorizantalLevelBreak(leveltf, breaktf, candleCountForBreak, entryLookback, entryThreshold, levelFilterGap);
-        emit entryPointReady(stopLookback, takeProfitLookback, candleCountForTP, takeProfitTF);
+        emit entryPointReady(stopLookback, takeProfitLookback, candleCountForTP, leveltf, breaktf);
     }
 }

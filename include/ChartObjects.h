@@ -37,6 +37,7 @@ struct Position {
     int     EntryIdx;
     int     EndIdx;
     int     LevelIdx;
+    double  LevelPrice;
     QString Timeframe;
     bool    isBullish;
     bool    isWin;

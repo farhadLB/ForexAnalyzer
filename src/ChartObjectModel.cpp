@@ -140,6 +140,7 @@ QVariantList ChartObjectModel::positions()
         m["isWin"]              = p.isWin;
         m["RewardToRisk"]       = p.RewardToRisk;
         m["outcome"]            = p.outcome;
+        m["LevelPrice"]         = p.LevelPrice;
         list.append(m);
     }
     return list;

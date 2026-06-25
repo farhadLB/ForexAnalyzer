@@ -33,21 +33,21 @@ Rectangle {
             spacing: 10
             Layout.margins: 10
 
-            Repeater {
+            ComboBox{
+                id: tfCombo
                 model: ["1m", "5m", "15m", "1h", "4h", "Daily"]
-
-                CustomButton{
-                    text: modelData
-                    onClicked: {
-                        if (!rawCandles || rawCandles.length === 0) return;
-                        var tf = Aggregator.getTimeframe(modelData);
-                        var newCandles = Aggregator.aggregate(rawCandles, tf)
-                        chart.candles = newCandles
-                        centerItem.timeframe = tf
-                        Aggregator.setTimeframe(modelData);
-                    }
-                }
+                Material.theme: Material.Dark
+                onActivated: (index) => {
+                                 if (!rawCandles || rawCandles.length === 0) return;
+                                 var selected = model[index]
+                                 var tf = Aggregator.getTimeframe(selected);
+                                 var newCandles = Aggregator.aggregate(rawCandles, tf)
+                                 chart.candles = newCandles
+                                 centerItem.timeframe = tf
+                                 Aggregator.setTimeframe(selected);
+                             }
             }
+
             CustomToggle {
                 id: crossToggle
                 Layout.alignment: Qt.AlignHCenter
@@ -113,6 +113,8 @@ Rectangle {
         function onCandlesReady(list) {
             rawCandles = list
             chart.candles = list
+            chart.rawCandles = list
+            tfCombo.currentIndex = 0
         }
     }
 }

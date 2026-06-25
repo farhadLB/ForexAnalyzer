@@ -39,7 +39,7 @@ QVariantList LevelDetector::detectLocalLevels(const QVariantList &candles,int lo
         }
     }
 
-    detectLevelBreaks(&levels, candles);
+    // detectLevelBreaks(&levels, candles);
     emit levelsReady(levels);
     return levels;
 }

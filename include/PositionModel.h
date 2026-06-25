@@ -32,7 +32,6 @@ public slots:
 private:
     QList<Position> m_positionList;
 
-
 };
 
 #endif // POSITIONMODEL_H

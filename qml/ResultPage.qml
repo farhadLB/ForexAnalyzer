@@ -4,10 +4,14 @@ import QtQuick.Controls
 import "components"
 
 Item {
+    id: root
     Layout.fillHeight: true
     Layout.fillWidth: true
     Layout.minimumWidth: 700
     Layout.minimumHeight: 500
+    property int  sortColumn: -1
+    property bool sortAscending: true
+    property int hoveredRow: -1
 
     Rectangle {
         anchors.fill: parent
@@ -23,12 +27,40 @@ Item {
             delegate: Rectangle {
                 color: "#2a5175"
                 implicitHeight: 40
-                Text {
+                Row {
                     anchors.centerIn: parent
-                    text: model.display
-                    font.bold: true
-                    font.pixelSize: 17
-                    color: "white"
+                    spacing: 4
+                    Text {
+                        text: model.display
+                        font.bold: true
+                        font.pixelSize: 17
+                        color: "white"
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    Text {
+                        visible: sortColumn === column
+                        text: sortAscending ? "▲" : "▼"
+                        font.pixelSize: 13
+                        color: "#add8ff"
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        if (root.sortColumn === column)
+                            root.sortAscending = !sortAscending
+                        else {
+                            root.sortColumn    = column
+                            root.sortAscending = true
+                        }
+                        positionModel.sort(
+                                    column,
+                                    root.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
+                                    )
+                        tableView.model = null
+                        tableView.model = positionModel
+                    }
                 }
             }
         }
@@ -43,16 +75,25 @@ Item {
             columnSpacing: 2
             rowSpacing: 2
             clip: true
+
             model: positionModel
             delegate: Rectangle {
-                // color: column === 6
-                //        ? (Win ? "#00aa55" : "#cc3333")
-                //        : (row % 2 === 0 ? "transparent" : "#949fa8")
-
-                color: row % 2 === 0 ? "transparent" : "#2f373d"
-
+                id: rec
+                color: {
+                    if (root.hoveredRow === row)
+                        return "#1e3a5f"
+                    return row % 2 === 0 ? "transparent" : "#2f373d"
+                }
                 implicitWidth:  column != 3 ? 150 : 200
                 implicitHeight: 40
+
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: root.hoveredRow = row
+                    onExited:  root.hoveredRow = -1
+                }
+
                 Text {
                     anchors.centerIn: parent
                     text: {

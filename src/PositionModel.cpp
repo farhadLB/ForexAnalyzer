@@ -12,17 +12,31 @@ int PositionModel::columnCount(const QModelIndex &parent) const
 
 QVariant PositionModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || index.row() >= m_positionList.size()){
+    if (!index.isValid() || index.row() >= m_positionList.size())
         return QVariant();
+
+    const Position &pos = m_positionList[index.row()];
+
+    if (role == Qt::DisplayRole) {
+        switch (index.column()) {
+        case 0: return index.row();
+        case 1: return pos.EntryPointPrice;
+        case 2: return pos.StopLossPrice;
+        case 3: return pos.TakeProfitPrice;
+        case 4: return pos.Timeframe;
+        case 5: return pos.isBullish;
+        case 6: return pos.isWin;
+        }
     }
+
     switch (role) {
     case IdxRole:           return index.row();
-    case EntryRole:         return m_positionList[index.row()].EntryPointPrice;
-    case StopLossRole:      return m_positionList[index.row()].StopLossPrice;
-    case TakeProfitRole:    return m_positionList[index.row()].TakeProfitPrice;
-    case TimeframeRole:     return m_positionList[index.row()].Timeframe;
-    case PositionTypeRole:  return m_positionList[index.row()].isBullish;
-    case WinRole:           return m_positionList[index.row()].isWin;
+    case EntryRole:         return pos.EntryPointPrice;
+    case StopLossRole:      return pos.StopLossPrice;
+    case TakeProfitRole:    return pos.TakeProfitPrice;
+    case TimeframeRole:     return pos.Timeframe;
+    case PositionTypeRole:  return pos.isBullish;
+    case WinRole:           return pos.isWin;
     }
     return QVariant();
 }
@@ -45,7 +59,6 @@ void PositionModel::setPositionList(QList<Position> newList)
 {
     beginResetModel();
     m_positionList = newList;
-    qInfo()<< m_positionList.size();
     endResetModel();
 }
 

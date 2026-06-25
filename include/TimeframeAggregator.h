@@ -28,8 +28,8 @@ public:
     Timeframe getEnumTimeframe(const QString &tf);
 
     Q_INVOKABLE void setTimeframe(const QString &newTimeframe);
+    Q_INVOKABLE QVariantMap indexAggregate(int index, Timeframe fromTimeframe, Timeframe toTimeframe);
     QString timeframeGetter();
-    QMap<QString, int> indexAggregate(int index, Timeframe fromTimeframe, Timeframe toTimeframe);
     QString timeframeToString(Timeframe tf);
 
 signals:

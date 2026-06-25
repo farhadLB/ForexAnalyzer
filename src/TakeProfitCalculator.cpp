@@ -9,19 +9,20 @@ TakeProfitCalculator::TakeProfitCalculator(CsvLoader *loader,
     : QObject(parent), m_loader(loader), m_pos(pos), m_agg(agg), m_entry(entry) {
 }
 
-void TakeProfitCalculator::firstPivot(int backdrop, int candleCount, QString timeframe)
+void TakeProfitCalculator::firstPivot(int backdrop,
+                                      int candleCount,
+                                      TimeframeAggregator::Timeframe leveltf,
+                                      TimeframeAggregator::Timeframe breaktf)
 {
     m_candles               = m_loader->getCandles();
     m_levels                = m_entry->getLevels();
     m_positionList          = m_pos->getPositions();
-    int tf                  = m_agg->getTimeframe(timeframe);
     double takeProfitPrice  = 0;
     QVariantList aggCandles;
     int firstIdx            = 0;
 
-    TimeframeAggregator::Timeframe positionTf = static_cast<TimeframeAggregator::Timeframe>(tf);
-    if(positionTf != TimeframeAggregator::M1){
-        aggCandles = m_agg->aggregate(m_candles, positionTf);
+    if(leveltf != TimeframeAggregator::M1){
+        aggCandles = m_agg->aggregate(m_candles, leveltf);
     }
     else{
         aggCandles = m_candles;
@@ -30,7 +31,7 @@ void TakeProfitCalculator::firstPivot(int backdrop, int candleCount, QString tim
     for(int i=0; i<m_levels.size(); i++){
         QVariantMap level = m_levels[i].toMap();
         takeProfitPrice = 0;
-        double risk = std::abs(m_positionList[i].StopLossPrice - m_positionList[i].EntryPointPrice);
+        double risk = std::abs(m_positionList[i].StopLossPrice - m_positionList[i].EntryPointPrice) ;
         m_positionList[i].TakeProfitPrice = 0;
 
         if(level["idx"].toInt() - candleCount > 0){
@@ -42,14 +43,15 @@ void TakeProfitCalculator::firstPivot(int backdrop, int candleCount, QString tim
 
         int  lastIdx      = level["idx"].toInt();
         bool isResistance = level["isResistance"].toBool();
+        int  levelBreakIdx= level["breakIndex"].toInt();
+        QVariantMap map   = m_agg->indexAggregate(levelBreakIdx, breaktf, leveltf);
         QVariantList subCandles = aggCandles.mid(firstIdx, lastIdx-firstIdx);
         QVariantList TPlevels   = levelDetector.detectLocalLevels(subCandles, backdrop);
         if(!TPlevels.isEmpty()){
             if(isResistance){
-                // double high = level["price"].toDouble();
-                double high = aggCandles[level["breakIndex"].toDouble()].toMap()["close"].toDouble();
+                double high = aggCandles[map["index"].toInt()].toMap()["close"].toDouble();
                 for(int j = 0; j<TPlevels.size(); j++){
-                    if(TPlevels[j].toMap()["price"].toDouble() > high){
+                    if(TPlevels[j].toMap()["price"].toDouble() > high && TPlevels[j].toMap()["price"].toDouble() - m_positionList[i].EntryPointPrice >= risk){
                         high = TPlevels[j].toMap()["price"].toDouble();
                         takeProfitPrice = TPlevels[j].toMap()["price"].toDouble();
                         m_positionList[i].TakeProfitPrice = takeProfitPrice;
@@ -61,10 +63,9 @@ void TakeProfitCalculator::firstPivot(int backdrop, int candleCount, QString tim
                 }
             }
             else{
-                // double low = level["price"].toDouble();
-                double low = aggCandles[level["breakIndex"].toDouble()].toMap()["close"].toDouble();
+                double low = aggCandles[map["index"].toInt()].toMap()["close"].toDouble();
                 for(int j = 0; j<TPlevels.size(); j++){
-                    if(TPlevels[j].toMap()["price"].toDouble() < low){
+                    if(TPlevels[j].toMap()["price"].toDouble() < low  &&  m_positionList[i].EntryPointPrice - TPlevels[j].toMap()["price"].toDouble() >= risk){
                         low = TPlevels[j].toMap()["price"].toDouble();
                         takeProfitPrice = TPlevels[j].toMap()["price"].toDouble();
                         m_positionList[i].TakeProfitPrice = takeProfitPrice;
@@ -90,12 +91,13 @@ void TakeProfitCalculator::firstPivot(int backdrop, int candleCount, QString tim
         }
     }
     m_pos->setPositions(m_positionList);
-    emit takeProfitReady();
 }
 
 void TakeProfitCalculator::runTakeProfit(int takeProfitLookback,
                                          int candleCountForTP,
-                                         QString takeProfitTF)
+                                         TimeframeAggregator::Timeframe leveltf,
+                                         TimeframeAggregator::Timeframe breaktf)
 {
-    firstPivot(takeProfitLookback, candleCountForTP, takeProfitTF);
+    firstPivot(takeProfitLookback, candleCountForTP, leveltf, breaktf);
+    emit takeProfitReady(leveltf);
 }

@@ -82,7 +82,7 @@ QString TimeframeAggregator::timeframeGetter()
     return m_timeframe;
 }
 
-QMap<QString, int> TimeframeAggregator::indexAggregate(int index, Timeframe fromTimeframe, Timeframe toTimeframe)
+QVariantMap TimeframeAggregator::indexAggregate(int index, Timeframe fromTimeframe, Timeframe toTimeframe)
 {
 
     int fromCoeff = 1;
@@ -106,9 +106,9 @@ QMap<QString, int> TimeframeAggregator::indexAggregate(int index, Timeframe from
     case D1:  toCoeff = 1440; break;
     }
 
-    int ratio    = static_cast<int>(std::ceil(static_cast<double>(fromCoeff) / toCoeff));
-    int newIndex = std::ceil(index * ratio);
-    QMap<QString, int> map;
+    double ratio    = static_cast<double>(fromCoeff) / toCoeff;
+    int newIndex    = std::ceil(index * ratio);
+    QVariantMap map;
 
     map["index"] = newIndex;
     map["ratio"] = ratio;

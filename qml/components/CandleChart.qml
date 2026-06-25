@@ -5,6 +5,7 @@ Item {
     id: root
 
     property var candles: []
+    property var rawCandles: []
 
     // visible range
     property int firstVisibleIndex: 0
@@ -63,7 +64,21 @@ Item {
 
     onPositionVisibleChanged: {
         currentPositionIndex = 0
-        canvas.requestPaint()
+
+        if (positionVisible) {
+            var positions = chartObjects.positions()
+            if (positions.length === 0) {
+                canvas.requestPaint()
+                return
+            }
+
+            var positionTf = Aggregator.getTimeframe(positions[0].Timeframe)
+            var newCandles = Aggregator.aggregate(root.rawCandles, positionTf)
+            Aggregator.setTimeframe(positions[0].Timeframe)
+            root.candles = newCandles
+        } else {
+            canvas.requestPaint()
+        }
     }
 
     onCandlesChanged: {
@@ -76,15 +91,31 @@ Item {
 
     function nextPosition() {
         var positions = chartObjects.positions()
+        var leftCandlesCount = 30                    // number of candles gap in the left of position
         if (positions.length === 0) return
         currentPositionIndex = (currentPositionIndex + 1) % positions.length
+        if(positions[currentPositionIndex].LevelIdx > leftCandlesCount ) {
+            firstVisibleIndex = positions[currentPositionIndex].LevelIdx - leftCandlesCount
+        }
+        else{
+            firstVisibleIndex = positions[currentPositionIndex].LevelIdx
+        }        recalcPriceRange()
         canvas.requestPaint()
     }
 
     function prevPosition() {
         var positions = chartObjects.positions()
+        var leftCandlesCount = 30                    // number of candles gap in the left of position
         if (positions.length === 0) return
         currentPositionIndex = (currentPositionIndex - 1 + positions.length) % positions.length
+        if(positions[currentPositionIndex].LevelIdx > leftCandlesCount ) {
+            firstVisibleIndex = positions[currentPositionIndex].LevelIdx - leftCandlesCount
+        }
+        else{
+            firstVisibleIndex = positions[currentPositionIndex].LevelIdx
+        }
+
+        recalcPriceRange()
         canvas.requestPaint()
     }
 
@@ -370,23 +401,25 @@ Item {
                 ctx.fill()
             }
 
-
             // Positions
             if (positionVisible)
             {
                 var positions  = chartObjects.positions()
-                var positionTf = Aggregator.getTimeframe(positions[0].Timeframe)
-                var newCandles = Aggregator.aggregate(candles, positionTf)
-                Aggregator.setTimeframe(positions[0].Timeframe)
                 var pos        = positions[currentPositionIndex]
-                var entryY2    = pos.isBullish ? priceToY(candles[pos.LevelIdx].high) : priceToY(candles[pos.LevelIdx].low)
-                var entryX     = indexToX(pos.EntryIdx)
+                var fromTf     = Aggregator.getTimeframe(pos.Timeframe)
+                var newLevelIdx= Aggregator.indexAggregate(pos.LevelIdx, fromTf, currentTimeframe)
+                var newEntryIdx= Aggregator.indexAggregate(pos.EntryIdx, fromTf, currentTimeframe)
+                var newEndIdx  = Aggregator.indexAggregate(pos.EndIdx, fromTf, currentTimeframe)
                 var entryX2    = indexToX(pos.LevelIdx)
-                var endX       = indexToX(pos.EndIdx)
+                var entryY2    = priceToY(pos.LevelPrice)
+                var entryX     = indexToX(newEntryIdx.index)
+                // var entryX2    = indexToX(pos.LevelIdx)
+                // var entryY2    = pos.isBullish ? priceToY(root.candles[pos.LevelIdx].high) : priceToY(root.candles[pos.LevelIdx].low)
+                // var endX       = indexToX(pos.EndIdx)
+                var endX       = indexToX(newEndIdx.index)
                 var entryY     = priceToY(pos.EntryPointPrice)
                 var stopY      = priceToY(pos.StopLossPrice)
                 var profitY    = priceToY(pos.TakeProfitPrice)
-
                 var rectX      = Math.min(entryX, endX)
                 var rectW      = Math.abs(endX - entryX)
 
@@ -436,6 +469,31 @@ Item {
                 ctx.moveTo(rectX, stopY)
                 ctx.lineTo(rectX + rectW, stopY)
                 ctx.stroke()
+
+                // positions info text
+                ctx.fillStyle = "white"
+                ctx.font = "15px sans-serif bold"
+                ctx.textAlign = "end"
+                ctx.fillText("Position Id: ", leftMargin + 50, 50)
+                ctx.fillText(currentPositionIndex + 1, leftMargin + 200, 50)
+                ctx.fillText("Entry Index: ", leftMargin + 50, 80)
+                ctx.fillText(pos.EntryIdx, leftMargin + 200, 80)
+                ctx.fillText("Stop Loss Price: ", leftMargin + 50, 110)
+                ctx.fillText(pos.StopLossPrice, leftMargin + 200, 110)
+                ctx.fillText("Take Profit Price: ", leftMargin + 50, 140)
+                ctx.fillText(pos.TakeProfitPrice.toFixed(3), leftMargin + 200, 140)
+                ctx.fillText("Position Result: ", leftMargin + 50, 170)
+                if(pos.isWin){
+                    ctx.fillStyle = "#00aa55"
+                    ctx.font = "15px sans-serif bold"
+                    ctx.fillText("Success", leftMargin + 200, 170)
+                }
+                else{
+                    ctx.fillStyle = "#cc3333"
+                    ctx.font = "15px sans-serif bold"
+                    ctx.fillText("fail", leftMargin + 200, 170)
+                }
+
             }
 
             // Y axis
@@ -487,7 +545,8 @@ Item {
 
                 // ---- text ----
                 ctx.fillStyle = "white"
-                ctx.fillText(txt,x,chartH+13)
+                ctx.textAlign = "start"
+                ctx.fillText(txt,x + 5,chartH+13)
             }
 
             // Y labels
@@ -499,7 +558,7 @@ Item {
                         (visibleMaxPrice-visibleMinPrice)*i/steps
 
                 var y = priceToY(p)
-                var txt = p.toFixed(5)
+                var txt = p.toFixed(3)
 
                 // ---- tick ----
                 ctx.strokeStyle = "#888"
@@ -510,14 +569,14 @@ Item {
 
                 // ---- text ----
                 ctx.fillStyle = "white"
-                ctx.fillText(txt, root.leftMargin - 2, y+3)
+                ctx.fillText(txt, root.leftMargin - 8, y+3)
             }
 
             if (crossVisible)
             {
                 // ---- price label (Y axis) ----
                 var price = yToPrice(crossY)
-                var priceTxt = price.toFixed(5)
+                var priceTxt = price.toFixed(3)
 
                 var labelH = 18
                 var labelW = root.leftMargin - 2
@@ -551,6 +610,12 @@ Item {
                     ctx.fillStyle = "white"
                     ctx.fillText(txt, tx+labelW2 - 6, chartH+12)
                 }
+
+                // --- current candle index ---
+                ctx.font = "15px sans-serif bold"
+                ctx.textAlign = "end"
+                ctx.fillText("Candle  Index: ", leftMargin + 50, 200)
+                ctx.fillText(xToIndex(crossX), leftMargin + 200, 200)
             }
         }
     }

@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QSortFilterProxyModel>
 #include <QQuickStyle>
 #include <CsvLoader.h>
 #include <TimeframeAggregator.h>
@@ -26,6 +27,8 @@ int main(int argc, char *argv[])
     PositionManager     positionManager(&csvLoader, &aggregator);
     TrendlineDetector   trendlineDetector(&aggregator);
     LevelDetector       levelDetector;
+    QSortFilterProxyModel proxy;
+    proxy.setSourceModel(&positionModel);
 
     EntryPointCalculator    entrypoint(&csvLoader, &positionManager, &aggregator);
     StopLossCalculator      stoploss(&csvLoader, &positionManager, &aggregator, &entrypoint);
@@ -80,7 +83,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("chartObjects",        &chartObjects);
     engine.rootContext()->setContextProperty("levelDetector",       &levelDetector);
     engine.rootContext()->setContextProperty("trendlineDetector",   &trendlineDetector);
-    engine.rootContext()->setContextProperty("positionModel",       &positionModel);
+    engine.rootContext()->setContextProperty("positionModel",       &proxy);
     engine.rootContext()->setContextProperty("positionManager",     &positionManager);
     engine.loadFromModule("ForexAnalyzer", "Main");
 

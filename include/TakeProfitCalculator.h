@@ -18,16 +18,20 @@ public:
                                   EntryPointCalculator *entry,
                                   QObject *parent = nullptr);
 
-    void firstPivot(int backdrop, int candleCount, QString timeframe);
+    void firstPivot(int backdrop,
+                    int candleCount,
+                    TimeframeAggregator::Timeframe leveltf,
+                    TimeframeAggregator::Timeframe breaktf);
     LevelDetector levelDetector;
 
 public slots:
     void runTakeProfit(int takeProfitLookback,
                        int candleCountForTP,
-                       QString takeProfitTF);
+                       TimeframeAggregator::Timeframe leveltf,
+                       TimeframeAggregator::Timeframe breaktf);
 
 signals:
-    void takeProfitReady();
+    void takeProfitReady(TimeframeAggregator::Timeframe leveltf);
 
 private:
     PositionManager*      m_pos;
