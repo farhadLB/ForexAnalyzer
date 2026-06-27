@@ -6,11 +6,28 @@ import QtQuick.Layouts
 Button {
 
     id: root
-    text: "Custom"
+    property string buttonText: "Custom"
+    property string iconSource: "../../assets/candle-white-small.svg"
+    property int iconSize: 20
+    property int textSize: 13
+    property bool textVisible: false
     hoverEnabled: true
     checkable: true
     checked: false
     Material.background: checked ? Material.LightBlue : Material.BlueGrey
     Material.elevation: 10
+    contentItem: RowLayout {
+        Image {
+            source: root.iconSource
+            Layout.maximumWidth: root.iconSize
+            Layout.maximumHeight: root.iconSize
+        }
+        Text {
+            text: root.buttonText
+            font.pixelSize: root.textSize
+            color: "white"
+            visible: textVisible
+        }
+    }
 
 }

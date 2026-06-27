@@ -3,23 +3,9 @@
 #include <QMutex>
 #include <algorithm>
 
-QVector<Candle> LevelDetector::toStructArray(const QVariantList &candles)
-{
-    QVector<Candle> out;
-    out.reserve(candles.size());
-    for (const QVariant &v : candles) {
-        const QVariantMap m = v.toMap();
-        Candle c;
-        c.high = m["high"].toDouble();
-        c.low  = m["low"].toDouble();
-        out.append(c);
-    }
-    return out;
-}
-
 QVariantList LevelDetector::detectLocalLevels(const QVariantList &candles, int lookback)
 {
-    const QVector<Candle> data = toStructArray(candles);  // one-time conversion
+    const QVector<Candle> data = CandleUtils::toStructArray(candles);  // one-time conversion
     const int size = data.size();
 
     // build index list to iterate over

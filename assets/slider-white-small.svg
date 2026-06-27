@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="50"
+   height="50"
+   viewBox="0 0 1.5 1.5"
+   fill="none"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="slider-white-small.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="2.1641613"
+     inkscape:cx="-52.214223"
+     inkscape:cy="61.224642"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <path
+     d="M 0.07869885,0.23338848 H 0.76241979 M 0.07869885,1.2589698 H 0.76241979 M 0.07869885,0.74617917 H 0.24962904 M 1.2752105,0.23338848 h 0.1709302 m -0.1709302,0 c 0,0.0944024 -0.076528,0.17093029 -0.1709302,0.17093029 -0.094403,0 -0.17093022,-0.0765284 -0.17093022,-0.17093029 0,-0.0944024 0.0765275,-0.17093019 0.17093022,-0.17093019 0.094403,0 0.1709302,0.0765275 0.1709302,0.17093019 z m 0,1.02558132 h 0.1709302 m -0.1709302,0 c 0,0.094402 -0.076528,0.1709303 -0.1709302,0.1709303 -0.094403,0 -0.17093022,-0.076528 -0.17093022,-0.1709303 0,-0.094402 0.0765275,-0.1709301 0.17093022,-0.1709301 0.094403,0 0.1709302,0.076528 0.1709302,0.1709301 z M 0.76241979,0.74617917 H 1.4461407 m -0.68372091,0 c 0,0.0944024 -0.0765275,0.17093029 -0.1709303,0.17093029 -0.0944024,0 -0.17093016,-0.0765276 -0.17093016,-0.17093029 0,-0.0944024 0.0765275,-0.17093021 0.17093016,-0.17093021 0.0944024,0 0.1709303,0.0765276 0.1709303,0.17093021 z"
+     stroke="#464455"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="path1"
+     style="stroke:#ffffff;stroke-width:0.102558;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+</svg>

@@ -4,6 +4,7 @@
 #include <ChartObjects.h>
 #include <QtConcurrent/QtConcurrentMap>
 #include <QVector>
+#include <CandleUtils.h>
 
 class LevelDetector : public QObject
 {

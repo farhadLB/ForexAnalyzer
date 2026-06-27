@@ -27,6 +27,9 @@ qt_add_qml_module(appForexAnalyzer
         qml/ChartPage.qml
         qml/LeftBar.qml
         qml/ResultPage.qml
+        qml/TitleBar.qml
+        qml/StrategyPopup.qml
+        qml/ChartTools.qml
         qml/components/CustomButton.qml
         qml/components/CandleChart.qml
         qml/components/CustomToggle.qml
@@ -35,10 +38,27 @@ qt_add_qml_module(appForexAnalyzer
         qml/components/CircularGauge.qml
         qml/components/OutcomeChart.qml
         qml/components/CustomProgressBar.qml
+        RESOURCES assets/chart.jpg
+        RESOURCES assets/slider-black-small.svg
+        RESOURCES assets/slider-grey-small.svg
+        assets/slider-white-small.svg
+        assets/candle-black-small.svg
+        assets/candle-grey-small.svg
+        assets/candle-white-small.svg
+        assets/chart-line-black.svg
+        assets/chart-line-grey.svg
+        assets/chart-line-white.svg
+        assets/play-green.svg
+        assets/play-grey.svg
+        assets/table-black.svg
+        assets/table-grey.svg
+        assets/table-white.svg
+        assets/position-black.svg
+        assets/position-grey.svg assets/position-white.svg
 )
 
 target_link_libraries(appForexAnalyzer PRIVATE
-    forexanalyzer_lib       # your classes
+    forexanalyzer_lib
     Qt6::Quick
     Qt6::QuickControls2
     Qt6::Charts

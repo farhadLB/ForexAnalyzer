@@ -7,6 +7,7 @@
 #include <TimeframeAggregator.h>
 #include <LevelDetector.h>
 #include <CsvLoader.h>
+#include <CandleUtils.h>
 
 class StopLossCalculator : public QObject
 {

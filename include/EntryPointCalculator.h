@@ -7,6 +7,7 @@
 #include <TimeframeAggregator.h>
 #include <CsvLoader.h>
 #include <PositionManager.h>
+#include <CandleUtils.h>
 
 class EntryPointCalculator : public QObject
 {
@@ -25,14 +26,14 @@ public:
     QVariantList getLevels();
 
     // --- calculate the Average True Range for candles
-    double ATR(QVariantList candles);
+    double ATR(const QVector<Candle> &candles);
 
 public slots:
     void HorizantalLevelBreak(TimeframeAggregator::Timeframe leveltf,
                               TimeframeAggregator::Timeframe breaktf,
                               int candleCount = 1000,
                               int lookback = 10,
-                              double threshold = 1,
+                              double threshold = 0.1,
                               double gap = 1);
 
     void runEntryPoint(TimeframeAggregator::Timeframe leveltf,

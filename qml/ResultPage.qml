@@ -76,6 +76,11 @@ Item {
             rowSpacing: 2
             clip: true
 
+            columnWidthProvider: function(column) {
+                // return column !== 3 ? 150 : 200
+                return (parent.width - 30) / columns
+            }
+
             model: positionModel
             delegate: Rectangle {
                 id: rec
