@@ -1,32 +1,3 @@
-// #pragma once
-
-// #include <QObject>
-// #include <QVector>
-// #include <QDateTime>
-// #include "ChartObjects.h"
-
-// class CsvLoader : public QObject
-// {
-//     Q_OBJECT
-// public:
-//     explicit CsvLoader(QObject *parent = nullptr);
-
-//     Q_INVOKABLE bool loadFile(const QString &filePath);
-
-//     QVariantList getCandles();
-
-// signals:
-//     void fileLoaded(int candleCount);
-//     void error(QString message);
-//     void candlesReady(QVariantList candles);
-//     void axisRangeReady(double min1, double min2);
-
-// private:
-//     QVector<Candle> m_data;
-//     QVariantList m_candles;
-// };
-
-
 #pragma once
 #include <QObject>
 #include <QThread>
@@ -45,6 +16,8 @@ public:
 
     Q_INVOKABLE void loadFile(const QString &filePath);
     Q_INVOKABLE void cancelLoad();
+    Q_INVOKABLE bool candlesLoaded();
+    Q_INVOKABLE void closeFile();
 
     bool isLoading() const { return m_isLoading; }
     int  progress()  const { return m_progress; }
@@ -57,8 +30,7 @@ signals:
     void candlesReady(QVariantList candles);
     void axisRangeReady(double min, double max);
     void error(QString message);
-
-    // internal signal to trigger worker across thread boundary
+    void closeCsvFile();
     void startWorker(const QString &filePath);
 
 private:

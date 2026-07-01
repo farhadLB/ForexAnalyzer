@@ -9,14 +9,12 @@ qt_standard_project_setup(REQUIRES 6.8)
 
 enable_testing()
 
-# Library of all your business logic
 add_subdirectory(src)
 
 add_subdirectory(tests)
 
 qt_standard_project_setup()
 
-# App target stays in root — QML paths are clean
 qt_add_executable(appForexAnalyzer src/main.cpp)
 
 qt_add_qml_module(appForexAnalyzer
@@ -30,14 +28,20 @@ qt_add_qml_module(appForexAnalyzer
         qml/TitleBar.qml
         qml/StrategyPopup.qml
         qml/ChartTools.qml
+        qml/InfographyPage.qml
         qml/components/CustomButton.qml
         qml/components/CandleChart.qml
         qml/components/CustomToggle.qml
-        qml/components/AccordionItem.qml
-        qml/InfographyPage.qml
         qml/components/CircularGauge.qml
         qml/components/OutcomeChart.qml
         qml/components/CustomProgressBar.qml
+        qml/components/CustomRoundButton.qml
+        qml/components/CustomComboBox.qml
+        qml/components/GUIParameters.qml
+        qml/components/CustomToolTip.qml
+        qml/components/CustomSlider.qml
+        qml/components/CustomTextField.qml
+        qml/components/qmldir
         RESOURCES assets/chart.jpg
         RESOURCES assets/slider-black-small.svg
         RESOURCES assets/slider-grey-small.svg
@@ -54,7 +58,29 @@ qt_add_qml_module(appForexAnalyzer
         assets/table-grey.svg
         assets/table-white.svg
         assets/position-black.svg
-        assets/position-grey.svg assets/position-white.svg
+        assets/position-grey.svg
+        assets/position-white.svg
+        assets/left-arrow-black.svg
+        assets/left-arrow-grey.svg
+        assets/left-arrow-white.svg
+        assets/right-arrow-black.svg
+        assets/right-arrow-grey.svg
+        assets/right-arrow-white.svg
+        assets/tools-black.svg
+        assets/tools-grey.svg
+        assets/tools-white.svg
+        assets/crosshair-black.svg
+        assets/crosshair-grey.svg
+        assets/crosshair-white.svg
+        assets/dollar-black.svg
+        assets/dollar-grey.svg
+        assets/dollar-white.svg
+        assets/moon-black.svg
+        assets/moon-grey.svg
+        assets/moon-white.svg
+        assets/sun-black.svg
+        assets/sun-grey.svg
+        assets/sun-white.svg
 )
 
 target_link_libraries(appForexAnalyzer PRIVATE

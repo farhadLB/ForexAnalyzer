@@ -12,7 +12,8 @@ TakeProfitCalculator::TakeProfitCalculator(CsvLoader *loader,
 void TakeProfitCalculator::firstPivot(int backdrop,
                                       int candleCount,
                                       TimeframeAggregator::Timeframe leveltf,
-                                      TimeframeAggregator::Timeframe breaktf)
+                                      TimeframeAggregator::Timeframe breaktf,
+                                      double rewradToRisk)
 {
     m_candles               = m_loader->getCandles();
     m_levels                = m_entry->getLevels();
@@ -28,10 +29,12 @@ void TakeProfitCalculator::firstPivot(int backdrop,
         aggCandles = m_candles;
     }
 
+    const QVector<Candle> aggData   = CandleUtils::toStructArray(aggCandles);
+
     for(int i=0; i<m_levels.size(); i++){
         QVariantMap level = m_levels[i].toMap();
         takeProfitPrice = 0;
-        double risk = std::abs(m_positionList[i].StopLossPrice - m_positionList[i].EntryPointPrice) ;
+        double risk = std::abs(m_positionList[i].StopLossPrice - m_positionList[i].EntryPointPrice) * rewradToRisk ;
         m_positionList[i].TakeProfitPrice = 0;
 
         if(level["idx"].toInt() - candleCount > 0){
@@ -49,7 +52,7 @@ void TakeProfitCalculator::firstPivot(int backdrop,
         QVariantList TPlevels   = levelDetector.detectLocalLevels(subCandles, backdrop);
         if(!TPlevels.isEmpty()){
             if(isResistance){
-                double high = aggCandles[map["index"].toInt()].toMap()["close"].toDouble();
+                double high = aggData[map["index"].toInt()].close;
                 for(int j = 0; j<TPlevels.size(); j++){
                     if(TPlevels[j].toMap()["price"].toDouble() > high && TPlevels[j].toMap()["price"].toDouble() - m_positionList[i].EntryPointPrice >= risk){
                         high = TPlevels[j].toMap()["price"].toDouble();
@@ -63,7 +66,7 @@ void TakeProfitCalculator::firstPivot(int backdrop,
                 }
             }
             else{
-                double low = aggCandles[map["index"].toInt()].toMap()["close"].toDouble();
+                double low = aggData[map["index"].toInt()].close;
                 for(int j = 0; j<TPlevels.size(); j++){
                     if(TPlevels[j].toMap()["price"].toDouble() < low  &&  m_positionList[i].EntryPointPrice - TPlevels[j].toMap()["price"].toDouble() >= risk){
                         low = TPlevels[j].toMap()["price"].toDouble();
@@ -96,8 +99,9 @@ void TakeProfitCalculator::firstPivot(int backdrop,
 void TakeProfitCalculator::runTakeProfit(int takeProfitLookback,
                                          int candleCountForTP,
                                          TimeframeAggregator::Timeframe leveltf,
-                                         TimeframeAggregator::Timeframe breaktf)
+                                         TimeframeAggregator::Timeframe breaktf,
+                                         double rewradToRisk)
 {
-    firstPivot(takeProfitLookback, candleCountForTP, leveltf, breaktf);
+    firstPivot(takeProfitLookback, candleCountForTP, leveltf, breaktf, rewradToRisk);
     emit takeProfitReady(leveltf);
 }

@@ -7,6 +7,7 @@
 #include <TimeframeAggregator.h>
 #include <LevelDetector.h>
 #include <CsvLoader.h>
+#include <CandleUtils.h>
 
 class TakeProfitCalculator : public QObject
 {
@@ -21,14 +22,16 @@ public:
     void firstPivot(int backdrop,
                     int candleCount,
                     TimeframeAggregator::Timeframe leveltf,
-                    TimeframeAggregator::Timeframe breaktf);
+                    TimeframeAggregator::Timeframe breaktf,
+                    double rewradToRisk);
     LevelDetector levelDetector;
 
 public slots:
     void runTakeProfit(int takeProfitLookback,
                        int candleCountForTP,
                        TimeframeAggregator::Timeframe leveltf,
-                       TimeframeAggregator::Timeframe breaktf);
+                       TimeframeAggregator::Timeframe breaktf,
+                       double rewradToRisk);
 
 signals:
     void takeProfitReady(TimeframeAggregator::Timeframe leveltf);

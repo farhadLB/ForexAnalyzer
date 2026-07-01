@@ -2,9 +2,11 @@
 #define POSITIONMANAGER_H
 
 #include <QObject>
+#include <QThread>
 #include <ChartObjects.h>
 #include <CsvLoader.h>
 #include <TimeframeAggregator.h>
+#include <CandleUtils.h>
 
 class PositionManager : public QObject
 {
@@ -21,6 +23,7 @@ public:
     Q_INVOKABLE QVariantMap     positionsInfo();
     void                        removeStopNA(QList<Position> *positions);      // Removes the positions that couldn't find StopLoss
     void                        removeSameEntries(QList<Position> *positions); // Keeps only one of the positions with same Entry price
+    void                        removeCloseEntries(QList<Position> *positions, int distance = 50);// Remove the positions with close Entry Point
 
     Q_PROPERTY(QString leveltf READ leveltf WRITE setLeveltf NOTIFY leveltfChanged FINAL)
     Q_PROPERTY(QString breaktf READ breaktf WRITE setBreaktf NOTIFY breaktfChanged FINAL)
@@ -32,6 +35,8 @@ public:
     Q_PROPERTY(int takeProfitLookback READ takeProfitLookback WRITE setTakeProfitLookback NOTIFY takeProfitLookbackChanged FINAL)
     Q_PROPERTY(int candleCountForTP READ candleCountForTP WRITE setCandleCountForTP NOTIFY candleCountForTPChanged FINAL)
     Q_PROPERTY(QString takeProfitTF READ takeProfitTF WRITE setTakeProfitTF NOTIFY takeProfitTFChanged FINAL)
+    Q_PROPERTY(bool isLoading READ isLoading WRITE setIsLoading NOTIFY isLoadingChanged FINAL)
+    Q_PROPERTY(double rewradToRisk READ rewradToRisk WRITE setRewradToRisk NOTIFY rewradToRiskChanged FINAL)
 
 
     // ---Q_PROPERTY getters ---
@@ -45,6 +50,8 @@ public:
     int takeProfitLookback() const;
     int candleCountForTP() const;
     QString takeProfitTF() const;
+    bool isLoading() const;
+    double rewradToRisk() const;
 
     // ---Q_PROPERTY setters ---
     void setLeveltf(const QString &newLeveltf);
@@ -57,6 +64,8 @@ public:
     void setTakeProfitLookback(int newTakeProfitLookback);
     void setCandleCountForTP(int newCandleCountForTP);
     void setTakeProfitTF(const QString &newTakeProfitTF);
+    void setIsLoading(bool newIsLoading);
+    void setRewradToRisk(double newRewradToRisk);
 
     // --- The list to keep the positions ---
 public:
@@ -67,6 +76,7 @@ public slots:
 
 signals:
     void positionListReady(QList<Position> list);
+    void calculationRequested();
     void initialValues(TimeframeAggregator::Timeframe leveltf,
                        TimeframeAggregator::Timeframe breaktf,
                        int candleCountForBreak,
@@ -76,7 +86,7 @@ signals:
                        int stopLookback,
                        int takeProfitLookback,
                        int candleCountForTP,
-                       QString takeProfitTF
+                       double rewradToRisk
                        );
 
     // ---Q_PROPERTY signals ---
@@ -92,6 +102,10 @@ signals:
 
     void levelFilterGapChanged();
 
+    void isLoadingChanged();
+
+    void rewradToRiskChanged();
+
 private:
     CsvLoader*              m_loader;
     TimeframeAggregator*    m_agg;
@@ -100,12 +114,14 @@ private:
     QString                 m_breaktf               = "1m";
     int                     m_candleCountForBreak   = 1000;
     int                     m_entryLookback         = 50;
-    double                  m_entryThreshold        = 5.0;
-    double                  m_levelFilterGap        = 1;
+    double                  m_entryThreshold        = 0.6;
+    double                  m_levelFilterGap        = 0.0003;
     int                     m_stopLookback          = 30;
     int                     m_takeProfitLookback    = 50;
     int                     m_candleCountForTP      = 500;
     QString                 m_takeProfitTF          = "1m";
+    bool                    m_isLoading             = false;
+    double                  m_rewradToRisk          = 1;
 };
 
 #endif // POSITIONMANAGER_H

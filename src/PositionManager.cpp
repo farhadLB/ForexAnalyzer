@@ -20,7 +20,10 @@ QVariantList PositionManager::getPositionsForQML()
     QVariantList list;
     for(const Position &pos: std::as_const(positionList)){
         QVariantMap m;
+        QDateTime dt = QDateTime::fromMSecsSinceEpoch(pos.time, Qt::UTC);
         m["yValue"] = pos.outcome;
+        m["time"]   = dt.time().hour();
+        m["isWin"]  = pos.isWin;
         list.append(m);
     }
     return list;
@@ -30,6 +33,7 @@ void PositionManager::startCalculation()
 {
     TimeframeAggregator::Timeframe newleveltf = m_agg->getEnumTimeframe(m_leveltf);
     TimeframeAggregator::Timeframe newbreaktf = m_agg->getEnumTimeframe(m_breaktf);
+    setIsLoading(true);
     emit initialValues(newleveltf,
                        newbreaktf,
                        m_candleCountForBreak,
@@ -39,8 +43,7 @@ void PositionManager::startCalculation()
                        m_stopLookback,
                        m_takeProfitLookback,
                        m_candleCountForTP,
-                       m_takeProfitTF
-                       );
+                       m_rewradToRisk);
 }
 
 QVariantMap PositionManager::positionsInfo()
@@ -98,6 +101,21 @@ void PositionManager::removeSameEntries(QList<Position> *positions)
     }
 }
 
+void PositionManager::removeCloseEntries(QList<Position> *positions, int distance)
+{
+    std::sort(positions->begin(), positions->end(), [](const Position &a, const Position &b) {
+        return a.EntryIdx < b.EntryIdx;
+    });
+
+    for (int i = 0; i < positions->size(); ++i) {
+        double entryIdx = (*positions)[i].EntryIdx;
+        positions->removeIf([entryIdx, distance, i, positions](const Position &pos) {
+            return &pos != &(*positions)[i] &&
+                   std::abs(pos.EntryIdx - entryIdx) < distance;
+        });
+    }
+}
+
 void PositionManager::run(TimeframeAggregator::Timeframe timeframe)
 {
     m_candles           = m_loader->getCandles();
@@ -109,19 +127,22 @@ void PositionManager::run(TimeframeAggregator::Timeframe timeframe)
     else{
         aggCandles = m_candles;
     }
+
+    const QVector<Candle> aggData = CandleUtils::toStructArray(aggCandles);
+
     for(Position &pos: positionList){
         int i = pos.EntryIdx + 1;
         bool closed = false;
 
         for(; i<aggCandles.size() - 1; i++){
             if(pos.isBullish){
-                if(aggCandles[i].toMap()["high"].toDouble() >= pos.TakeProfitPrice){
+                if(aggData[i].high >= pos.TakeProfitPrice){
                     pos.isWin = true;
                     pos.EndIdx = i;
                     closed = true;
                     break;
                 }
-                else if(aggCandles[i].toMap()["low"].toDouble() <= pos.StopLossPrice){
+                else if(aggData[i].low <= pos.StopLossPrice){
                     pos.isWin = false;
                     pos.EndIdx = i;
                     closed = true;
@@ -129,13 +150,13 @@ void PositionManager::run(TimeframeAggregator::Timeframe timeframe)
                 }
             }
             else{
-                if(aggCandles[i].toMap()["low"].toDouble() <= pos.TakeProfitPrice){
+                if(aggData[i].low <= pos.TakeProfitPrice){
                     pos.isWin = true;
                     pos.EndIdx = i;
                     closed = true;
                     break;
                 }
-                else if(aggCandles[i].toMap()["high"].toDouble() >= pos.StopLossPrice){
+                else if(aggData[i].high >= pos.StopLossPrice){
                     pos.isWin = false;
                     pos.EndIdx = i;
                     closed = true;
@@ -163,7 +184,35 @@ void PositionManager::run(TimeframeAggregator::Timeframe timeframe)
     }
     removeStopNA(&positionList);
     removeSameEntries(&positionList);
+    removeCloseEntries(&positionList);
     emit positionListReady(positionList);
+    setIsLoading(false);
+}
+
+double PositionManager::rewradToRisk() const
+{
+    return m_rewradToRisk;
+}
+
+void PositionManager::setRewradToRisk(double newRewradToRisk)
+{
+    if (qFuzzyCompare(m_rewradToRisk, newRewradToRisk))
+        return;
+    m_rewradToRisk = newRewradToRisk;
+    emit rewradToRiskChanged();
+}
+
+bool PositionManager::isLoading() const
+{
+    return m_isLoading;
+}
+
+void PositionManager::setIsLoading(bool newIsLoading)
+{
+    if (m_isLoading == newIsLoading)
+        return;
+    m_isLoading = newIsLoading;
+    emit isLoadingChanged();
 }
 
 double PositionManager::levelFilterGap() const

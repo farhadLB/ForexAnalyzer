@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="50"
+   height="50"
+   viewBox="0 -6.5 2.375 2.375"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="right-arrow-grey.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="5.5366461"
+     inkscape:cx="93.37783"
+     inkscape:cy="28.627439"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <title
+     id="title1">right-arrow</title>
+  <desc
+     id="desc1">Created with Sketch.</desc>
+  <g
+     id="icons"
+     stroke="none"
+     stroke-width="1"
+     fill="none"
+     fill-rule="evenodd"
+     transform="matrix(0.0612496,0,0,0.0612496,0.02550292,-6.0723002)"
+     style="fill:#808080;fill-opacity:1">
+    <g
+       id="ui-gambling-website-lined-icnos-casinoshunter"
+       transform="translate(-1511,-158)"
+       fill="#1c1c1f"
+       fill-rule="nonzero"
+       style="fill:#808080;fill-opacity:1">
+      <g
+         id="1"
+         transform="translate(1350,120)"
+         style="fill:#808080;fill-opacity:1">
+        <path
+           d="m 187.81214,38.580211 10.51308,10.42406 0.0879,0.08157 c 0.35176,0.348815 0.55642,0.808848 0.58688,1.352381 l -0.002,0.18272 c -0.0255,0.430549 -0.19006,0.84187 -0.51431,1.210455 l -0.12268,0.126623 -10.54912,10.461768 c -0.78015,0.773615 -2.04157,0.773615 -2.82172,0 -0.78482,-0.778241 -0.78482,-2.043532 -6e-5,-2.82171 l 7.2839,-7.22417 -29.27479,7.2e-4 c -1.1024,0 -1.99947,-0.889553 -1.99947,-1.991097 0,-1.101545 0.89707,-1.991098 1.99944,-1.991098 l 29.03976,-7.19e-4 -7.04878,-6.989731 c -0.78482,-0.778241 -0.78482,-2.043532 0,-2.821773 0.78015,-0.773615 2.04157,-0.773615 2.82172,0 z"
+           id="right-arrow"
+           style="fill:#808080;fill-opacity:1" />
+      </g>
+    </g>
+  </g>
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>right-arrow</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

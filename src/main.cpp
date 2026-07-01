@@ -13,11 +13,11 @@
 #include <EntryPointCalculator.h>
 #include <StopLossCalculator.h>
 #include <TakeProfitCalculator.h>
+#include <QThread>
 
 int main(int argc, char *argv[])
 {
 
-    qputenv("QT_QUICK_CONTROLS_MATERIAL_ACCENT", "white");
     QQuickStyle::setStyle("Material");
     QApplication     app(argc, argv);
     CsvLoader           csvLoader;
@@ -33,6 +33,12 @@ int main(int argc, char *argv[])
     EntryPointCalculator    entrypoint(&csvLoader, &positionManager, &aggregator);
     StopLossCalculator      stoploss(&csvLoader, &positionManager, &aggregator, &entrypoint);
     TakeProfitCalculator    takeprofit(&csvLoader, &positionManager, &aggregator, &entrypoint);
+
+    QThread *workerThread = new QThread();
+    entrypoint.moveToThread(workerThread);
+    stoploss.moveToThread(workerThread);
+    takeprofit.moveToThread(workerThread);
+
 
     QQmlApplicationEngine engine;
     QObject::connect(
@@ -79,21 +85,23 @@ int main(int argc, char *argv[])
         &chartObjects,
         &ChartObjectModel::getPositions);
 
-    engine.rootContext()->setContextProperty("csvLoader",           &csvLoader);
-    engine.rootContext()->setContextProperty("chartObjects",        &chartObjects);
-    engine.rootContext()->setContextProperty("levelDetector",       &levelDetector);
-    engine.rootContext()->setContextProperty("trendlineDetector",   &trendlineDetector);
-    engine.rootContext()->setContextProperty("positionModel",       &proxy);
-    engine.rootContext()->setContextProperty("positionManager",     &positionManager);
-    engine.loadFromModule("ForexAnalyzer", "Main");
+    workerThread->start();
 
-    //defining time aggregator as a singleton
     qmlRegisterSingletonInstance(
         "ForexAnalyzer",
         1, 0,
         "Aggregator",
         &aggregator
         );
+
+    engine.rootContext()->setContextProperty("csvLoader",           &csvLoader);
+    engine.rootContext()->setContextProperty("chartObjects",        &chartObjects);
+    engine.rootContext()->setContextProperty("levelDetector",       &levelDetector);
+    engine.rootContext()->setContextProperty("trendlineDetector",   &trendlineDetector);
+    engine.rootContext()->setContextProperty("proxyModel",          &proxy);
+    engine.rootContext()->setContextProperty("positionModel",       &positionModel);
+    engine.rootContext()->setContextProperty("positionManager",     &positionManager);
+    engine.loadFromModule("ForexAnalyzer", "Main");
 
     return app.exec();
 }

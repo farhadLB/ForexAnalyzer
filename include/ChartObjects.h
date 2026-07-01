@@ -28,6 +28,11 @@ struct HorizontalLevel {
     int    breakIndex;
     qint64 breakTime;
     double breakThreshold;
+    double ATR;
+    double ADX;
+    double PlusDI;
+    double MinusDI;
+    bool   TrendAligned;
 };
 
 struct Position {
@@ -43,4 +48,10 @@ struct Position {
     bool    isWin;
     double  RewardToRisk;
     double  outcome;
+    qint64  time;
+    double  ATR;
+    double  ADX;
+    double  PlusDI;
+    double  MinusDI;
+    bool    TrendAligned;
 };

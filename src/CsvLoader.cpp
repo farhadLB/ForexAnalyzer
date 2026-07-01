@@ -3,10 +3,9 @@
 CsvLoader::CsvLoader(QObject *parent) : QObject(parent)
 {
     m_thread = new QThread(this);
-    m_worker = new CsvWorker;          // no parent — lives on worker thread
+    m_worker = new CsvWorker;
     m_worker->moveToThread(m_thread);
 
-    // worker → loader (cross-thread, queued automatically)
     connect(m_worker, &CsvWorker::progressChanged, this, [this](int p) {
         setProgress(p);
     });
@@ -21,12 +20,11 @@ CsvLoader::CsvLoader(QObject *parent) : QObject(parent)
         emit error(msg);
     });
 
-    // loader → worker (triggers work on the worker thread)
     connect(this, &CsvLoader::startWorker, m_worker, &CsvWorker::loadFile);
 
     connect(m_worker, &CsvWorker::candlesReady, this, [this](const QVariantList &list) {
-        m_candles = list;          // cache it
-        emit candlesReady(list);   // forward to QML
+        m_candles = list;
+        emit candlesReady(list);
     });
 
     m_thread->start();
@@ -41,15 +39,25 @@ CsvLoader::~CsvLoader()
 
 void CsvLoader::loadFile(const QString &filePath)
 {
-    if (m_isLoading) return;   // ignore if already running
+    if (m_isLoading) return;
     setProgress(0);
     setIsLoading(true);
-    emit startWorker(filePath); // safe cross-thread signal
+    emit startWorker(filePath);
 }
 
 void CsvLoader::cancelLoad()
 {
     if (m_worker) m_worker->requestCancel();
+}
+
+bool CsvLoader::candlesLoaded()
+{
+    return !m_candles.isEmpty();
+}
+
+void CsvLoader::closeFile()
+{
+    emit closeCsvFile();
 }
 
 void CsvLoader::setIsLoading(bool v)

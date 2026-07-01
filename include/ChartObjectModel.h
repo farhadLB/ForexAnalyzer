@@ -20,11 +20,8 @@ public:
     Q_INVOKABLE void setAutoLevels(const QVariantList &levels);
     Q_INVOKABLE void setAutoTrendlines(const QVariantList &lines, const int start);
 
-    // --- Accessors ---
     Q_INVOKABLE QVariantList allTrendlines() const;                 // manual + auto trendlines
     Q_INVOKABLE QVariantList allLevels() const;                     // manual + auto
-    // Q_INVOKABLE QVariantList manualTrendlines() const;           // فقط manual
-    // Q_INVOKABLE QVariantList horizontalLevels() const;           // فقط manual
 
 public slots:
 

@@ -19,129 +19,18 @@ Window {
             root: root
         }
 
-        Rectangle{
-            id: leftMenu
+        LeftBar{
+            id: leftBar
             height: parent.height - titleBar.height
             width: 150
-            color: "#3e3e59"
             anchors.left: parent.left
             anchors.top: titleBar.bottom
-            ColumnLayout{
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                Rectangle{
-                    Layout.minimumHeight: 60
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignHCenter
-                    color: myStack.currentIndex !== 0 ? "#3e3e59" : "#111827"
-                    RowLayout{
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        spacing: 15
-                        Image {
-                            Layout.maximumWidth: 25
-                            Layout.maximumHeight: 25
-                            antialiasing: true
-                            source: myStack.currentIndex !== 0 ? "../assets/candle-grey-small.svg" : "../assets/candle-white-small.svg"
-                            Layout.alignment: Qt.AlignLeft
-                            Layout.leftMargin: 5
-                        }
-                        Text {
-                            Layout.minimumWidth: 50
-                            height: 20
-                            text: "Candle Chart"
-                            font.pixelSize: 14
-                            Layout.alignment: Qt.AlignLeft
-                            color: myStack.currentIndex !== 0 ? "grey" : "white"
-                        }
-                    }
-                    MouseArea{
-                        anchors.fill: parent
-                        onClicked: {
-                            myStack.currentIndex = 0
-                        }
-                    }
-                }
-                Rectangle{
-                    Layout.minimumHeight: 60
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignHCenter
-                    color: myStack.currentIndex !== 1 ? "#3e3e59" : "#111827"
-                    RowLayout{
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        spacing: 15
-                        Image {
-                            Layout.maximumWidth: 25
-                            Layout.maximumHeight: 25
-                            antialiasing: true
-                            source: myStack.currentIndex !== 1 ? "../assets/chart-line-grey.svg" : "../assets/chart-line-white.svg"
-                            Layout.alignment: Qt.AlignLeft
-                            Layout.leftMargin: 5
-                        }
-                        Text {
-                            Layout.minimumWidth: 50
-                            height: 20
-                            text: "Stretegy Result"
-                            font.pixelSize: 14
-                            Layout.alignment: Qt.AlignLeft
-                            color: myStack.currentIndex !== 1 ? "grey" : "white"
-
-                        }
-                    }
-                    MouseArea{
-                        anchors.fill: parent
-                        onClicked: {
-                            myStack.currentIndex = 1
-                        }
-                    }
-                }
-                Rectangle{
-                    Layout.minimumHeight: 60
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignHCenter
-                    color: myStack.currentIndex !== 2 ? "#3e3e59" : "#111827"
-                    RowLayout{
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        spacing: 15
-                        Image {
-                            Layout.maximumWidth: 25
-                            Layout.maximumHeight: 25
-                            antialiasing: true
-                            source: myStack.currentIndex !== 2 ? "../assets/table-grey.svg" : "../assets/table-white.svg"
-                            Layout.alignment: Qt.AlignLeft
-                            Layout.leftMargin: 5
-                        }
-                        Text {
-                            Layout.minimumWidth: 50
-                            height: 20
-                            text: "Positions Table"
-                            font.pixelSize: 14
-                            Layout.alignment: Qt.AlignLeft
-                            color: myStack.currentIndex !== 2 ? "grey" : "white"
-                        }
-                    }
-                    MouseArea{
-                        anchors.fill: parent
-                        onClicked: {
-                            myStack.currentIndex = 2
-                        }
-                    }
-                }
-            }
+            stackRef: myStack
         }
 
         Item {
             id: windowArea
-            width: parent.width - leftMenu.width
+            width: parent.width - leftBar.width
             height: parent.height - titleBar.height
             anchors.right: parent.right
             anchors.top: titleBar.bottom
@@ -151,6 +40,7 @@ Window {
                 anchors.fill: parent
                 ChartPage{
                     id: chartPage
+                    stackRef: myStack
                 }
                 InfographyPage{
                     id: infoPage

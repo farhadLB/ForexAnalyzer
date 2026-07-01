@@ -13,7 +13,7 @@ QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
     QList<Pivot> highs;
     QList<Pivot> lows;
 
-    // -------- Detect pivots ----------
+    // --- Detect pivots ---
     for(int i=m_lookback; i<candles.size()-m_lookback; ++i)
     {
         auto map = candles[i].toMap();
@@ -43,7 +43,7 @@ QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
         if(isLow)  lows.append({i,low});
     }
 
-    // -------- UP trendlines ----------
+    // --- UP trendlines ---
     for(int i=0;i<lows.size()-1;++i)
     {
         for(int j=i+1;j<lows.size();++j)
@@ -54,9 +54,8 @@ QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
             double sPrice = lows[i].price;
             double ePrice = lows[j].price;
 
-            if(ePrice <= sPrice) continue; // Higher Low
+            if(ePrice <= sPrice) continue;
 
-            // STRICT breakout check
             if(m_strict)
             {
                 double midHigh = -1e20;
@@ -100,7 +99,7 @@ QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
         }
     }
 
-    // -------- DOWN trendlines ----------
+    // --- DOWN trendlines ---
     for(int i=0;i<highs.size()-1;++i)
     {
         for(int j=i+1;j<highs.size();++j)
@@ -111,7 +110,7 @@ QVariantList TrendlineDetector::detectTrendlines(const QVariantList &candles)
             double sPrice = highs[i].price;
             double ePrice = highs[j].price;
 
-            if(ePrice >= sPrice) continue; // Lower High
+            if(ePrice >= sPrice) continue;
 
             if(m_strict)
             {

@@ -8,6 +8,7 @@
 #include <LevelDetector.h>
 #include <CsvLoader.h>
 #include <CandleUtils.h>
+#include <QThread>
 
 class StopLossCalculator : public QObject
 {
@@ -29,13 +30,15 @@ public slots:
                      int takeProfitLookback,
                      int candleCountForTP,
                      TimeframeAggregator::Timeframe takeProfitTF,
-                     TimeframeAggregator::Timeframe breakTF);
+                     TimeframeAggregator::Timeframe breakTF,
+                     double rewradToRisk);
 
 signals:
     void stopLossReady(int takeProfitLookback,
                        int candleCountForTP,
                        TimeframeAggregator::Timeframe takeProfitTF,
-                       TimeframeAggregator::Timeframe breakTF);
+                       TimeframeAggregator::Timeframe breakTF,
+                       double rewradToRisk);
 
 private:
     PositionManager*      m_pos;

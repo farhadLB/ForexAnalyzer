@@ -5,10 +5,9 @@
 
 QVariantList LevelDetector::detectLocalLevels(const QVariantList &candles, int lookback)
 {
-    const QVector<Candle> data = CandleUtils::toStructArray(candles);  // one-time conversion
+    const QVector<Candle> data = CandleUtils::toStructArray(candles);
     const int size = data.size();
 
-    // build index list to iterate over
     QVector<int> indices;
     indices.reserve(size - 2 * lookback);
     for (int i = lookback; i < size - lookback; ++i)
@@ -28,7 +27,7 @@ QVariantList LevelDetector::detectLocalLevels(const QVariantList &candles, int l
             if (data[i + j].high > high) { isHigh = false; }
             if (data[i - j].low  < low)  { isLow  = false; }
             if (data[i + j].low  < low)  { isLow  = false; }
-            if (!isHigh && !isLow) break;  // early exit
+            if (!isHigh && !isLow) break;
         }
 
         if (isHigh || isLow) {
@@ -52,7 +51,6 @@ QVariantList LevelDetector::detectLocalLevels(const QVariantList &candles, int l
         }
     });
 
-    // sort by index since parallel execution breaks order
     std::sort(levels.begin(), levels.end(), [](const QVariant &a, const QVariant &b) {
         return a.toMap()["idx"].toInt() < b.toMap()["idx"].toInt();
     });
@@ -82,12 +80,10 @@ QVariantList LevelDetector::filterCloseLevels(QVariantList levels, double gap)
         double diff = qAbs(current["price"].toDouble() - last["price"].toDouble());
 
         if (diff < gap) {
-            // keep whichever level formed earlier
             if (current["idx"].toInt() < last["idx"].toInt()) {
                 result.removeLast();
                 result.append(current);
             }
-            // else discard 'current', keep 'last'
         } else {
             result.append(current);
         }

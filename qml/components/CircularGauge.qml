@@ -6,11 +6,12 @@ ColumnLayout{
     id: root
     Layout.fillWidth: true
     Layout.fillHeight: true
+    antialiasing: true
 
     property real   percentage: 25          // 0–100
-    property color  ringColor: "#A855F7"   // filled arc color
-    property color  trackColor: "#3B2F6B"  // background arc color
-    property color  textColor: "#FFFFFF"
+    property color  ringColor: GUIParameters.secondaryBright   // filled arc color
+    property color  trackColor: GUIParameters.secondaryDim  // background arc color
+    property color  textColor: GUIParameters.textOnPrimary
     property int    ringWidth: 20
     property string label: "Win rate"
     property int    itemHeight: 240
@@ -30,7 +31,7 @@ ColumnLayout{
         readonly property real _radius:     Math.min(width, height) / 2 - ringWidth / 2
         readonly property real _cx:         width  / 2
         readonly property real _cy:         height / 2
-        readonly property real _startAngle: -90                        // 12 o'clock
+        readonly property real _startAngle: -90
         readonly property real _sweepAngle: percentage / 100 * 360
 
         // Helper: degrees → radians
@@ -106,7 +107,7 @@ ColumnLayout{
         text: root.label
         color: root.textColor
         font {
-            pixelSize:  root.width * 0.15
+            pixelSize:  root.width * 0.1
             weight:     Font.DemiBold
         }
     }

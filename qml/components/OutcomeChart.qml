@@ -1,6 +1,7 @@
 import QtQuick
 import QtCharts
 import QtQuick.Layouts
+import QtQuick.Controls
 
 Item {
     id: root
@@ -18,146 +19,295 @@ Item {
     property int  strategyGain: 0
     property double  averageRtoR: 0
 
-    ColumnLayout{
+    ScrollView{
         anchors.fill: parent
-        anchors.margins: 10
-        Rectangle{
-            Layout.preferredHeight: 250
-            Layout.fillWidth: true
-            Layout.margins: 5
-            color: "transparent"
-            radius: 15
-            border.color: "grey"
-            border.width: 2
+        clip: true
+        contentWidth: availableWidth
+        contentHeight: columnLayout.implicitHeight
 
-            RowLayout{
-                anchors.fill: parent
+        ColumnLayout{
+            id: columnLayout
+            width: parent.width
+            Rectangle{
+                Layout.preferredHeight: 250
+                Layout.fillWidth: true
+                Layout.margins: 5
+                color: "transparent"
+                radius: 15
+                border.color: "grey"
+                border.width: 1
 
-                CircularGauge{
-                    id: winrateGauge
-                    ringWidth: 15
-                    Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                    Layout.maximumHeight: 200
-                    Layout.maximumWidth: 200
-                    percentage: 0;
-                }
+                RowLayout{
+                    anchors.fill: parent
 
-                Rectangle{
-                    height: parent.height - 50
-                    width: 2
-                    color: "grey"
-                    radius: 1
-                }
-                ColumnLayout{
-                    Layout.fillHeight: true
-                    Layout.maximumWidth: 300
-                    Layout.leftMargin: 20
-                    Text {
-                        text: "Total Positions: "
-                        color: "white"
-                        font.pixelSize: 18
+                    CircularGauge{
+                        id: winrateGauge
+                        ringWidth: 15
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                        Layout.maximumHeight: 200
+                        Layout.maximumWidth: 200
+                        percentage: 0;
                     }
-                    Text {
-                        text: "Successful Positions: "
-                        color: "white"
-                        font.pixelSize: 18
+
+                    Rectangle{
+                        height: parent.height - 50
+                        width: 2
+                        color: "grey"
+                        radius: 1
                     }
-                    Text {
-                        text: "Failed Positions: "
-                        color: "white"
-                        font.pixelSize: 18
+                    ColumnLayout{
+                        Layout.fillHeight: true
+                        Layout.maximumWidth: 300
+                        Layout.leftMargin: 20
+                        Text {
+                            text: "Total Positions: "
+                            color: GUIParameters.textOnPrimary
+                            font.pixelSize: GUIParameters.fontSizeLarge
+                        }
+                        Text {
+                            text: "Successful Positions: "
+                            color: GUIParameters.textOnPrimary
+                            font.pixelSize: GUIParameters.fontSizeLarge
+                        }
+                        Text {
+                            text: "Failed Positions: "
+                            color: GUIParameters.textOnPrimary
+                            font.pixelSize: GUIParameters.fontSizeLarge
+                        }
+                        Text {
+                            text: "Average Reward to Risk Ratio: "
+                            color: GUIParameters.textOnPrimary
+                            font.pixelSize: GUIParameters.fontSizeLarge
+                        }
+                        Text {
+                            text: "Strategy Gain: "
+                            color: GUIParameters.textOnPrimary
+                            font.pixelSize: GUIParameters.fontSizeLarge
+                        }
                     }
-                    Text {
-                        text: "Average Reward to Risk Ratio: "
-                        color: "white"
-                        font.pixelSize: 18
-                    }
-                    Text {
-                        text: "Strategy Gain: "
-                        color: "white"
-                        font.pixelSize: 18
-                    }
-                }
-                ColumnLayout{
-                    Layout.fillHeight: true
-                    Layout.maximumWidth: 300
-                    Text {
-                        text: root.totalPos
-                        color: "white"
-                        font.pixelSize: 18
-                    }
-                    Text {
-                        text: root.successPos
-                        color: "white"
-                        font.pixelSize: 18
-                    }
-                    Text {
-                        text: root.failedPos
-                        color: "white"
-                        font.pixelSize: 18
-                    }
-                    Text {
-                        text: root.averageRtoR.toFixed(2)
-                        color: "white"
-                        font.pixelSize: 18
-                    }
-                    Text {
-                        text: root.strategyGain
-                        color: "white"
-                        font.pixelSize: 18
+                    ColumnLayout{
+                        Layout.fillHeight: true
+                        Layout.maximumWidth: 300
+                        Text {
+                            text: root.totalPos
+                            color: GUIParameters.textOnPrimary
+                            font.pixelSize: GUIParameters.fontSizeLarge
+                        }
+                        Text {
+                            text: root.successPos
+                            color: GUIParameters.textOnPrimary
+                            font.pixelSize: GUIParameters.fontSizeLarge
+                        }
+                        Text {
+                            text: root.failedPos
+                            color: GUIParameters.textOnPrimary
+                            font.pixelSize: GUIParameters.fontSizeLarge
+                        }
+                        Text {
+                            text: root.averageRtoR.toFixed(2)
+                            color: GUIParameters.textOnPrimary
+                            font.pixelSize: GUIParameters.fontSizeLarge
+                        }
+                        Text {
+                            text: root.strategyGain
+                            color: GUIParameters.textOnPrimary
+                            font.pixelSize: GUIParameters.fontSizeLarge
+                        }
                     }
                 }
             }
-        }
 
-        Rectangle{
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Layout.margins: 5
-            color: "transparent"
-            radius: 15
-            border.color: "grey"
-            border.width: 2
-            ChartView {
-                anchors.fill: parent
-                antialiasing: true
-                legend.visible: false
-                theme: ChartView.ChartThemeDark
+            Rectangle{
+                id: outcomeChart
+                Layout.preferredHeight: 500
+                Layout.fillWidth: true
+                Layout.margins: 5
+                color: "transparent"
+                radius: 15
+                border.color: "grey"
+                border.width: 1
+                ChartView {
+                    id: chart
+                    anchors.fill: parent
+                    antialiasing: true
+                    legend.visible: false
+                    theme: GUIParameters.chartTheme
 
-                Component.onCompleted: {
-                    backgroundColor = "transparent"
-                    plotAreaColor = "transparent"
-                }
+                    function applyTransparentStyle() {
+                        backgroundColor = "transparent"
+                        plotAreaColor = "transparent"
+                        areaSeries.color = GUIParameters.secondaryHighlight
+                        valueAxisX.gridLineColor = Qt.rgba(0.5, 0.5, 0.5, 0.3)
+                        valueAxisY.gridLineColor = Qt.rgba(0.5, 0.5, 0.5, 0.3)
+                    }
 
-                ValueAxis {
-                    id: valueAxisX
-                    min: 0
-                    max: root.maxX
-                    labelFormat: "%.0f"
-                    tickCount: root.maxX < 20 ? root.maxX : 20
-                    gridLineColor: Qt.rgba(0.5, 0.5, 0.5, 0.3)
-                }
-                ValueAxis {
-                    id: valueAxisY
-                    min: root.minY
-                    max: root.maxY
-                    tickCount: 15
-                    gridLineColor: Qt.rgba(0.5, 0.5, 0.5, 0.3)
-                }
+                    Component.onCompleted: applyTransparentStyle()
 
-                AreaSeries {
-                    id: areaSeries
-                    axisX: valueAxisX
-                    axisY: valueAxisY
-                    color: "#A855F7"
-                    upperSeries: LineSeries {
-                        id: areaChart
+                    Connections {
+                        target: GUIParameters
+
+                        function onChartThemeChanged() {
+                            chart.applyTransparentStyle()
+                        }
+                    }
+
+                    ValueAxis {
+                        id: valueAxisX
+                        min: 0
+                        max: root.maxX
+                        labelFormat: "%.0f"
+                        tickCount: root.maxX < 20 ? root.maxX : 20
+                        gridLineColor: Qt.rgba(0.5, 0.5, 0.5, 0.3)
+                    }
+                    ValueAxis {
+                        id: valueAxisY
+                        min: root.minY
+                        max: root.maxY
+                        tickCount: 15
+                        gridLineColor: Qt.rgba(0.5, 0.5, 0.5, 0.3)
+                    }
+
+                    AreaSeries {
+                        id: areaSeries
+                        axisX: valueAxisX
+                        axisY: valueAxisY
+                        color: GUIParameters.secondaryHighlight
+                        upperSeries: LineSeries {
+                            id: areaChart
+                        }
                     }
                 }
             }
+
+            Rectangle{
+                id: winTable
+                Layout.preferredHeight: 500
+                Layout.fillWidth: true
+                Layout.margins: 5
+                color: "transparent"
+                radius: 15
+                border.color: "grey"
+                border.width: 1
+                visible: false
+                ChartView {
+                    id: winChart
+                    anchors.fill: parent
+                    antialiasing: true
+                    legend.visible: false
+                    theme: GUIParameters.chartTheme
+
+                    function applyTransparentStyle() {
+                        backgroundColor = "transparent"
+                        plotAreaColor = "transparent"
+                        areaSeries2.color = "green"
+                        valueAxisX.gridLineColor = Qt.rgba(0.5, 0.5, 0.5, 0.3)
+                        valueAxisY.gridLineColor = Qt.rgba(0.5, 0.5, 0.5, 0.3)
+                    }
+
+                    Component.onCompleted: applyTransparentStyle()
+
+                    Connections {
+                        target: GUIParameters
+
+                        function onChartThemeChanged() {
+                            winChart.applyTransparentStyle()
+                        }
+                    }
+
+                    ValueAxis {
+                        id: valueAxisX2
+                        min: 0
+                        max: root.maxX
+                        labelFormat: "%.0f"
+                        tickCount: root.maxX < 20 ? root.maxX : 20
+                        gridLineColor: Qt.rgba(0.5, 0.5, 0.5, 0.3)
+                    }
+                    ValueAxis {
+                        id: valueAxisY2
+                        min: root.minY
+                        max: root.maxY
+                        tickCount: 15
+                        gridLineColor: Qt.rgba(0.5, 0.5, 0.5, 0.3)
+                    }
+
+                    AreaSeries {
+                        id: areaSeries2
+                        axisX: valueAxisX2
+                        axisY: valueAxisY2
+                        color: GUIParameters.secondaryHighlight
+                        upperSeries: LineSeries {
+                            id: winSeries
+                        }
+                    }
+                }
+            }
+            Rectangle{
+                id: loseTable
+                Layout.preferredHeight: 500
+                Layout.fillWidth: true
+                Layout.margins: 5
+                color: "transparent"
+                radius: 15
+                border.color: "grey"
+                border.width: 1
+                visible: false
+                ChartView {
+                    id: loseChart
+                    anchors.fill: parent
+                    antialiasing: true
+                    legend.visible: false
+                    theme: GUIParameters.chartTheme
+
+                    function applyTransparentStyle() {
+                        backgroundColor = "transparent"
+                        plotAreaColor = "transparent"
+                        areaSeries3.color = "red"
+                        valueAxisX.gridLineColor = Qt.rgba(0.5, 0.5, 0.5, 0.3)
+                        valueAxisY.gridLineColor = Qt.rgba(0.5, 0.5, 0.5, 0.3)
+                    }
+
+                    Component.onCompleted: applyTransparentStyle()
+
+                    Connections {
+                        target: GUIParameters
+
+                        function onChartThemeChanged() {
+                            loseChart.applyTransparentStyle()
+                        }
+                    }
+
+                    ValueAxis {
+                        id: valueAxisX3
+                        min: 0
+                        max: root.maxX
+                        labelFormat: "%.0f"
+                        tickCount: root.maxX < 20 ? root.maxX : 20
+                        gridLineColor: Qt.rgba(0.5, 0.5, 0.5, 0.3)
+                    }
+                    ValueAxis {
+                        id: valueAxisY3
+                        min: root.minY
+                        max: root.maxY
+                        tickCount: 15
+                        gridLineColor: Qt.rgba(0.5, 0.5, 0.5, 0.3)
+                    }
+
+                    AreaSeries {
+                        id: areaSeries3
+                        axisX: valueAxisX3
+                        axisY: valueAxisY3
+                        color: GUIParameters.secondaryHighlight
+                        upperSeries: LineSeries {
+                            id: loseSeries
+                        }
+                    }
+                }
+            }
+
+
         }
+
     }
-
     Connections {
         target: positionManager
         function onPositionListReady(){
@@ -175,6 +325,47 @@ Item {
             root.strategyGain = positionsInfo.strategyGain
 
             values = positionManager.getPositionsForQML()
+
+            winSeries.clear()
+            loseSeries.clear()
+
+            var wins = Array(24).fill(0)
+            var losses = Array(24).fill(0)
+
+            // Count positions per hour
+            for (var i = 0; i < values.length; i++) {
+                var hour = values[i].time
+
+                if (values[i].isWin)
+                    wins[hour]++
+                else
+                    losses[hour]++
+            }
+
+            // Add to chart
+            for (var h = 0; h < 24; h++) {
+                winSeries.append(h, wins[h])
+                loseSeries.append(h, losses[h])
+            }
+
+            // Update axes
+            valueAxisX2.min = 0
+            valueAxisX2.max = 23
+
+            valueAxisX3.min = 0
+            valueAxisX3.max = 23
+
+            var maxCount = Math.max(
+                ...wins,
+                ...losses
+            )
+
+            valueAxisY2.min = 0
+            valueAxisY2.max = maxCount + 1
+
+            valueAxisY3.min = 0
+            valueAxisY3.max = maxCount + 1
+
             for(var i=0; i < values.length; i++){
                 income += values[i].yValue * risk * (income/100)
                 incomeValues.push(income)
@@ -185,6 +376,27 @@ Item {
             for(var j=0; j < incomeValues.length; j++){
                 areaChart.append(j, incomeValues[j])
             }
+        }
+    }
+    Connections {
+        target: csvLoader
+        function onCandlesReady() {
+            areaChart.clear()
+            winrateGauge.percentage = 0
+            root.totalPos = 0
+            root.successPos = 0
+            root.failedPos = 0
+            root.averageRtoR = 0
+            root.strategyGain = 0
+        }
+        function onCloseCsvFile() {
+            areaChart.clear()
+            winrateGauge.percentage = 0
+            root.totalPos = 0
+            root.successPos = 0
+            root.failedPos = 0
+            root.averageRtoR = 0
+            root.strategyGain = 0
         }
     }
 }

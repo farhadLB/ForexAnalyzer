@@ -15,7 +15,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: "#111827"
+        color: GUIParameters.background
 
         HorizontalHeaderView {
             id: horizontalHeader
@@ -25,22 +25,21 @@ Item {
             anchors.top: parent.top
             anchors.margins: 10
             delegate: Rectangle {
-                color: "#2a5175"
+                color: GUIParameters.secondary
                 implicitHeight: 40
                 Row {
                     anchors.centerIn: parent
                     spacing: 4
                     Text {
                         text: model.display
-                        font.bold: true
                         font.pixelSize: 17
-                        color: "white"
+                        color: GUIParameters.textOnPrimary
                         anchors.verticalCenter: parent.verticalCenter
                     }
                     Text {
                         visible: sortColumn === column
                         text: sortAscending ? "▲" : "▼"
-                        font.pixelSize: 13
+                        font.pixelSize: GUIParameters.fontSizeSmall
                         color: "#add8ff"
                         anchors.verticalCenter: parent.verticalCenter
                     }
@@ -54,12 +53,12 @@ Item {
                             root.sortColumn    = column
                             root.sortAscending = true
                         }
-                        positionModel.sort(
+                        proxyModel.sort(
                                     column,
                                     root.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
                                     )
                         tableView.model = null
-                        tableView.model = positionModel
+                        tableView.model = proxyModel
                     }
                 }
             }
@@ -77,17 +76,16 @@ Item {
             clip: true
 
             columnWidthProvider: function(column) {
-                // return column !== 3 ? 150 : 200
                 return (parent.width - 30) / columns
             }
 
-            model: positionModel
+            model: proxyModel
             delegate: Rectangle {
                 id: rec
                 color: {
                     if (root.hoveredRow === row)
-                        return "#1e3a5f"
-                    return row % 2 === 0 ? "transparent" : "#2f373d"
+                        return GUIParameters.titleBar
+                    return row % 2 === 0 ? "transparent" : GUIParameters.primary
                 }
                 implicitWidth:  column != 3 ? 150 : 200
                 implicitHeight: 40
@@ -103,20 +101,33 @@ Item {
                     anchors.centerIn: parent
                     text: {
                         switch(column) {
-                        case 0: return Idx + 1
-                        case 1: return EntryPrice
-                        case 2: return StopLoss
-                        case 3: return TakeProfit.toFixed(3)
-                        case 4: return Timeframe
-                        case 5: return Type
-                        case 6: return (Win) ? "success" : "fail"
+                        case 0: return  Idx + 1
+                        case 1: return  EntryPrice
+                        case 2: return  StopLoss
+                        case 3: return  TakeProfit.toFixed(3)
+                        case 4: return  Timeframe
+                        case 5: return  Type
+                        case 6: return  (Win) ? "success" : "fail"
+                        case 7: return  ADX.toFixed(3)
+                        case 8: return  PlusDI.toFixed(3)
+                        case 9: return  MinusDI.toFixed(3)
+                        case 10: return TrendAligned
                         }
                     }
-                    font.pixelSize: 17
+                    font.pixelSize: GUIParameters.fontSizeLarge
                     font.bold: column === 6 ? true : false
-                    color: column === 6 ? (Win ? "#00aa55" : "#cc3333") : "white"
+                    color: column === 6 ? (Win ? "#00aa55" : "#cc3333") : GUIParameters.textOnPrimary
                 }
             }
+        }
+    }
+    Connections {
+        target: csvLoader
+        function onCandlesReady() {
+            positionModel.clearData()
+        }
+        function onCloseCsvFile() {
+            positionModel.clearData()
         }
     }
 }

@@ -17,7 +17,11 @@ public:
         TakeProfitRole,
         TimeframeRole,
         PositionTypeRole,
-        WinRole
+        WinRole,
+        ADXRole,
+        PlusDIRole,
+        MinusDIRole,
+        TrendAlignedRole
     };
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
@@ -25,6 +29,7 @@ public:
     int columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     QHash<int, QByteArray> roleNames() const;
+    Q_INVOKABLE void clearData();
 
 public slots:
     void setPositionList(QList<Position> newList);

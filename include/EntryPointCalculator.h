@@ -8,6 +8,8 @@
 #include <CsvLoader.h>
 #include <PositionManager.h>
 #include <CandleUtils.h>
+#include <TrendCalculator.h>
+
 
 class EntryPointCalculator : public QObject
 {
@@ -24,9 +26,8 @@ public:
     };
 
     QVariantList getLevels();
-
-    // --- calculate the Average True Range for candles
     double ATR(const QVector<Candle> &candles);
+    double PivotATR(QVector<Candle> *candles, const int start, const int end);
 
 public slots:
     void HorizantalLevelBreak(TimeframeAggregator::Timeframe leveltf,
@@ -44,14 +45,15 @@ public slots:
                        double levelFilterGap,
                        int stopLookback,
                        int takeProfitLookback,
-                       int candleCountForTP
-                       );
+                       int candleCountForTP,
+                       double rewradToRisk);
 signals:
     void entryPointReady(int stopLookback,
                          int takeProfitLookback,
                          int candleCountForTP,
                          TimeframeAggregator::Timeframe takeProfitTF,
-                         TimeframeAggregator::Timeframe breaktf
+                         TimeframeAggregator::Timeframe breaktf,
+                         double rewradToRisk
                          );
 
 private:
@@ -63,6 +65,8 @@ private:
     CsvLoader           *m_loader;
     PositionManager     *m_pos;
     int                 m_strategy;
+    TrendCalculator     m_trendCalc;
+
 };
 
 #endif // ENTRYPOINTCALCULATOR_H

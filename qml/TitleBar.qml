@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Dialogs
+import "components"
 
 Item{
     id: mainItem
@@ -10,19 +11,19 @@ Item{
     property var root
     Rectangle {
         id: titleBar
-        color: "#2a2a40"
+        color: GUIParameters.titleBar
         anchors.fill: parent
         property bool closedByButton: false
 
         MouseArea {
             anchors.fill: parent
             onPressed: (mouse) => {
-                root.startSystemMove()
-                if (filePopup.visible && !titleBar.closedByButton) {
-                    filePopup.close()
-                }
-                titleBar.closedByButton = false
-            }
+                           root.startSystemMove()
+                           if (filePopup.visible && !titleBar.closedByButton) {
+                               filePopup.close()
+                           }
+                           titleBar.closedByButton = false
+                       }
         }
 
         RowLayout {
@@ -36,19 +37,19 @@ Item{
                 Text {
                     anchors.centerIn: parent
                     text: "File"
-                    font.pixelSize: 14
-                    color: "white"
+                    font.pixelSize: GUIParameters.fontSizeNormal
+                    color: GUIParameters.textOnPrimary
                 }
                 MouseArea {
                     anchors.fill: parent
                     onPressed: (mouse) => {
-                        mouse.accepted = true  // blocks background MouseArea
-                        if (filePopup.visible) {
-                            filePopup.close()
-                        } else {
-                            filePopup.open()
-                        }
-                    }
+                                   mouse.accepted = true  // blocks background MouseArea
+                                   if (filePopup.visible) {
+                                       filePopup.close()
+                                   } else {
+                                       filePopup.open()
+                                   }
+                               }
                 }
             }
             Rectangle{
@@ -58,8 +59,8 @@ Item{
                 Text {
                     anchors.centerIn: parent
                     text: "Preferences"
-                    font.pixelSize: 14
-                    color: "white"
+                    font.pixelSize: GUIParameters.fontSizeNormal
+                    color: GUIParameters.textOnPrimary
                 }
             }
             Rectangle{
@@ -69,8 +70,8 @@ Item{
                 Text {
                     anchors.centerIn: parent
                     text: "About"
-                    font.pixelSize: 14
-                    color: "white"
+                    font.pixelSize: GUIParameters.fontSizeNormal
+                    color: GUIParameters.textOnPrimary
                 }
             }
         }
@@ -95,6 +96,10 @@ Item{
                     onClicked: {
                         root.showMinimized()
                     }
+                    CustomToolTip{
+                        visible: parent.containsMouse
+                        text: "Minimize"
+                    }
                 }
             }
             Rectangle{
@@ -112,10 +117,12 @@ Item{
                     onClicked: {
                         if (root.visibility === Window.Maximized)
                             root.showNormal()
-                        if (root.visibility === Window.Minimized)
-                            root.showNormal()
                         else
                             root.showMaximized()
+                    }
+                    CustomToolTip{
+                        visible: parent.containsMouse
+                        text: "Maximize"
                     }
                 }
             }
@@ -134,6 +141,10 @@ Item{
                     onClicked: {
                         root.close()
                     }
+                    CustomToolTip{
+                        visible: parent.containsMouse
+                        text: "Close"
+                    }
                 }
             }
         }
@@ -142,7 +153,7 @@ Item{
     Popup{
         id: filePopup
         width: 150
-        height: 300
+        height: 150
         y: mainItem.height
         x: 5
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
@@ -155,8 +166,10 @@ Item{
         }
 
         background: Rectangle{
+            id: popUpRec
             anchors.fill: parent
-            color: "#2a2a40"
+            color: GUIParameters.titleBar
+
             ColumnLayout {
                 anchors.top: parent.top
                 anchors.left: parent.left
@@ -166,18 +179,19 @@ Item{
                 Rectangle{
                     id: openRec
                     Layout.fillWidth: true
-                    Layout.minimumHeight: 25
+                    Layout.minimumHeight: 35
                     color: "transparent"
                     Text{
-                        anchors.fill: parent
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
                         text: "    Open File"
-                        font.pixelSize: 14
-                        color: "white"
+                        font.pixelSize: GUIParameters.fontSizeNormal
+                        color: GUIParameters.textOnPrimary
                     }
                     MouseArea{
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered: openRec.color = "#3e3e59"
+                        onEntered: openRec.color = GUIParameters.primary
                         onExited: openRec.color  = "transparent"
                         onClicked: {
                             fileDialog.open()
@@ -188,37 +202,66 @@ Item{
                 Rectangle{
                     id: closeRec
                     Layout.fillWidth: true
-                    Layout.minimumHeight: 25
+                    Layout.minimumHeight: 35
                     color: "transparent"
+                    z: -1
                     Text{
-                        anchors.fill: parent
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
                         text: "    Close File"
-                        font.pixelSize: 14
-                        color: "white"
+                        font.pixelSize: GUIParameters.fontSizeNormal
+                        color: GUIParameters.textOnPrimary
                     }
                     MouseArea{
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered: closeRec.color = "#3e3e59"
+                        onEntered: closeRec.color = GUIParameters.primary
                         onExited: closeRec.color  = "transparent"
+                        onClicked: {
+                            csvLoader.closeFile()
+                            filePopup.close()
+                        }
                     }
                 }
                 Rectangle{
                     id: saveRec
                     Layout.fillWidth: true
-                    Layout.minimumHeight: 25
+                    Layout.minimumHeight: 35
                     color: "transparent"
                     Text{
-                        anchors.fill: parent
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
                         text: "    Save Result"
-                        font.pixelSize: 14
-                        color: "white"
+                        font.pixelSize: GUIParameters.fontSizeNormal
+                        color: GUIParameters.textOnPrimary
                     }
                     MouseArea{
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered: saveRec.color = "#3e3e59"
+                        onEntered: saveRec.color = GUIParameters.primary
                         onExited: saveRec.color  = "transparent"
+                    }
+                }
+                Rectangle{
+                    id: exitRec
+                    Layout.fillWidth: true
+                    Layout.minimumHeight: 35
+                    color: "transparent"
+                    Text{
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "    Exit"
+                        font.pixelSize: GUIParameters.fontSizeNormal
+                        color: GUIParameters.textOnPrimary
+                    }
+                    MouseArea{
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered: exitRec.color = GUIParameters.primary
+                        onExited: exitRec.color  = "transparent"
+                        onClicked: {
+                            root.close()
+                        }
                     }
                 }
             }

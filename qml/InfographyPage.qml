@@ -11,33 +11,22 @@ Item {
     Rectangle {
         id: background
         anchors.fill: parent
-        color: "#111827"
+        color: GUIParameters.background
+
+        Rectangle {
+            anchors.fill: parent
+            color: "#80111827"
+            visible: positionManager.isLoading
+            z: 10
+
+            BusyIndicator {
+                anchors.centerIn: parent
+                running: positionManager.isLoading
+            }
+        }
+
         ColumnLayout{
             anchors.fill: parent
-
-            // TabBar{
-            //     Layout.preferredWidth: 250
-            //     Layout.preferredHeight: 40
-            //     Layout.margins: 10
-            //     Material.background: Material.primary
-            //     currentIndex: 0
-            //     TabButton{
-            //         id: chartButton
-            //         text: "Chart"
-            //         width: 100
-            //         onClicked: {
-            //             stack.currentIndex = 0
-            //         }
-            //     }
-            //     TabButton{
-            //         id: tableButton
-            //         text: "Positions table"
-            //         width: 150
-            //         onClicked: {
-            //             stack.currentIndex = 1
-            //         }
-            //     }
-            // }
             StackLayout{
                 id: stack
                 Layout.fillHeight: true

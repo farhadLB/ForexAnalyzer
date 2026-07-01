@@ -15,6 +15,7 @@ add_library(forexanalyzer_lib STATIC
     ${CMAKE_SOURCE_DIR}/include/PositionModel.h
     ${CMAKE_SOURCE_DIR}/include/CsvWorker.h
     ${CMAKE_SOURCE_DIR}/include/CandleUtils.h
+    ${CMAKE_SOURCE_DIR}/include/TrendCalculator.h
 
 
     # Sources
@@ -29,6 +30,7 @@ add_library(forexanalyzer_lib STATIC
     TakeProfitCalculator.cpp
     PositionModel.cpp
     CsvWorker.cpp
+    TrendCalculator.cpp
 )
 
 target_link_libraries(forexanalyzer_lib PUBLIC Qt6::Core Qt6::Concurrent)

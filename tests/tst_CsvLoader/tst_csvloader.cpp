@@ -1,5 +1,5 @@
 #include <QtTest>
-#include "CsvLoader.h"   // works because forexanalyzer_lib exposes include/
+#include "CsvLoader.h"
 
 class TestCsvLoader : public QObject
 {
@@ -9,7 +9,7 @@ private slots:
     void testLoadsCorrectRowCount()
     {
         CsvLoader Loader;
-        QString fileUrl = "file:///C:/Users/LENOVO/Desktop/XAUUSD.csv";
+        QString fileUrl = "";
         QSignalSpy spy(&Loader, SIGNAL(fileLoaded(int)));
         Loader.loadFile(fileUrl);
         QCOMPARE(spy.count(), 2);

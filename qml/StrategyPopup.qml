@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "components"
 
 Item {
     anchors.fill: parent
@@ -30,7 +31,7 @@ Item {
             id: bg
             width: popup.width
             height: popup.height
-            color: "#111827"
+            color: GUIParameters.background
             radius: 10
             Rectangle{
                 id: closeButton
@@ -55,8 +56,8 @@ Item {
             Text {
                 id: title
                 text: "Stretegy Settings"
-                color: "white"
-                font.pixelSize: 20
+                color: GUIParameters.textOnPrimary
+                font.pixelSize: GUIParameters.fontSizeTitle
                 font.bold: true
                 anchors.top: parent.top
                 anchors.left: parent.left
@@ -75,14 +76,14 @@ Item {
                     id: entryButton
                     width: 90
                     height: popup.buttonHeight
-                    color: popup.tabIndex === 0 ? "#202c48" : "#3e3e59"
+                    color: popup.tabIndex === 0 ? GUIParameters.primary : GUIParameters.titleBar
                     topRightRadius: 5
                     topLeftRadius: 5
                     Text {
                         anchors.centerIn: parent
                         text: "Entry Point"
-                        font.pixelSize: 14
-                        color: "white"
+                        font.pixelSize: GUIParameters.fontSizeNormal
+                        color: GUIParameters.textOnPrimary
                     }
                     MouseArea{
                         anchors.fill: parent
@@ -98,14 +99,14 @@ Item {
                     id: stopButton
                     width: 90
                     height: popup.buttonHeight
-                    color: popup.tabIndex === 1 ? "#202c48" : "#3e3e59"
+                    color: popup.tabIndex === 1 ? GUIParameters.primary : GUIParameters.titleBar
                     topRightRadius: 5
                     topLeftRadius: 5
                     Text {
                         anchors.centerIn: parent
                         text: "Stop Loss"
-                        font.pixelSize: 14
-                        color: "white"
+                        font.pixelSize: GUIParameters.fontSizeNormal
+                        color: GUIParameters.textOnPrimary
                     }
                     MouseArea{
                         anchors.fill: parent
@@ -121,14 +122,14 @@ Item {
                     id: takeProfitButton
                     width: 90
                     height: popup.buttonHeight
-                    color: popup.tabIndex === 2 ? "#202c48" : "#3e3e59"
+                    color: popup.tabIndex === 2 ? GUIParameters.primary : GUIParameters.titleBar
                     topRightRadius: 5
                     topLeftRadius: 5
                     Text {
                         anchors.centerIn: parent
                         text: "Take Profit"
-                        font.pixelSize: 14
-                        color: "white"
+                        font.pixelSize: GUIParameters.fontSizeNormal
+                        color: GUIParameters.textOnPrimary
                     }
                     MouseArea{
                         anchors.fill: parent
@@ -148,7 +149,7 @@ Item {
                 anchors.top: tabBar.bottom
                 anchors.left: parent.left
                 anchors.leftMargin: popup.leftMarginValue
-                color: "#202c48"
+                color: GUIParameters.primary
                 topRightRadius: 10
                 bottomLeftRadius: 10
                 bottomRightRadius: 10
@@ -175,14 +176,12 @@ Item {
                                     id: leveltf
                                     Layout.minimumWidth: 120
                                     text: "Level Timeframe: "
-                                    font.pixelSize: 13
-                                    color: "white"
+                                    font.pixelSize: GUIParameters.fontSizeNormal
+                                    color: GUIParameters.textOnPrimary
                                 }
-                                ComboBox{
+                                CustomComboBox{
                                     id: levelCombo
                                     model: ["1m", "5m", "15m", "1h", "4h", "Daily"]
-                                    Material.theme: Material.Dark
-
                                     onActivated: {
                                         positionManager.leveltf = model[currentIndex]
                                     }
@@ -197,13 +196,12 @@ Item {
                                     Layout.minimumWidth: 120
                                     text: "Break Timeframe: "
                                     font.family: "Book Antiqua"
-                                    font.pixelSize: 13
-                                    color: "white"
+                                    font.pixelSize: GUIParameters.fontSizeNormal
+                                    color: GUIParameters.textOnPrimary
                                 }
-                                ComboBox{
+                                CustomComboBox{
                                     id: breakCombo
                                     model: ["1m", "5m", "15m", "1h", "4h", "Daily"]
-                                    Material.theme: Material.Dark
                                     onActivated: {
                                         positionManager.breaktf = model[currentIndex]
                                     }
@@ -219,17 +217,17 @@ Item {
                                 id: entryLookback
                                 Layout.minimumWidth: 120
                                 text: "Entry Sensetivity"
-                                font.pixelSize: 13
-                                color: "white"
+                                font.pixelSize: GUIParameters.fontSizeNormal
+                                color: GUIParameters.textOnPrimary
                             }
 
-                            Slider{
-                                id: entrySlider
+                            CustomSlider{
+                                id: entryCustomSlider
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 from: 1
                                 to: 100
-                                value: 50
+                                value: positionManager.entryLookback
                                 stepSize: 1
                                 onValueChanged: {
                                     positionManager.entryLookback = value
@@ -239,9 +237,9 @@ Item {
                                 id: entryValue
                                 Layout.minimumWidth: 10
                                 Layout.alignment: Qt.AlignRight
-                                text: entrySlider.value
-                                font.pixelSize: 13
-                                color: "white"
+                                text: entryCustomSlider.value
+                                font.pixelSize: GUIParameters.fontSizeNormal
+                                color: GUIParameters.textOnPrimary
                             }
                         }
                         RowLayout{
@@ -253,18 +251,19 @@ Item {
                                 id: entryThresholdLabel
                                 Layout.minimumWidth: 120
                                 text: "Entry threshold"
-                                font.pixelSize: 13
-                                color: "white"
+                                font.pixelSize: GUIParameters.fontSizeNormal
+                                color: GUIParameters.textOnPrimary
                             }
 
-                            Slider{
-                                id: entryThresholdSlider
+                            CustomSlider{
+                                id: entryThresholdCustomSlider
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 from: 0.1
-                                to: 3.0
-                                value: 0.1
+                                to: 1.0
+                                value: positionManager.entryThreshold
                                 stepSize: 0.1
+                                decimal: 1
                                 onValueChanged: {
                                     positionManager.entryThreshold = parseFloat(value.toFixed(1))
                                 }
@@ -273,9 +272,9 @@ Item {
                                 id: entryThresholdValue
                                 Layout.minimumWidth: 10
                                 Layout.alignment: Qt.AlignRight
-                                text: entryThresholdSlider.value.toFixed(1)
-                                font.pixelSize: 13
-                                color: "white"
+                                text: entryThresholdCustomSlider.value.toFixed(1)
+                                font.pixelSize: GUIParameters.fontSizeNormal
+                                color: GUIParameters.textOnPrimary
                             }
                         }
                         RowLayout{
@@ -287,29 +286,30 @@ Item {
                                 id: entryGap
                                 Layout.minimumWidth: 120
                                 text: "level gap filter"
-                                font.pixelSize: 13
-                                color: "white"
+                                font.pixelSize: GUIParameters.fontSizeNormal
+                                color: GUIParameters.textOnPrimary
                             }
 
-                            Slider{
-                                id: entryGapSlider
+                            CustomSlider{
+                                id: entryGapCustomSlider
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 from: 0
-                                to: 2
-                                value: 1
-                                stepSize: 0.1
+                                to: 1
+                                value: positionManager.levelFilterGap
+                                stepSize: 0.001
+                                decimal: 3
                                 onValueChanged: {
-                                    positionManager.levelFilterGap = parseFloat(value.toFixed(1))
+                                    positionManager.levelFilterGap = parseFloat(value.toFixed(4))
                                 }
                             }
                             Text {
                                 id: entryGapValue
                                 Layout.minimumWidth: 10
                                 Layout.alignment: Qt.AlignRight
-                                text: entryGapSlider.value.toFixed(1)
-                                font.pixelSize: 13
-                                color: "white"
+                                text: entryGapCustomSlider.value.toFixed(2)
+                                font.pixelSize: GUIParameters.fontSizeNormal
+                                color: GUIParameters.textOnPrimary
                             }
                         }
                         RowLayout{
@@ -321,16 +321,15 @@ Item {
                                 id: breakCandles
                                 Layout.minimumWidth: 120
                                 text: "Break Candles:"
-                                font.pixelSize: 13
-                                color: "white"
+                                font.pixelSize: GUIParameters.fontSizeNormal
+                                color: GUIParameters.textOnPrimary
                             }
 
-                            TextField{
+                            CustomTextField{
                                 Layout.alignment: Qt.AlignHCenter
                                 Layout.margins: 10
                                 Layout.maximumHeight: 40
-                                placeholderTextColor: "white"
-                                Material.theme: Material.Dark
+                                placeholderTextColor: GUIParameters.textOnPrimary
                                 onAccepted: {
                                     positionManager.candleCountForBreak = parseFloat(text)
                                 }
@@ -356,19 +355,19 @@ Item {
                                 id: stopLookback
                                 text: "Stop Sensetivity"
                                 Layout.minimumWidth: 120
-                                font.pixelSize: 13
-                                color: "white"
+                                font.pixelSize: GUIParameters.fontSizeNormal
+                                color: GUIParameters.textOnPrimary
                             }
 
-                            Slider{
-                                id: stopSlider
+                            CustomSlider{
+                                id: stopCustomSlider
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 from: 1
                                 to: 100
-                                value: 30
+                                value: positionManager.stopLookback
                                 stepSize: 1
-                                snapMode: Slider.SnapAlways
+                                snapMode: CustomSlider.SnapAlways
                                 onValueChanged: {
                                     positionManager.stopLookback = value
                                 }
@@ -377,9 +376,9 @@ Item {
                                 id: stopValue
                                 Layout.minimumWidth: 10
                                 Layout.alignment: Qt.AlignRight
-                                text: stopSlider.value
-                                font.pixelSize: 13
-                                color: "white"
+                                text: stopCustomSlider.value
+                                font.pixelSize: GUIParameters.fontSizeNormal
+                                color: GUIParameters.textOnPrimary
                             }
                         }
                     }
@@ -403,19 +402,19 @@ Item {
                                 id: takeProfitLookback
                                 Layout.minimumWidth: 120
                                 text: "TP Sensetivity"
-                                font.pixelSize: 13
-                                color: "white"
+                                font.pixelSize: GUIParameters.fontSizeNormal
+                                color: GUIParameters.textOnPrimary
                             }
 
-                            Slider{
-                                id: takeProfitSlider
+                            CustomSlider{
+                                id: takeProfitCustomSlider
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 from: 1
                                 to: 100
-                                value: 50
+                                value: positionManager.takeProfitLookback
                                 stepSize: 1
-                                snapMode: Slider.SnapAlways
+                                snapMode: CustomSlider.SnapAlways
                                 onValueChanged: {
                                     positionManager.takeProfitLookback = value
                                 }
@@ -424,9 +423,46 @@ Item {
                                 id: takeProfitValue
                                 Layout.minimumWidth: 10
                                 Layout.alignment: Qt.AlignRight
-                                text: takeProfitSlider.value
-                                font.pixelSize: 13
-                                color: "white"
+                                text: takeProfitCustomSlider.value
+                                font.pixelSize: GUIParameters.fontSizeNormal
+                                color: GUIParameters.textOnPrimary
+                            }
+                        }
+
+                        RowLayout{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.margins: 10
+
+                            Text{
+                                id: rewardToRisk
+                                Layout.minimumWidth: 120
+                                text: "Reward to Risk Ratio"
+                                font.pixelSize: GUIParameters.fontSizeNormal
+                                color: GUIParameters.textOnPrimary
+                            }
+
+                            CustomSlider{
+                                id: rewardToRiskCustomSlider
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                from: 0.5
+                                to: 3
+                                value: positionManager.rewradToRisk
+                                stepSize: 0.1
+                                decimal: 1
+                                snapMode: CustomSlider.SnapAlways
+                                onValueChanged: {
+                                    positionManager.rewradToRisk = value
+                                }
+                            }
+                            Text {
+                                id: rewardToRiskValue
+                                Layout.minimumWidth: 10
+                                Layout.alignment: Qt.AlignRight
+                                text: rewardToRiskCustomSlider.value.toFixed(1)
+                                font.pixelSize: GUIParameters.fontSizeNormal
+                                color: GUIParameters.textOnPrimary
                             }
                         }
                         RowLayout{
@@ -438,22 +474,35 @@ Item {
                                 id: tPCandles
                                 Layout.minimumWidth: 120
                                 text: "TP Candles: "
-                                font.pixelSize: 14
-                                color: "white"
+                                font.pixelSize: GUIParameters.fontSizeNormal
+                                color: GUIParameters.textOnPrimary
                             }
 
-                            TextField{
+                            CustomTextField{
                                 Layout.alignment: Qt.AlignHCenter
                                 Layout.margins: 10
                                 Layout.maximumHeight: 40
-                                placeholderTextColor: "white"
-                                Material.theme: Material.Dark
+                                placeholderTextColor: GUIParameters.textOnPrimary
                                 onAccepted: {
                                     positionManager.candleCountForTP = parseFloat(text)
                                 }
                             }
                         }
                     }
+                }
+            }
+            CustomButton{
+                id: okButton
+                anchors.bottom: parent.bottom
+                anchors.right: parent.right
+                anchors.rightMargin: 20
+                anchors.bottomMargin: 10
+                width: 100
+                iconVisible: false
+                textSize: 15
+                buttonText: "Ok"
+                onClicked: {
+                    popup.close()
                 }
             }
         }

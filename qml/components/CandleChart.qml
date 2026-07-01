@@ -18,7 +18,7 @@ Item {
     property real dragStartX: 0
     property int  dragStartIndex: 0
 
-    property real wheelFactor: 1.4   // ضریب زوم
+    property real wheelFactor: 1.4   // zoom coefficient
     property int minVisibleCount: 10
     property int maxVisibleCount: 750
 
@@ -30,10 +30,10 @@ Item {
     property real crossY: 0
     property bool crossVisible: true
 
-    property real basePaddingPercent: 0.55     // padding حالت zoom-out
-    property real minPaddingPercent: 0.13      // حداقل padding در zoom-in
+    property real basePaddingPercent: 0.55     // zoom-out padding
+    property real minPaddingPercent: 0.13      // minimum zoom-in padding
 
-    property int rightOffsetCandles: 0   // تعداد کندل فضای خالی انتها
+    property int rightOffsetCandles: 0   // number of empty candles at the end
 
     property real leftMargin: 60
     property real topMargin: 10
@@ -45,6 +45,7 @@ Item {
     property int currentPositionIndex: 0
 
     property bool isLoading: false
+    property bool themeToggle: false
 
 
     Connections {
@@ -76,9 +77,8 @@ Item {
             }
 
             var positionTf = Aggregator.getTimeframe(positions[0].Timeframe)
-            var newCandles = Aggregator.aggregate(root.rawCandles, positionTf)
-            Aggregator.setTimeframe(positions[0].Timeframe)
-            root.candles = newCandles
+            Aggregator.comboIndex = positionTf
+            root.firstVisibleIndex = 0
         } else {
             canvas.requestPaint()
         }
@@ -90,6 +90,10 @@ Item {
             recalcPriceRange()
             canvas.requestPaint()
         }
+    }
+
+    onThemeToggleChanged:  {
+        canvas.requestPaint()
     }
 
     function nextPosition() {
@@ -139,8 +143,6 @@ Item {
 
         var range = maxP - minP
         if (range <= 0) range = 1
-
-        // ---- padding وابسته به zoom ----
         var zoomRatio = visibleCount / candles.length
         var dynamicPaddingPercent =
                 minPaddingPercent +
@@ -232,15 +234,6 @@ Item {
                 return root.leftMargin + (index - firstVisibleIndex) * candleW + candleW * 0.5
             }
 
-            // function timeToIndex(time)
-            // {
-            //     for(var i=0;i<candles.length;i++){
-            //         if(candles[i].time >= time)
-            //             return i
-            //     }
-            //     return candles.length-1
-            // }
-
             function timeToIndex(time) {
                 var lo = 0
                 var hi = candles.length - 1
@@ -309,7 +302,7 @@ Item {
 
             // crosshair
             if (crossVisible) {
-                ctx.strokeStyle = "white"
+                ctx.strokeStyle = GUIParameters.textOnPrimary
                 ctx.setLineDash([4,4])
 
                 // vertical
@@ -421,106 +414,104 @@ Item {
             if (positionVisible)
             {
                 var positions  = chartObjects.positions()
-                var pos        = positions[currentPositionIndex]
-                var fromTf     = Aggregator.getTimeframe(pos.Timeframe)
-                var newLevelIdx= Aggregator.indexAggregate(pos.LevelIdx, fromTf, currentTimeframe)
-                var newEntryIdx= Aggregator.indexAggregate(pos.EntryIdx, fromTf, currentTimeframe)
-                var newEndIdx  = Aggregator.indexAggregate(pos.EndIdx, fromTf, currentTimeframe)
-                var entryX2    = indexToX(pos.LevelIdx)
-                var entryY2    = priceToY(pos.LevelPrice)
-                var entryX     = indexToX(newEntryIdx.index)
-                // var entryX2    = indexToX(pos.LevelIdx)
-                // var entryY2    = pos.isBullish ? priceToY(root.candles[pos.LevelIdx].high) : priceToY(root.candles[pos.LevelIdx].low)
-                // var endX       = indexToX(pos.EndIdx)
-                var endX       = indexToX(newEndIdx.index)
-                var entryY     = priceToY(pos.EntryPointPrice)
-                var stopY      = priceToY(pos.StopLossPrice)
-                var profitY    = priceToY(pos.TakeProfitPrice)
-                var rectX      = Math.min(entryX, endX)
-                var rectW      = Math.abs(endX - entryX)
+                if (positions.length !== 0){
+                    var pos        = positions[currentPositionIndex]
+                    var fromTf     = Aggregator.getTimeframe(pos.Timeframe)
+                    var newLevelIdx= Aggregator.indexAggregate(pos.LevelIdx, fromTf, currentTimeframe)
+                    var newEntryIdx= Aggregator.indexAggregate(pos.EntryIdx, fromTf, currentTimeframe)
+                    var newEndIdx  = Aggregator.indexAggregate(pos.EndIdx, fromTf, currentTimeframe)
+                    var entryX2    = indexToX(pos.LevelIdx)
+                    var entryY2    = priceToY(pos.LevelPrice)
+                    var entryX     = indexToX(newEntryIdx.index)
+                    var endX       = indexToX(newEndIdx.index)
+                    var entryY     = priceToY(pos.EntryPointPrice)
+                    var stopY      = priceToY(pos.StopLossPrice)
+                    var profitY    = priceToY(pos.TakeProfitPrice)
+                    var rectX      = Math.min(entryX, endX)
+                    var rectW      = Math.abs(endX - entryX)
 
-                // entry price dash line
-                ctx.setLineDash([6,4])
-                ctx.strokeStyle = positions[currentPositionIndex].isBullish ? "#00ffaa" : "red"
-                ctx.beginPath()
-                ctx.moveTo(entryX2, entryY2)
-                ctx.lineTo(width, entryY2)
-                ctx.stroke()
+                    // entry price dash line
+                    ctx.setLineDash([6,4])
+                    ctx.strokeStyle = positions[currentPositionIndex].isBullish ? "#00ffaa" : "red"
+                    ctx.beginPath()
+                    ctx.moveTo(entryX2, entryY2)
+                    ctx.lineTo(width, entryY2)
+                    ctx.stroke()
 
-                // entry price circle
-                ctx.beginPath()
-                ctx.arc(entryX, entryY, 5, 0, 2 * Math.PI)
-                ctx.fillStyle = "orange"
-                ctx.fill()
+                    // entry price circle
+                    ctx.beginPath()
+                    ctx.arc(entryX, entryY, 5, 0, 2 * Math.PI)
+                    ctx.fillStyle = "orange"
+                    ctx.fill()
 
-                // profit zone (green, above entry line — lower Y = higher price)
-                ctx.fillStyle  = "rgba(0, 180, 100, 0.18)"
-                ctx.fillRect(rectX, profitY, rectW, entryY - profitY)
+                    // profit zone (green, above entry line — lower Y = higher price)
+                    ctx.fillStyle  = "rgba(0, 180, 100, 0.18)"
+                    ctx.fillRect(rectX, profitY, rectW, entryY - profitY)
 
-                // loss zone (red, below entry line)
-                ctx.fillStyle  = "rgba(220, 50, 50, 0.18)"
-                ctx.fillRect(rectX, entryY, rectW, stopY - entryY)
+                    // loss zone (red, below entry line)
+                    ctx.fillStyle  = "rgba(220, 50, 50, 0.18)"
+                    ctx.fillRect(rectX, entryY, rectW, stopY - entryY)
 
-                // entry line
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.85)"
-                ctx.lineWidth   = 1
-                ctx.setLineDash([])
-                ctx.beginPath()
-                ctx.moveTo(rectX, entryY)
-                ctx.lineTo(rectX + rectW, entryY)
-                ctx.stroke()
+                    // entry line
+                    ctx.strokeStyle = "rgba(255, 255, 255, 0.85)"
+                    ctx.lineWidth   = 1
+                    ctx.setLineDash([])
+                    ctx.beginPath()
+                    ctx.moveTo(rectX, entryY)
+                    ctx.lineTo(rectX + rectW, entryY)
+                    ctx.stroke()
 
-                // take profit line
-                ctx.strokeStyle = "#00cc66"
-                ctx.lineWidth   = 1
-                ctx.beginPath()
-                ctx.moveTo(rectX, profitY)
-                ctx.lineTo(rectX + rectW, profitY)
-                ctx.stroke()
+                    // take profit line
+                    ctx.strokeStyle = "#00cc66"
+                    ctx.lineWidth   = 1
+                    ctx.beginPath()
+                    ctx.moveTo(rectX, profitY)
+                    ctx.lineTo(rectX + rectW, profitY)
+                    ctx.stroke()
 
-                // stop loss line
-                ctx.strokeStyle = "#dd3333"
-                ctx.lineWidth   = 1
-                ctx.beginPath()
-                ctx.moveTo(rectX, stopY)
-                ctx.lineTo(rectX + rectW, stopY)
-                ctx.stroke()
+                    // stop loss line
+                    ctx.strokeStyle = "#dd3333"
+                    ctx.lineWidth   = 1
+                    ctx.beginPath()
+                    ctx.moveTo(rectX, stopY)
+                    ctx.lineTo(rectX + rectW, stopY)
+                    ctx.stroke()
 
-                // positions info text
-                ctx.fillStyle = "white"
-                ctx.font = "15px sans-serif bold"
-                ctx.textAlign = "end"
-                ctx.fillText("Position Id: ", leftMargin + 50, 50)
-                ctx.fillText(currentPositionIndex + 1, leftMargin + 200, 50)
-                ctx.fillText("Entry Index: ", leftMargin + 50, 80)
-                ctx.fillText(pos.EntryIdx, leftMargin + 200, 80)
-                ctx.fillText("Stop Loss Price: ", leftMargin + 50, 110)
-                ctx.fillText(pos.StopLossPrice, leftMargin + 200, 110)
-                ctx.fillText("Take Profit Price: ", leftMargin + 50, 140)
-                ctx.fillText(pos.TakeProfitPrice.toFixed(3), leftMargin + 200, 140)
-                ctx.fillText("Position Result: ", leftMargin + 50, 170)
-                if(pos.isWin){
-                    ctx.fillStyle = "#00aa55"
+                    // positions info text
+                    ctx.fillStyle = GUIParameters.textOnPrimary
                     ctx.font = "15px sans-serif bold"
-                    ctx.fillText("Success", leftMargin + 200, 170)
+                    ctx.textAlign = "end"
+                    ctx.fillText("Position Id: ", leftMargin + 30, 150)
+                    ctx.fillText(currentPositionIndex + 1, leftMargin + 170, 150)
+                    ctx.fillText("Entry Index: ", leftMargin + 30, 180)
+                    ctx.fillText(pos.EntryIdx, leftMargin + 170, 180)
+                    ctx.fillText("Stop Loss Price: ", leftMargin + 30, 210)
+                    ctx.fillText(pos.StopLossPrice, leftMargin + 170, 210)
+                    ctx.fillText("Take Profit Price: ", leftMargin + 30, 240)
+                    ctx.fillText(pos.TakeProfitPrice.toFixed(3), leftMargin + 170, 240)
+                    ctx.fillText("Position Result: ", leftMargin + 30, 270)
+                    if(pos.isWin){
+                        ctx.fillStyle = "#00aa55"
+                        ctx.font = "15px sans-serif bold"
+                        ctx.fillText("Success", leftMargin + 170, 270)
+                    }
+                    else{
+                        ctx.fillStyle = "#cc3333"
+                        ctx.font = "15px sans-serif bold"
+                        ctx.fillText("fail", leftMargin + 170, 270)
+                    }
                 }
-                else{
-                    ctx.fillStyle = "#cc3333"
-                    ctx.font = "15px sans-serif bold"
-                    ctx.fillText("fail", leftMargin + 200, 170)
-                }
-
             }
 
             // Y axis
             ctx.strokeStyle = "#888"
             ctx.beginPath()
-            ctx.moveTo(leftMargin,0)
+            ctx.moveTo(leftMargin,root.topMargin)
             ctx.lineTo(leftMargin,chartH)
             ctx.stroke()
 
-            ctx.fillStyle = "white"
-            ctx.font = "10px sans-serif"
+            ctx.fillStyle = GUIParameters.textOnPrimary
+            ctx.font = "11px sans-serif"
 
             // X axis
             ctx.beginPath()
@@ -529,13 +520,13 @@ Item {
             ctx.stroke()
 
             // axis backgrounds
-            ctx.fillStyle = "#111827"
-            ctx.fillRect(0, 0, root.leftMargin, chartH)
-            ctx.fillStyle = "#111827"
+            ctx.fillStyle = GUIParameters.background
+            ctx.fillRect(0, root.topMargin, root.leftMargin, chartH)
+            ctx.fillStyle = GUIParameters.background
             ctx.fillRect(0, chartH, width, height - chartH)
 
             // time labels
-            var labelCount = 10
+            var labelCount = 12
             var stepIndex = Math.floor(visibleCount/labelCount)
 
             for (var i=0;i<=labelCount;i++)
@@ -560,15 +551,15 @@ Item {
                 ctx.stroke()
 
                 // ---- text ----
-                ctx.fillStyle = "white"
+                ctx.fillStyle = GUIParameters.textOnPrimary
                 ctx.textAlign = "start"
-                ctx.fillText(txt,x + 5,chartH+13)
+                ctx.fillText(txt,x + 12,chartH + 15)
             }
 
             // Y labels
             var steps = 12
-            ctx.font = "10px sans-serif"
-            for (var i=0;i<=steps;i++)
+            ctx.font = "11px sans-serif"
+            for (var i=1;i<=steps;i++)
             {
                 var p = visibleMinPrice +
                         (visibleMaxPrice-visibleMinPrice)*i/steps
@@ -579,12 +570,12 @@ Item {
                 // ---- tick ----
                 ctx.strokeStyle = "#888"
                 ctx.beginPath()
-                ctx.moveTo(leftMargin-5,y)
+                ctx.moveTo(leftMargin - 5,y)
                 ctx.lineTo(leftMargin,y)
                 ctx.stroke()
 
                 // ---- text ----
-                ctx.fillStyle = "white"
+                ctx.fillStyle = GUIParameters.textOnPrimary
                 ctx.fillText(txt, root.leftMargin - 8, y+3)
             }
 
@@ -620,18 +611,19 @@ Item {
                                       Math.min(width-labelW2,
                                                crossX-labelW2/2))
 
-                    ctx.fillStyle = "#202030"
+                    // ctx.fillStyle = "#202030"
+                    ctx.fillStyle = GUIParameters.titleBar
                     ctx.fillRect(tx, chartH, labelW2, 18)
 
-                    ctx.fillStyle = "white"
-                    ctx.fillText(txt, tx+labelW2 - 6, chartH+12)
+                    ctx.fillStyle = GUIParameters.textOnPrimary
+                    ctx.fillText(txt, tx+labelW2 - 3, chartH+12)
                 }
 
                 // --- current candle index ---
-                ctx.font = "15px sans-serif bold"
-                ctx.textAlign = "end"
-                ctx.fillText("Candle  Index: ", leftMargin + 50, 200)
-                ctx.fillText(xToIndex(crossX), leftMargin + 200, 200)
+                // ctx.font = "15px sans-serif bold"
+                // ctx.textAlign = "end"
+                // ctx.fillText("Candle  Index: ", leftMargin + 30, 300)
+                // ctx.fillText(xToIndex(crossX), leftMargin + 170, 300)
             }
         }
     }
@@ -692,34 +684,30 @@ Item {
 
             if (candles.length === 0) return
 
-            // مقدار zoom جدید
-            var newVisibleCount = visibleCount
-
-            if (wheel.angleDelta.y > 0) { // چرخ به بالا → zoom in
-                newVisibleCount = Math.max(minVisibleCount, visibleCount / wheelFactor)
-            } else { // چرخ به پایین → zoom out
-                newVisibleCount = Math.min(maxVisibleCount, visibleCount * wheelFactor)
-            }
-
             var chartW = width - root.leftMargin
             var xRelative = wheel.x - root.leftMargin
             xRelative = Math.max(0, Math.min(chartW, xRelative))
 
+            // --- find which candle index is currently under the cursor ---
             var totalVisible = visibleCount + rightOffsetCandles
             var candlePixel = chartW / totalVisible
+            var mouseIndex = firstVisibleIndex + xRelative / candlePixel
 
-            var mouseIndex = firstVisibleIndex + Math.floor(xRelative / candlePixel)
+            // --- compute new visibleCount ---
+            var newVisibleCount
+            if (wheel.angleDelta.y > 0)
+                newVisibleCount = Math.max(minVisibleCount, Math.floor(visibleCount / wheelFactor))
+            else
+                newVisibleCount = Math.min(maxVisibleCount, Math.floor(visibleCount * wheelFactor))
 
-            var newFirstIndex =
-                    mouseIndex -
-                    Math.floor((xRelative / chartW) * totalVisible)
+            // --- keep mouseIndex pinned under the cursor after zoom ---
+            var newTotalVisible = newVisibleCount + rightOffsetCandles
+            var newFirstIndex = Math.round(mouseIndex - (xRelative / chartW) * newTotalVisible)
 
             newFirstIndex = Math.max(0,
-                                     Math.min(candles.length - newVisibleCount,
-                                              newFirstIndex))
+                                     Math.min(candles.length - newVisibleCount, newFirstIndex))
 
-
-            visibleCount = Math.floor(newVisibleCount)
+            visibleCount = newVisibleCount
             firstVisibleIndex = newFirstIndex
 
             recalcPriceRange()

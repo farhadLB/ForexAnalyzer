@@ -7,6 +7,7 @@
 class TimeframeAggregator : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString timeframe READ timeframeGetter WRITE setTimeframe NOTIFY timeframeChanged FINAL)
+    Q_PROPERTY(int comboIndex READ comboIndex WRITE setComboIndex NOTIFY comboIndexChanged FINAL)
 public:
     explicit TimeframeAggregator(QObject *parent = nullptr) : QObject(parent) {}
 
@@ -32,10 +33,15 @@ public:
     QString timeframeGetter();
     QString timeframeToString(Timeframe tf);
 
+    int comboIndex() const;
+    void setComboIndex(int newComboIndex);
+
 signals:
     void timeframeChanged();
     void aggReady(QVariantList candles);
+    void comboIndexChanged();
 
 private:
     QString m_timeframe = "1m";
+    int     m_comboIndex= 0;
 };

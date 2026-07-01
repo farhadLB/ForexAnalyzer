@@ -7,7 +7,7 @@ int PositionModel::rowCount(const QModelIndex &parent) const
 
 int PositionModel::columnCount(const QModelIndex &parent) const
 {
-    return 7;
+    return 11;
 }
 
 QVariant PositionModel::data(const QModelIndex &index, int role) const
@@ -26,6 +26,10 @@ QVariant PositionModel::data(const QModelIndex &index, int role) const
         case 4: return pos.Timeframe;
         case 5: return pos.isBullish;
         case 6: return pos.isWin;
+        case 7: return pos.ADX;
+        case 8: return pos.PlusDI;
+        case 9: return pos.MinusDI;
+        case 10: return pos.TrendAligned;
         }
     }
 
@@ -37,6 +41,10 @@ QVariant PositionModel::data(const QModelIndex &index, int role) const
     case TimeframeRole:     return pos.Timeframe;
     case PositionTypeRole:  return pos.isBullish;
     case WinRole:           return pos.isWin;
+    case ADXRole:           return pos.ADX;
+    case PlusDIRole:        return pos.PlusDI;
+    case MinusDIRole:       return pos.MinusDI;
+    case TrendAlignedRole:  return pos.TrendAligned;
     }
     return QVariant();
 }
@@ -51,8 +59,19 @@ QHash<int, QByteArray> PositionModel::roleNames() const
         {TakeProfitRole,    "TakeProfit"},
         {TimeframeRole,     "Timeframe"},
         {PositionTypeRole,  "Type"},
-        {WinRole,           "Win"}
+        {WinRole,           "Win"},
+        {ADXRole,           "ADX"},
+        {PlusDIRole,        "PlusDI"},
+        {MinusDIRole,       "MinusDI"},
+        {TrendAlignedRole,  "TrendAligned"}
     };
+}
+
+void PositionModel::clearData()
+{
+    beginResetModel();
+    m_positionList.clear();
+    endResetModel();
 }
 
 void PositionModel::setPositionList(QList<Position> newList)
@@ -73,6 +92,10 @@ QVariant PositionModel::headerData(int section, Qt::Orientation orientation, int
         case 4: return "Timeframe";
         case 5: return "Bullish";
         case 6: return "Successful";
+        case 7: return "ADX";
+        case 8: return "PlusDI";
+        case 9: return "MinusDI";
+        case 10: return "TrendAligned";
         }
     }
     return QAbstractTableModel::headerData(section, orientation, role);

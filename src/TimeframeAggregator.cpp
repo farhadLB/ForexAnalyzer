@@ -7,7 +7,7 @@ QVariantList TimeframeAggregator::aggregate(const QVariantList &rawCandles, Time
     if (rawCandles.isEmpty())
         return {};
 
-    int step = 1;  // default = 1m
+    int step = 1;
 
     switch(tf){
     case M1:  step = 1; break;
@@ -128,4 +128,17 @@ QString TimeframeAggregator::timeframeToString(Timeframe tf)
     case D1:  strTimeframe = "Daily"; break;
     }
     return strTimeframe;
+}
+
+int TimeframeAggregator::comboIndex() const
+{
+    return m_comboIndex;
+}
+
+void TimeframeAggregator::setComboIndex(int newComboIndex)
+{
+    if (m_comboIndex == newComboIndex)
+        return;
+    m_comboIndex = newComboIndex;
+    emit comboIndexChanged();
 }
