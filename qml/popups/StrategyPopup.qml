@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "components"
+import "../components"
 
 Item {
     anchors.fill: parent
@@ -226,7 +226,7 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 from: 1
-                                to: 100
+                                to: 15
                                 value: positionManager.entryLookback
                                 stepSize: 1
                                 onValueChanged: {
@@ -295,10 +295,10 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 from: 0
-                                to: 1
+                                to: 0.001
                                 value: positionManager.levelFilterGap
-                                stepSize: 0.001
-                                decimal: 3
+                                stepSize: 0.0001
+                                decimal: 4
                                 onValueChanged: {
                                     positionManager.levelFilterGap = parseFloat(value.toFixed(4))
                                 }
@@ -364,7 +364,7 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 from: 1
-                                to: 100
+                                to: 15
                                 value: positionManager.stopLookback
                                 stepSize: 1
                                 snapMode: CustomSlider.SnapAlways
@@ -411,7 +411,7 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 from: 1
-                                to: 100
+                                to: 15
                                 value: positionManager.takeProfitLookback
                                 stepSize: 1
                                 snapMode: CustomSlider.SnapAlways
