@@ -1,8 +1,9 @@
 #include "PositionManager.h"
 
-PositionManager::PositionManager(CsvLoader *loader,
+PositionManager::PositionManager(CandleModel *model,
+                                 CsvLoader *loader,
                                  TimeframeAggregator *agg,
-                                 QObject *parent): m_loader(loader), m_agg(agg), QObject(parent) {
+                                 QObject *parent): m_model(model) ,m_loader(loader), m_agg(agg), QObject(parent) {
 }
 
 void PositionManager::setPositions(QList<Position> newList)
@@ -20,7 +21,7 @@ QVariantList PositionManager::getPositionsForQML()
     QVariantList list;
     for(const Position &pos: std::as_const(positionList)){
         QVariantMap m;
-        QDateTime dt = QDateTime::fromMSecsSinceEpoch(pos.time, Qt::UTC);
+        QDateTime dt = QDateTime::fromMSecsSinceEpoch(pos.time, QTimeZone::UTC);
         m["yValue"] = pos.outcome;
         m["time"]   = dt.time().hour();
         m["isWin"]  = pos.isWin;
@@ -67,6 +68,7 @@ QVariantMap PositionManager::positionsInfo()
     m["successfulPositions"]    = successfulPosCnt;
     m["failedPositions"]        = total - successfulPosCnt;
     m["winRate"]                = successfulPosCnt * 100 / total;
+    m["winRate"]                = 10;
     m["averageRtoR"]            = riskToRewardSum / total;
     m["strategyGain"]           = strategyGain;
 
@@ -118,7 +120,7 @@ void PositionManager::removeCloseEntries(QList<Position> *positions, int distanc
 
 void PositionManager::run(TimeframeAggregator::Timeframe timeframe)
 {
-    m_candles           = m_loader->getCandles();
+    m_candles           = m_model->candles();
     QVariantList        aggCandles;
 
     if(timeframe != TimeframeAggregator::M1){
@@ -182,9 +184,13 @@ void PositionManager::run(TimeframeAggregator::Timeframe timeframe)
             pos.outcome = -1;
         }
     }
+    qDebug() << "1" << positionList.size();
     removeStopNA(&positionList);
+    qDebug() << "2" << positionList.size();
     removeSameEntries(&positionList);
+    qDebug() << "3" << positionList.size();
     removeCloseEntries(&positionList);
+    qDebug() << "4" << positionList.size();
     emit positionListReady(positionList);
     setIsLoading(false);
 }

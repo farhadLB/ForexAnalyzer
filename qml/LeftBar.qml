@@ -120,5 +120,40 @@ Rectangle{
                 }
             }
         }
+        Rectangle{
+            Layout.minimumHeight: 60
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            color: stackRef.currentIndex !== 3 ? GUIParameters.primary : GUIParameters.background
+            RowLayout{
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 15
+                Image {
+                    Layout.maximumWidth: 25
+                    Layout.maximumHeight: 25
+                    antialiasing: true
+                    source: stackRef.currentIndex !== 3 ? GUIParameters.apiOff : GUIParameters.apiOn
+                    Layout.alignment: Qt.AlignLeft
+                    Layout.leftMargin: 5
+                }
+                Text {
+                    Layout.minimumWidth: 50
+                    height: 20
+                    text: "API Settings"
+                    font.pixelSize: GUIParameters.fontSizeNormal
+                    Layout.alignment: Qt.AlignLeft
+                    color: stackRef.currentIndex !== 3 ? GUIParameters.textOff : GUIParameters.textOnPrimary
+                }
+            }
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    stackRef.currentIndex = 3
+                }
+            }
+        }
     }
 }

@@ -8,12 +8,14 @@
 #include <LevelDetector.h>
 #include <CsvLoader.h>
 #include <CandleUtils.h>
+#include <CandleModel.h>
 
 class TakeProfitCalculator : public QObject
 {
     Q_OBJECT
 public:
-    explicit TakeProfitCalculator(CsvLoader *loader,
+    explicit TakeProfitCalculator(CandleModel *model,
+                                  CsvLoader *loader,
                                   PositionManager *pos,
                                   TimeframeAggregator *agg,
                                   EntryPointCalculator *entry,
@@ -41,6 +43,7 @@ private:
     EntryPointCalculator* m_entry;
     TimeframeAggregator*  m_agg;
     CsvLoader*            m_loader;
+    CandleModel*          m_model;
     QList<Position>       m_positionList;
     QVariantList          m_candles;
     QVariantList          m_levels;

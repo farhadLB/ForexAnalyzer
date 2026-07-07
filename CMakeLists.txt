@@ -4,7 +4,7 @@ project(ForexAnalyzer VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Core QuickControls2 Charts Concurrent)
+find_package(Qt6 REQUIRED COMPONENTS Quick Core QuickControls2 Charts Concurrent Network WebSockets)
 qt_standard_project_setup(REQUIRES 6.8)
 
 enable_testing()
@@ -26,9 +26,10 @@ qt_add_qml_module(appForexAnalyzer
         qml/LeftBar.qml
         qml/ResultPage.qml
         qml/TitleBar.qml
-        qml/StrategyPopup.qml
         qml/ChartTools.qml
         qml/InfographyPage.qml
+        qml/APIPage.qml
+        qml/CurrencyModel.qml
         qml/components/CustomButton.qml
         qml/components/CandleChart.qml
         qml/components/CustomToggle.qml
@@ -42,9 +43,11 @@ qt_add_qml_module(appForexAnalyzer
         qml/components/CustomSlider.qml
         qml/components/CustomTextField.qml
         qml/components/qmldir
+        qml/popups/StrategyPopup.qml
+        qml/popups/LoadChartPopup.qml
         RESOURCES assets/chart.jpg
-        RESOURCES assets/slider-black-small.svg
-        RESOURCES assets/slider-grey-small.svg
+        assets/slider-black-small.svg
+        assets/slider-grey-small.svg
         assets/slider-white-small.svg
         assets/candle-black-small.svg
         assets/candle-grey-small.svg
@@ -81,6 +84,20 @@ qt_add_qml_module(appForexAnalyzer
         assets/sun-black.svg
         assets/sun-grey.svg
         assets/sun-white.svg
+        assets/api-black.svg
+        assets/api-grey.svg
+        assets/api-white.svg
+        assets/load-black.svg
+        assets/load-grey.svg
+        assets/load-white.svg
+        assets/flags/aud.svg
+        assets/flags/cad.svg
+        assets/flags/chf.svg
+        assets/flags/eur.svg
+        assets/flags/gbp.svg
+        assets/flags/jpy.svg
+        assets/flags/nzd.svg
+        assets/flags/usd.svg
 )
 
 target_link_libraries(appForexAnalyzer PRIVATE
@@ -89,6 +106,8 @@ target_link_libraries(appForexAnalyzer PRIVATE
     Qt6::QuickControls2
     Qt6::Charts
     Qt6::Concurrent
+    Qt6::Network
+    Qt6::WebSockets
 )
 
 set_target_properties(appForexAnalyzer PROPERTIES

@@ -73,8 +73,9 @@ void CsvWorker::loadFile(const QString &filePath)
             emit progressChanged(int(file.pos() * 100 / totalSize));
     }
 
-    QVariantList list;
-    list.reserve(data.size());
+    auto list = QSharedPointer<QVariantList>::create();
+    list->reserve(data.size());
+
     double minY = std::numeric_limits<double>::max();
     double maxY = std::numeric_limits<double>::lowest();
 
@@ -85,7 +86,7 @@ void CsvWorker::loadFile(const QString &filePath)
         m["high"]  = c.high;
         m["low"]   = c.low;
         m["close"] = c.close;
-        list.append(m);
+        list->append(m);
 
         minY = std::min(minY, c.low);
         maxY = std::max(maxY, c.high);

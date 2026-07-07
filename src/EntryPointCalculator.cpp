@@ -1,11 +1,12 @@
 #include "EntryPointCalculator.h"
 #include <deque>
 
-EntryPointCalculator::EntryPointCalculator(CsvLoader *loader,
+EntryPointCalculator::EntryPointCalculator(CandleModel *model,
+                                           CsvLoader *loader,
                                            PositionManager *pos,
                                            TimeframeAggregator *agg,
                                            int strategy,
-                                           QObject *parent): QObject(parent), m_loader(loader), m_pos(pos), m_agg(agg), m_strategy(strategy){}
+                                           QObject *parent): QObject(parent), m_model(model), m_loader(loader), m_pos(pos), m_agg(agg), m_strategy(strategy){}
 
 QVariantList EntryPointCalculator::getLevels()
 {
@@ -39,7 +40,12 @@ void EntryPointCalculator::HorizantalLevelBreak(TimeframeAggregator::Timeframe l
 {
     m_positionList.clear();
     m_levels.clear();
-    m_candles = m_loader->getCandles();
+    m_candles = m_model->candles();
+
+    if (m_candles.isEmpty()) {
+        qDebug() << "No candles loaded";
+        return;
+    }
 
     QVariantList aggCandles      = m_agg->aggregate(m_candles, leveltf);
     QVariantList levels          = m_levelDetector.detectLocalLevels(aggCandles, lookback);

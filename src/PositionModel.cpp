@@ -78,6 +78,7 @@ void PositionModel::setPositionList(QList<Position> newList)
 {
     beginResetModel();
     m_positionList = newList;
+    qDebug() << "size: " << m_positionList.size();
     endResetModel();
 }
 

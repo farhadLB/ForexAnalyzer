@@ -3,6 +3,7 @@
 #include <QVariant>
 #include <QDateTime>
 #include <ChartObjects.h>
+#include <QSharedPointer>
 
 class TimeframeAggregator : public QObject {
     Q_OBJECT
@@ -15,6 +16,7 @@ public:
     Q_ENUM(Timeframe)
 
     Q_INVOKABLE QVariantList aggregate(const QVariantList &rawCandles, Timeframe tf);
+    Q_INVOKABLE QVariantList aggregate(QSharedPointer<QVariantList> rawCandles, Timeframe tf);
 
     Q_INVOKABLE int getTimeframe(const QString &tf) {
         if (tf == "1m") return M1;

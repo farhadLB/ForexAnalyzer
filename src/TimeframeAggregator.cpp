@@ -58,6 +58,11 @@ QVariantList TimeframeAggregator::aggregate(const QVariantList &rawCandles, Time
     return result;
 }
 
+QVariantList TimeframeAggregator::aggregate(QSharedPointer<QVariantList> rawCandles, Timeframe tf)
+{
+    return aggregate(*rawCandles, tf);
+}
+
 TimeframeAggregator::Timeframe TimeframeAggregator::getEnumTimeframe(const QString &tf)
 {
     if (tf == "1m") return TimeframeAggregator::M1;

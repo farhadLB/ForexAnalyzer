@@ -9,12 +9,14 @@
 #include <CsvLoader.h>
 #include <CandleUtils.h>
 #include <QThread>
+#include <CandleModel.h>
 
 class StopLossCalculator : public QObject
 {
     Q_OBJECT
 public:
-    explicit StopLossCalculator(CsvLoader *loader,
+    explicit StopLossCalculator(CandleModel *model,
+                                CsvLoader *loader,
                                 PositionManager *pos,
                                 TimeframeAggregator *agg,
                                 EntryPointCalculator *entry,
@@ -45,6 +47,7 @@ private:
     EntryPointCalculator* m_entry;
     TimeframeAggregator*  m_agg;
     CsvLoader*            m_loader;
+    CandleModel*          m_model;
     QList<Position>       m_positionList;
     QVariantList          m_candles;
     QVariantList          m_levels;

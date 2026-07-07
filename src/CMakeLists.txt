@@ -1,4 +1,4 @@
-find_package(Qt6 REQUIRED COMPONENTS Core Concurrent)
+find_package(Qt6 REQUIRED COMPONENTS Core Concurrent Network WebSockets)
 
 add_library(forexanalyzer_lib STATIC
     # Headers — MOC needs to see these
@@ -16,6 +16,8 @@ add_library(forexanalyzer_lib STATIC
     ${CMAKE_SOURCE_DIR}/include/CsvWorker.h
     ${CMAKE_SOURCE_DIR}/include/CandleUtils.h
     ${CMAKE_SOURCE_DIR}/include/TrendCalculator.h
+    ${CMAKE_SOURCE_DIR}/include/TwelveDataWorker.h
+    ${CMAKE_SOURCE_DIR}/include/CandleModel.h
 
 
     # Sources
@@ -31,9 +33,11 @@ add_library(forexanalyzer_lib STATIC
     PositionModel.cpp
     CsvWorker.cpp
     TrendCalculator.cpp
+    TwelveDataWorker.cpp
+    CandleModel.cpp
 )
 
-target_link_libraries(forexanalyzer_lib PUBLIC Qt6::Core Qt6::Concurrent)
+target_link_libraries(forexanalyzer_lib PUBLIC Qt6::Core Qt6::Concurrent Qt6::Network Qt6::WebSockets)
 
 target_include_directories(forexanalyzer_lib PUBLIC
     ${CMAKE_SOURCE_DIR}/include

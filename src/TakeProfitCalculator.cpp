@@ -1,12 +1,13 @@
 #include "TakeProfitCalculator.h"
 
 
-TakeProfitCalculator::TakeProfitCalculator(CsvLoader *loader,
+TakeProfitCalculator::TakeProfitCalculator(CandleModel *model,
+                                           CsvLoader *loader,
                                            PositionManager *pos,
                                            TimeframeAggregator *agg,
                                            EntryPointCalculator *entry,
                                            QObject *parent)
-    : QObject(parent), m_loader(loader), m_pos(pos), m_agg(agg), m_entry(entry) {
+    : QObject(parent), m_model(model), m_loader(loader), m_pos(pos), m_agg(agg), m_entry(entry) {
 }
 
 void TakeProfitCalculator::firstPivot(int backdrop,
@@ -15,7 +16,7 @@ void TakeProfitCalculator::firstPivot(int backdrop,
                                       TimeframeAggregator::Timeframe breaktf,
                                       double rewradToRisk)
 {
-    m_candles               = m_loader->getCandles();
+    m_candles               = m_model->candles();
     m_levels                = m_entry->getLevels();
     m_positionList          = m_pos->getPositions();
     double takeProfitPrice  = 0;

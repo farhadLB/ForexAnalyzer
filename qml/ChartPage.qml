@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "components"
+import "popups"
 import ForexAnalyzer 1.0
 
 Rectangle {
@@ -41,10 +42,57 @@ Rectangle {
                 isLoading: csvLoader.isLoading
                 visible: showChart
                 themeToggle: themeToggle.checked
+
+                RowLayout{
+                    id: dataInfo
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.leftMargin: 80
+                    anchors.topMargin: 20
+                    width: 150
+                    height: 40
+                    visible: !candleModel.isFromCSV
+                    Item{
+                        id: flagsItem
+                        Layout.fillHeight: true
+                        Layout.minimumWidth: 50
+                        Layout.alignment: Qt.AlignVCenter
+                        Layout.margins: 8
+                        Rectangle{
+                            id: backRec
+                            width: parent.height
+                            height: parent.height
+                            radius: parent.height
+                            color: "transparent"
+                            Image {
+                                anchors.fill: parent
+                                source: symbolToFlag(tdWorker.first)
+                            }
+                        }
+                        Rectangle{
+                            id: frontRec
+                            width: parent.height
+                            height: parent.height
+                            radius: parent.height
+                            x: parent.height / 2
+                            color: "transparent"
+                            Image {
+                                anchors.fill: parent
+                                source: symbolToFlag(tdWorker.second)
+                            }
+                        }
+                    }
+                    Text {
+                        text: tdWorker.symbolDesc
+                        color: GUIParameters.textOnPrimary
+                        font.pixelSize: GUIParameters.fontSizeNormal
+                    }
+                }
+
                 ChartTools{
                     id: tools
                     anchors.left: parent.left
-                    anchors.top: parent.top
+                    anchors.top: dataInfo.visible ? dataInfo.bottom : chart.top
                     anchors.leftMargin: 80
                     anchors.topMargin: 20
                     chartRef: chart
@@ -57,18 +105,18 @@ Rectangle {
             id: chartImage
             Layout.fillHeight: true
             Layout.fillWidth: true
-            source: "../assets/chart.jpg"
-            visible: !showChart
+            source: tdWorker.isLoading ? "" : "../assets/chart.jpg"
+            visible: !showChart || tdWorker.isLoading
 
             Rectangle {
                 anchors.fill: parent
                 color: "#80111827"
-                visible: csvLoader.isLoading
+                visible: csvLoader.isLoading || tdWorker.isLoading
                 z: 10
 
                 BusyIndicator {
                     anchors.centerIn: parent
-                    running: csvLoader.isLoading
+                    running: csvLoader.isLoading || tdWorker.isLoading
                 }
             }
 
@@ -77,6 +125,7 @@ Rectangle {
                 anchors.fill: parent
                 color: GUIParameters.background
                 opacity: 0.92
+                visible: !tdWorker.isLoading
                 Column{
                     anchors.centerIn: parent
                     spacing: 8
@@ -125,6 +174,20 @@ Rectangle {
                 spacing: 10
                 anchors.left: parent.left
                 CustomButton{
+                    buttonText: "Load Chart Data"
+                    iconSource: GUIParameters.load
+                    onClicked: {
+                        if(!loadPopup.popupRef.visible){
+                            loadPopup.popupRef.open()
+                        }
+                    }
+                    CustomToolTip{
+                        visible: parent.hovered
+                        text: "Add data to chart"
+                    }
+
+                }
+                CustomButton{
                     buttonText: "Modifications"
                     iconSource: GUIParameters.slider
                     onClicked: {
@@ -142,7 +205,7 @@ Rectangle {
                     iconSource: "../../assets/play-green.svg"
                     iconColor: GUIParameters.titleBar
                     onClicked: {
-                        if(csvLoader.candlesLoaded()){
+                        if(!candleModel.isEmpty){
                             positionManager.startCalculation()
                             stackRef.currentIndex = 1
                         }
@@ -204,7 +267,7 @@ Rectangle {
                         var selected = model[currentIndex]
                         var tf = Aggregator.getTimeframe(selected);
                         var newCandles = Aggregator.aggregate(rawCandles, tf)
-                        chart.candles = newCandles
+                        candleModel.loadCandles(newCandles)
                         centerItem.timeframe = tf
                         Aggregator.setTimeframe(selected);
                     }
@@ -231,6 +294,10 @@ Rectangle {
         id: stratPopup
     }
 
+    LoadChartPopup{
+        id: loadPopup
+    }
+
 
     Connections {
         target: csvLoader
@@ -241,8 +308,8 @@ Rectangle {
         }
 
         function onFileLoaded(count) {
+            tdWorker.stopStreaming()
             Qt.callLater(function() {
-                chart.candles = rawCandles
                 chart.rawCandles = rawCandles
                 tfCombo.currentIndex = 0
             })
@@ -256,6 +323,30 @@ Rectangle {
         target: Aggregator
         function onComboIndexChanged() {
             tfCombo.currentIndex = Aggregator.comboIndex
+        }
+    }
+    Connections {
+        target: candleModel
+        function onClearingModel() {
+            centerItem.showChart = false
+        }
+    }
+    Connections {
+        target: tdWorker
+        function onFileLoaded() {
+            centerItem.showChart = true
+        }
+    }
+    function symbolToFlag(symbol) {
+        switch (symbol) {
+        case "EUR" : return GUIParameters.eur
+        case "USD" : return GUIParameters.usd
+        case "AUD" : return GUIParameters.aud
+        case "CHF" : return GUIParameters.chf
+        case "GBP" : return GUIParameters.gbp
+        case "NZD" : return GUIParameters.nzd
+        case "JPY" : return GUIParameters.jpy
+        case "CAD" : return GUIParameters.cad
         }
     }
 }

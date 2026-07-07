@@ -1,11 +1,12 @@
 #include "StopLossCalculator.h"
 
-StopLossCalculator::StopLossCalculator(CsvLoader *loader,
+StopLossCalculator::StopLossCalculator(CandleModel *model,
+                                       CsvLoader *loader,
                                        PositionManager *pos,
                                        TimeframeAggregator *agg,
                                        EntryPointCalculator *entry,
                                        QObject *parent)
-    : QObject(parent), m_loader(loader), m_pos(pos), m_agg(agg), m_entry(entry) {
+    : QObject(parent), m_model(model), m_loader(loader), m_pos(pos), m_agg(agg), m_entry(entry) {
 }
 
 void StopLossCalculator::firstPivot(int backdrop,
@@ -13,7 +14,7 @@ void StopLossCalculator::firstPivot(int backdrop,
                                     TimeframeAggregator::Timeframe breaktf)
 {
     m_positionList = m_pos->getPositions();
-    m_candles      = m_loader->getCandles();
+    m_candles      = m_model->candles();
     m_levels       = m_entry->getLevels();
 
     QVariantList aggCandlesRaw = (leveltf != TimeframeAggregator::M1)

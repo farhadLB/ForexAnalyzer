@@ -13,7 +13,6 @@ CsvLoader::CsvLoader(QObject *parent) : QObject(parent)
         setIsLoading(false);
         emit fileLoaded(count);
     });
-    connect(m_worker, &CsvWorker::candlesReady,  this, &CsvLoader::candlesReady);
     connect(m_worker, &CsvWorker::axisRangeReady, this, &CsvLoader::axisRangeReady);
     connect(m_worker, &CsvWorker::error, this, [this](const QString &msg) {
         setIsLoading(false);
@@ -22,8 +21,8 @@ CsvLoader::CsvLoader(QObject *parent) : QObject(parent)
 
     connect(this, &CsvLoader::startWorker, m_worker, &CsvWorker::loadFile);
 
-    connect(m_worker, &CsvWorker::candlesReady, this, [this](const QVariantList &list) {
-        m_candles = list;
+    connect(m_worker, &CsvWorker::candlesReady, this, [this](QSharedPointer<QVariantList> list) {
+        m_candles = *list;
         emit candlesReady(list);
     });
 

@@ -7,12 +7,15 @@
 #include <CsvLoader.h>
 #include <TimeframeAggregator.h>
 #include <CandleUtils.h>
+#include <QTimeZone>
+#include <CandleModel.h>
 
 class PositionManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit PositionManager(CsvLoader* loader,
+    explicit PositionManager(CandleModel *model,
+                             CsvLoader* loader,
                              TimeframeAggregator *agg,
                              QObject *parent = nullptr);
 
@@ -108,16 +111,17 @@ signals:
 
 private:
     CsvLoader*              m_loader;
+    CandleModel*            m_model;
     TimeframeAggregator*    m_agg;
     QVariantList            m_candles;
     QString                 m_leveltf               = "1m";
     QString                 m_breaktf               = "1m";
-    int                     m_candleCountForBreak   = 1000;
-    int                     m_entryLookback         = 50;
-    double                  m_entryThreshold        = 0.6;
+    int                     m_candleCountForBreak   = 500;
+    int                     m_entryLookback         = 5;
+    double                  m_entryThreshold        = 0.5;
     double                  m_levelFilterGap        = 0.0003;
-    int                     m_stopLookback          = 30;
-    int                     m_takeProfitLookback    = 50;
+    int                     m_stopLookback          = 3;
+    int                     m_takeProfitLookback    = 3;
     int                     m_candleCountForTP      = 500;
     QString                 m_takeProfitTF          = "1m";
     bool                    m_isLoading             = false;

@@ -28,6 +28,7 @@ Item {
     property string rightArrowOff: "../../assets/right-arrow-grey.svg"
     property string tools: "../../assets/tools-white.svg"
     property string slider: "../../assets/slider-white-small.svg"
+    property string load: "../../assets/load-white.svg"
     property string sunOn: "../../assets/sun-white.svg"
     property string sunOff: "../../assets/sun-grey.svg"
     property string moonOn: "../../assets/moon-white.svg"
@@ -38,6 +39,18 @@ Item {
     property string chartOn: "../assets/chart-line-white.svg"
     property string tableOff: "../assets/table-grey.svg"
     property string tableOn: "../assets/table-white.svg"
+    property string apiOn: "../assets/api-white.svg"
+    property string apiOff: "../assets/api-grey.svg"
+
+    // Flags
+    property string aud: "../assets/flags/aud.svg"
+    property string cad: "../assets/flags/cad.svg"
+    property string chf: "../assets/flags/chf.svg"
+    property string eur: "../assets/flags/eur.svg"
+    property string gbp: "../assets/flags/gbp.svg"
+    property string jpy: "../assets/flags/jpy.svg"
+    property string nzd: "../assets/flags/nzd.svg"
+    property string usd: "../assets/flags/usd.svg"
 
     // Candles
     property color bullCandle:         "#00aa55"
@@ -90,6 +103,7 @@ Item {
         rightArrow= "../../assets/right-arrow-black.svg"
         tools= "../../assets/tools-black.svg"
         slider= "../../assets/slider-black-small.svg"
+        load= "../../assets/load-black.svg"
         sunOn= "../../assets/sun-black.svg"
         moonOn= "../../assets/moon-black.svg"
         candleOff= "../assets/candle-grey-small.svg"
@@ -98,6 +112,8 @@ Item {
         chartOn= "../assets/chart-line-black.svg"
         tableOff= "../assets/table-grey.svg"
         tableOn= "../assets/table-black.svg"
+        apiOff= "../assets/api-grey.svg"
+        apiOn= "../assets/api-black.svg"
 
     }
 
@@ -123,6 +139,7 @@ Item {
         rightArrow= "../../assets/right-arrow-white.svg"
         tools= "../../assets/tools-white.svg"
         slider= "../../assets/slider-white-small.svg"
+        load= "../../assets/load-white.svg"
         sunOn= "../../assets/sun-white.svg"
         moonOn= "../../assets/moon-white.svg"
         candleOff= "../assets/candle-grey-small.svg"
@@ -131,5 +148,7 @@ Item {
         chartOn= "../assets/chart-line-white.svg"
         tableOff= "../assets/table-grey.svg"
         tableOn= "../assets/table-white.svg"
+        apiOff= "../assets/api-grey.svg"
+        apiOn= "../assets/api-white.svg"
     }
 }

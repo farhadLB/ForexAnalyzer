@@ -3,7 +3,9 @@
 #include <QVector>
 #include <QVariantList>
 #include <atomic>
-#include "ChartObjects.h"
+#include <ChartObjects.h>
+#include <QSharedPointer>
+
 
 class CsvWorker : public QObject
 {
@@ -17,7 +19,7 @@ public slots:
 
 signals:
     void progressChanged(int percent);
-    void candlesReady(QVariantList candles);
+    void candlesReady(QSharedPointer<QVariantList> candles);
     void axisRangeReady(double min, double max);
     void fileLoaded(int candleCount);
     void error(QString message);

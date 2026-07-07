@@ -48,6 +48,10 @@ Window {
                 ResultPage{
                     id: resultPage
                 }
+                APIPage{
+                    id: apiPage
+                    stackRef: myStack
+                }
             }
         }
     }

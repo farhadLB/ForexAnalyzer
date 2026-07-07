@@ -9,13 +9,15 @@
 #include <PositionManager.h>
 #include <CandleUtils.h>
 #include <TrendCalculator.h>
+#include "CandleModel.h"
 
 
 class EntryPointCalculator : public QObject
 {
     Q_OBJECT
 public:
-    EntryPointCalculator(CsvLoader *loader,
+    EntryPointCalculator(CandleModel *model,
+                         CsvLoader *loader,
                          PositionManager *pos,
                          TimeframeAggregator *agg,
                          int strategy = LevelBreak,
@@ -63,6 +65,7 @@ private:
     QList<Position>     m_positionList;
     TimeframeAggregator *m_agg;
     CsvLoader           *m_loader;
+    CandleModel         *m_model;
     PositionManager     *m_pos;
     int                 m_strategy;
     TrendCalculator     m_trendCalc;

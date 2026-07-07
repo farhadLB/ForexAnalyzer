@@ -43,7 +43,7 @@ Item{
                 MouseArea {
                     anchors.fill: parent
                     onPressed: (mouse) => {
-                                   mouse.accepted = true  // blocks background MouseArea
+                                   mouse.accepted = true  // block background MouseArea
                                    if (filePopup.visible) {
                                        filePopup.close()
                                    } else {
@@ -218,7 +218,7 @@ Item{
                         onEntered: closeRec.color = GUIParameters.primary
                         onExited: closeRec.color  = "transparent"
                         onClicked: {
-                            csvLoader.closeFile()
+                            candleModel.clear()
                             filePopup.close()
                         }
                     }
@@ -274,6 +274,7 @@ Item{
         onAccepted: {
             csvLoader.loadFile(fileDialog.selectedFile)
             stackRef.currentIndex = 0
+            candleModel.isFromCSV = true
         }
     }
 }

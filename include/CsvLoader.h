@@ -27,7 +27,8 @@ signals:
     void isLoadingChanged();
     void progressChanged();
     void fileLoaded(int candleCount);
-    void candlesReady(QVariantList candles);
+    void candlesReady(QSharedPointer<QVariantList> candles);
+
     void axisRangeReady(double min, double max);
     void error(QString message);
     void closeCsvFile();
