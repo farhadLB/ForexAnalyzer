@@ -16,6 +16,9 @@ This project was built as a hands-on exercise in applying real-world concurrency
 
 Each stage is a `QObject` connected to the next purely through **queued signal/slot connections**, so the calculation chain runs entirely off the GUI thread while results flow back to the UI models safely across the thread boundary — no manual mutex juggling required in application code, no frozen UI during heavy computation.
 
+<img width="1693" height="929" alt="UI_Photo" src="https://github.com/user-attachments/assets/77602ff6-5c2f-406a-a217-93c1d47b2b78" />
+
+
 ## Tech Stack
 
 - **Language:** C++17
