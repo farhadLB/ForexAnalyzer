@@ -37,10 +37,25 @@ Item {
                 diameter: 40
                 iconSize: 25
                 iconSource: GUIParameters.dollar
-                enabled: false
-                onClicked: {
-                    chartRef.positionVisible = ! chartRef.positionVisible
+                enabled: chartObjects.hasPositions
+                checked: chartObjects.hasPositions && GUIParameters.positionChecked
+                onCheckedChanged: {
+                    chartRef.positionVisible = checked
                 }
+                // enabled: chartObjects.hasPositions
+                // checked:  GUIParameters.positionChecked
+                // onEnabledChanged: {
+                //     if(!positionToggle.enabled)
+                //         positionToggle.checked = false
+                // }
+                // onCheckedChanged: {
+                //     if(checked) {
+                //         chartRef.positionVisible = true
+                //     }
+                //     else{
+                //         chartRef.positionVisible = false
+                //     }
+                // }
                 CustomToolTip{
                     visible: parent.hovered
                     text: positionToggle.checked ? "Hide Positions" : "Show Positions"
@@ -66,18 +81,6 @@ Item {
                     text: "Next Positions"
                 }
             }
-        }
-    }
-    Connections{
-        target: positionManager
-        function onPositionListReady(){
-            positionToggle.enabled = true
-        }
-    }
-    Connections{
-        target: csvLoader
-        function onCloseCsvFile(){
-            positionToggle.enabled = false
         }
     }
 }

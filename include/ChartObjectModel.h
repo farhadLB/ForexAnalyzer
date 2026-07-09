@@ -23,14 +23,22 @@ public:
     Q_INVOKABLE QVariantList allTrendlines() const;                 // manual + auto trendlines
     Q_INVOKABLE QVariantList allLevels() const;                     // manual + auto
 
+
+    bool hasPositions() const;
+    void setHasPositions(bool newHasPositions);
+    Q_PROPERTY(bool hasPositions READ hasPositions WRITE setHasPositions NOTIFY hasPositionsChanged FINAL)
+
 public slots:
 
     // --- Positions ---
     Q_INVOKABLE QVariantList positions();
+    Q_INVOKABLE void         clearPositions();
     void getPositions(QList<Position> newList);
 
 signals:
     void objectsChanged();
+
+    void hasPositionsChanged();
 
 private:
     // --- Manual ---
@@ -41,4 +49,5 @@ private:
     QVector<Trendline>          m_autoTrendlines;
     QVector<HorizontalLevel>    m_autoLevels;
     QList<Position>             m_positionList;
+    bool                        m_hasPositions;
 };

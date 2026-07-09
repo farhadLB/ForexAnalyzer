@@ -11,6 +11,7 @@ Button {
     property color checkedColor: GUIParameters.secondary
     property color baseColor:    GUIParameters.titleBar
     property color rippleColor:  GUIParameters.secondaryHighlight
+
     checkable: true
 
     width:  diameter

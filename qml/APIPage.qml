@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 import "components"
 
 Rectangle {
@@ -63,30 +64,24 @@ Rectangle {
                             tdWorker.setApiKey(text)
                         }
                     }
-                    CustomButton{
-                        id: acceptButton
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 100
-                        iconVisible: false
-                        textSize: 15
-                        buttonText: "Accept"
-                        onClicked: {
-                            apiTextField.accepted()
-                        }
-                    }
+
                     CustomButton{
                         id: runButton
                         anchors.verticalCenter: parent.verticalCenter
                         width: 100
                         iconVisible: false
                         textSize: 15
-                        buttonText: "Run API"
+                        buttonText: "Start API"
                         onClicked: {
+                            apiTextField.accepted()
                             if(tdWorker.isConnected()){
                                 tdWorker.stopStreaming()
                             }
 
                             if(tdWorker.hasApiKey()){
+                                GUIParameters.positionChecked = true
+                                chartObjects.clearPositions()
+                                positionModel.clearData()
                                 tdWorker.stream("1min")
                                 stackRef.currentIndex = 0
                                 candleModel.isFromCSV = false
@@ -130,6 +125,28 @@ Rectangle {
                         clip: true
                         focus: true
                         currentIndex: -1
+
+                        HoverHandler {
+                            id: hoverHandler
+                        }
+
+                        ScrollBar.vertical: ScrollBar {
+                            id: vScrollBar
+                            policy: ScrollBar.AsNeeded
+                            visible: true
+                            opacity: (hoverHandler.hovered && size < 1.0) ? 0.5 : 0.0
+
+                            Behavior on opacity {
+                                NumberAnimation { duration: 150 }
+                            }
+
+                            contentItem: Rectangle {
+                                implicitWidth: 6
+                                radius: width / 2
+                                color: GUIParameters.textOnPrimary
+                            }
+                            background: Item {}
+                        }
 
                         delegate: Item {
                             id: delegateRoot

@@ -112,6 +112,7 @@ Item {
             var positionTf = Aggregator.getTimeframe(positions[0].Timeframe)
             Aggregator.comboIndex = positionTf
             root.firstVisibleIndex = 0
+            recalcPriceRange()
         } else {
             canvas.requestPaint()
         }
@@ -596,13 +597,13 @@ Item {
                 if (idx >= 0 && idx < data.length && data[idx]) {
                     var d = new Date(data[idx].time)
                     var txt = root.formatTimeForTimeframe(d, root.currentTimeframe)
-                    var labelW2 = 100
+                    var labelW2 = 120
                     var tx = Math.max(root.leftMargin, Math.min(width - labelW2, crossX - labelW2 / 2))
 
                     ctx.fillStyle = GUIParameters.titleBar
                     ctx.fillRect(tx, chartH, labelW2, 18)
                     ctx.fillStyle = GUIParameters.textOnPrimary
-                    ctx.fillText(txt, tx + labelW2 - 3, chartH + 12)
+                    ctx.fillText(txt, tx + labelW2 - 10, chartH + 12)
                 }
             }
         }

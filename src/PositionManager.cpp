@@ -68,7 +68,6 @@ QVariantMap PositionManager::positionsInfo()
     m["successfulPositions"]    = successfulPosCnt;
     m["failedPositions"]        = total - successfulPosCnt;
     m["winRate"]                = successfulPosCnt * 100 / total;
-    m["winRate"]                = 10;
     m["averageRtoR"]            = riskToRewardSum / total;
     m["strategyGain"]           = strategyGain;
 
@@ -184,13 +183,9 @@ void PositionManager::run(TimeframeAggregator::Timeframe timeframe)
             pos.outcome = -1;
         }
     }
-    qDebug() << "1" << positionList.size();
     removeStopNA(&positionList);
-    qDebug() << "2" << positionList.size();
     removeSameEntries(&positionList);
-    qDebug() << "3" << positionList.size();
     removeCloseEntries(&positionList);
-    qDebug() << "4" << positionList.size();
     emit positionListReady(positionList);
     setIsLoading(false);
 }

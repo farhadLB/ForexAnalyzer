@@ -30,6 +30,7 @@ Item{
             height: parent.height
             width: 200
             anchors.left: parent.left
+            anchors.leftMargin: 5
             Rectangle{
                 Layout.fillHeight: true
                 Layout.minimumWidth: 50
@@ -42,6 +43,9 @@ Item{
                 }
                 MouseArea {
                     anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: parent.color = GUIParameters.hover
+                    onExited:  parent.color = "transparent"
                     onPressed: (mouse) => {
                                    mouse.accepted = true  // block background MouseArea
                                    if (filePopup.visible) {
@@ -54,13 +58,19 @@ Item{
             }
             Rectangle{
                 Layout.fillHeight: true
-                Layout.minimumWidth: 50
+                Layout.minimumWidth: 100
                 color: "transparent"
                 Text {
                     anchors.centerIn: parent
                     text: "Preferences"
                     font.pixelSize: GUIParameters.fontSizeNormal
                     color: GUIParameters.textOnPrimary
+                }
+                MouseArea{
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: parent.color = GUIParameters.hover
+                    onExited:  parent.color = "transparent"
                 }
             }
             Rectangle{
@@ -72,6 +82,12 @@ Item{
                     text: "About"
                     font.pixelSize: GUIParameters.fontSizeNormal
                     color: GUIParameters.textOnPrimary
+                }
+                MouseArea{
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: parent.color = GUIParameters.hover
+                    onExited:  parent.color = "transparent"
                 }
             }
         }
@@ -174,7 +190,6 @@ Item{
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.topMargin: 10
                 spacing: 0
                 Rectangle{
                     id: openRec
@@ -191,7 +206,7 @@ Item{
                     MouseArea{
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered: openRec.color = GUIParameters.primary
+                        onEntered: openRec.color = GUIParameters.hover
                         onExited: openRec.color  = "transparent"
                         onClicked: {
                             fileDialog.open()
@@ -215,10 +230,12 @@ Item{
                     MouseArea{
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered: closeRec.color = GUIParameters.primary
+                        onEntered: closeRec.color = GUIParameters.hover
                         onExited: closeRec.color  = "transparent"
                         onClicked: {
+                            GUIParameters.positionChecked = false
                             candleModel.clear()
+                            chartObjects.clearPositions()
                             filePopup.close()
                         }
                     }
@@ -238,7 +255,7 @@ Item{
                     MouseArea{
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered: saveRec.color = GUIParameters.primary
+                        onEntered: saveRec.color = GUIParameters.hover
                         onExited: saveRec.color  = "transparent"
                     }
                 }
@@ -257,7 +274,7 @@ Item{
                     MouseArea{
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered: exitRec.color = GUIParameters.primary
+                        onEntered: exitRec.color = GUIParameters.hover
                         onExited: exitRec.color  = "transparent"
                         onClicked: {
                             root.close()
@@ -272,6 +289,8 @@ Item{
         title: "Select Forex CSV"
         nameFilters: ["CSV files (*.csv)"]
         onAccepted: {
+            chartObjects.clearPositions()
+            GUIParameters.positionChecked = true
             csvLoader.loadFile(fileDialog.selectedFile)
             stackRef.currentIndex = 0
             candleModel.isFromCSV = true

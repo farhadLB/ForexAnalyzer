@@ -86,17 +86,17 @@ Item {
                     textSize: GUIParameters.fontSizeNormal
                     onClicked: {
                         if(tdWorker.hasApiKey()){
-                            tdWorker.connect("XAU/USD", "1min")
+                            chartObjects.clearPositions()
+                            positionModel.clearData()
+                            tdWorker.stream("1min")
+                            candleModel.isFromCSV = false
                             stackRef.currentIndex = 0
                             popup.close()
                         }
                         else{
-                            apiKeyWarning.visible = true
+                            stackRef.currentIndex = 3
+                            popup.close()
                         }
-                    }
-                    CustomToolTip{
-                        id: apiKeyWarning
-                        text: "Error: No API Key!"
                     }
                 }
             }
@@ -107,6 +107,8 @@ Item {
         title: "Select Forex CSV"
         nameFilters: ["CSV files (*.csv)"]
         onAccepted: {
+            GUIParameters.positionChecked = true
+            chartObjects.clearPositions()
             csvLoader.loadFile(fileDialog.selectedFile)
             candleModel.isFromCSV = true
         }

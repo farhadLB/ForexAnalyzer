@@ -5,8 +5,8 @@ import "components"
 
 Window {
     id: root
-    width: 1480
-    height: 820
+    width: Screen.width
+    height: Screen.height
     visible: true
     title: "Forex Analyzer"
     flags: Qt.Window | Qt.FramelessWindowHint

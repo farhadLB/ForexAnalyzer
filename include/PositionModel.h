@@ -20,8 +20,7 @@ public:
         WinRole,
         ADXRole,
         PlusDIRole,
-        MinusDIRole,
-        TrendAlignedRole
+        MinusDIRole
     };
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;

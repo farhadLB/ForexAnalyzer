@@ -4,8 +4,10 @@ import QtCharts
 
 Item {
 
+
     // Main
     property color primary:            "#262626"
+    property color hover:              "#5c1e1919"
     property color textOnPrimary:      "white"
     property color textOff:            "grey"
     property color secondary:          "#2b8579"
@@ -52,6 +54,9 @@ Item {
     property string nzd: "../assets/flags/nzd.svg"
     property string usd: "../assets/flags/usd.svg"
 
+    // Settings
+    property bool  positionChecked:    true
+
     // Candles
     property color bullCandle:         "#00aa55"
     property color bearCandle:         "#cc3333"
@@ -83,16 +88,17 @@ Item {
 
     function lightTheme(){
         // Main
-        primary=            "#f0eff2"
+        primary=            "#e6e6e6"
+        hover=              "#88b8b8b8"
         textOnPrimary=      "black"
-        textOff=            "grey"
+        textOff=            "#5c5c5c"
         secondary=          "#2b8579"
         textOnSecondary=    "black"
-        secondaryHighlight= "#50a297"
-        secondaryBright=    "#74e3d4"
-        secondaryDim=       "#4e605e"
+        secondaryHighlight= "#3f9c8f"
+        secondaryBright=    "#1fae9b"
+        secondaryDim=       "#7d938f"
         background=         "#ffffff"
-        titleBar=           "#e0e0e0"
+        titleBar=           "#d6d6d6"
         menuPrimary=        "#202020"
         chartTheme =        ChartView.ChartThemeLight
 
@@ -120,6 +126,7 @@ Item {
     function darkTheme(){
         // Main
         primary=            "#262626"
+        hover=              "#5c1e1919"
         textOnPrimary=      "white"
         textOff=            "grey"
         secondary=          "#2b8579"

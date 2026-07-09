@@ -7,6 +7,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS Quick Core QuickControls2 Charts Concurrent Network WebSockets)
 qt_standard_project_setup(REQUIRES 6.8)
 
+if(WIN32)
+     set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/src/app_icon.rc")
+endif()
+
 enable_testing()
 
 add_subdirectory(src)
@@ -15,7 +19,7 @@ add_subdirectory(tests)
 
 qt_standard_project_setup()
 
-qt_add_executable(appForexAnalyzer src/main.cpp)
+qt_add_executable(appForexAnalyzer src/main.cpp ${APP_ICON_RESOURCE_WINDOWS})
 
 qt_add_qml_module(appForexAnalyzer
     URI ForexAnalyzer
@@ -90,6 +94,7 @@ qt_add_qml_module(appForexAnalyzer
         assets/load-black.svg
         assets/load-grey.svg
         assets/load-white.svg
+        assets/icon.svg
         assets/flags/aud.svg
         assets/flags/cad.svg
         assets/flags/chf.svg

@@ -131,7 +131,7 @@ Rectangle {
                     spacing: 8
                     Text {
                         id: line1
-                        text: "Open your .csv file form File menu"
+                        text: "Open your .csv file or Enter API Key from twelvedata.com"
                         color: GUIParameters.textOnPrimary
                         opacity: 0.9
                         font.pixelSize: 18
@@ -144,19 +144,19 @@ Rectangle {
                     }
 
                     Text {
-                        text: "Set the modifications"
+                        text: "-> Set the modifications"
                         color: GUIParameters.textOnPrimary
                         opacity: 0.9
                         font.pixelSize: 18
                     }
                     Text {
-                        text: "Run the backtest to see the strategy result"
+                        text: "-> Run the backtest to see the strategy result"
                         color: GUIParameters.textOnPrimary
                         opacity: 0.9
                         font.pixelSize: 18
                     }
                     Text {
-                        text: "Show the result positions by \"Show Positions\" button"
+                        text: "-> Show the result positions by \"Show Positions\" button"
                         color: GUIParameters.textOnPrimary
                         opacity: 0.9
                         font.pixelSize: 18
@@ -201,7 +201,7 @@ Rectangle {
                     }
                 }
                 CustomButton{
-                    buttonText: "Run"
+                    buttonText: "Run Backtest"
                     iconSource: "../../assets/play-green.svg"
                     iconColor: GUIParameters.titleBar
                     onClicked: {
@@ -225,6 +225,7 @@ Rectangle {
                     diameter: 40
                     iconSource: GUIParameters.tools
                     checked: true
+                    enabled: showChart
                     CustomToolTip{
                         visible: parent.hovered
                         text: toolsToggle.checked ? "Hide Chart Tools" : "Show Chart Tools"
@@ -256,7 +257,7 @@ Rectangle {
                 CustomComboBox{
                     id: tfCombo
                     model: ["1m", "5m", "15m", "1h", "4h", "Daily"]
-                    enabled: !tools.positionChecked
+                    enabled: !tools.positionChecked && candleModel.isFromCSV
                     Component.onCompleted: {
                         currentIndex = Aggregator.comboIndex
                     }
@@ -273,7 +274,7 @@ Rectangle {
                     }
                     CustomToolTip{
                         visible: parent.hovered && !parent.enabled
-                        text: "Hide positions to change the timeframe"
+                        text: tools.positionChecked ? "Hide positions to change the timeframe" : "Disabled in API mode"
                     }
                 }
             }

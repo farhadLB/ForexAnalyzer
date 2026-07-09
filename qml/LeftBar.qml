@@ -14,11 +14,17 @@ Rectangle{
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
+        spacing: 0
+
         Rectangle{
-            Layout.minimumHeight: 60
+            id: candleItem
+            property bool hovered: false
+            Layout.minimumHeight: 70
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
-            color: stackRef.currentIndex !== 0 ? GUIParameters.primary : GUIParameters.background
+            color: stackRef.currentIndex === 0
+                   ? GUIParameters.background
+                   : (hovered ? GUIParameters.hover : GUIParameters.primary)
             RowLayout{
                 anchors.left: parent.left
                 anchors.top: parent.top
@@ -44,16 +50,24 @@ Rectangle{
             }
             MouseArea{
                 anchors.fill: parent
+                hoverEnabled: true
+                onEntered: candleItem.hovered = true
+                onExited: candleItem.hovered = false
                 onClicked: {
                     stackRef.currentIndex = 0
                 }
             }
         }
+
         Rectangle{
-            Layout.minimumHeight: 60
+            id: strategyItem
+            property bool hovered: false
+            Layout.minimumHeight: 70
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
-            color: stackRef.currentIndex !== 1 ? GUIParameters.primary : GUIParameters.background
+            color: stackRef.currentIndex === 1
+                   ? GUIParameters.background
+                   : (hovered ? GUIParameters.hover : GUIParameters.primary)
             RowLayout{
                 anchors.left: parent.left
                 anchors.top: parent.top
@@ -75,21 +89,28 @@ Rectangle{
                     font.pixelSize: GUIParameters.fontSizeNormal
                     Layout.alignment: Qt.AlignLeft
                     color: stackRef.currentIndex !== 1 ? GUIParameters.textOff : GUIParameters.textOnPrimary
-
                 }
             }
             MouseArea{
                 anchors.fill: parent
+                hoverEnabled: true
+                onEntered: strategyItem.hovered = true
+                onExited: strategyItem.hovered = false
                 onClicked: {
                     stackRef.currentIndex = 1
                 }
             }
         }
+
         Rectangle{
-            Layout.minimumHeight: 60
+            id: tableItem
+            property bool hovered: false
+            Layout.minimumHeight: 70
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
-            color: stackRef.currentIndex !== 2 ? GUIParameters.primary : GUIParameters.background
+            color: stackRef.currentIndex === 2
+                   ? GUIParameters.background
+                   : (hovered ? GUIParameters.hover : GUIParameters.primary)
             RowLayout{
                 anchors.left: parent.left
                 anchors.top: parent.top
@@ -115,16 +136,24 @@ Rectangle{
             }
             MouseArea{
                 anchors.fill: parent
+                hoverEnabled: true
+                onEntered: tableItem.hovered = true
+                onExited: tableItem.hovered = false
                 onClicked: {
                     stackRef.currentIndex = 2
                 }
             }
         }
+
         Rectangle{
-            Layout.minimumHeight: 60
+            id: apiItem
+            property bool hovered: false
+            Layout.minimumHeight: 70
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
-            color: stackRef.currentIndex !== 3 ? GUIParameters.primary : GUIParameters.background
+            color: stackRef.currentIndex === 3
+                   ? GUIParameters.background
+                   : (hovered ? GUIParameters.hover : GUIParameters.primary)
             RowLayout{
                 anchors.left: parent.left
                 anchors.top: parent.top
@@ -150,6 +179,9 @@ Rectangle{
             }
             MouseArea{
                 anchors.fill: parent
+                hoverEnabled: true
+                onEntered: apiItem.hovered = true
+                onExited: apiItem.hovered = false
                 onClicked: {
                     stackRef.currentIndex = 3
                 }

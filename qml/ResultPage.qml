@@ -76,7 +76,7 @@ Item {
             clip: true
 
             columnWidthProvider: function(column) {
-                return (parent.width - 30) / columns
+                return (parent.width - 40) / columns
             }
 
             model: proxyModel
@@ -87,7 +87,7 @@ Item {
                         return GUIParameters.titleBar
                     return row % 2 === 0 ? "transparent" : GUIParameters.primary
                 }
-                implicitWidth:  column != 3 ? 150 : 200
+                implicitWidth:  column != 3 ? 140 : 180
                 implicitHeight: 40
 
                 MouseArea {
@@ -111,7 +111,6 @@ Item {
                         case 7: return  ADX.toFixed(3)
                         case 8: return  PlusDI.toFixed(3)
                         case 9: return  MinusDI.toFixed(3)
-                        case 10: return TrendAligned
                         }
                     }
                     font.pixelSize: GUIParameters.fontSizeLarge

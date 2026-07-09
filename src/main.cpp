@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QIcon>
 #include <QSortFilterProxyModel>
 #include <QQuickStyle>
 #include <CsvLoader.h>
@@ -24,6 +25,9 @@ int main(int argc, char *argv[])
 
     QQuickStyle::setStyle("Material");
     QApplication     app(argc, argv);
+    app.setWindowIcon(QIcon("../../assets/icon.svg"));
+    QApplication::setOrganizationName("FarhadLB");
+    QApplication::setApplicationName("ForexAnalyzer");
     CsvLoader        *csvLoader = new CsvLoader();
     TimeframeAggregator aggregator;
     ChartObjectModel    chartObjects;

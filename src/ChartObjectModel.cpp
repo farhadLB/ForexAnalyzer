@@ -146,7 +146,30 @@ QVariantList ChartObjectModel::positions()
     return list;
 }
 
+void ChartObjectModel::clearPositions()
+{
+    m_positionList.clear();
+    m_hasPositions = false;
+    emit hasPositionsChanged();
+}
+
 void ChartObjectModel::getPositions(QList<Position> newList)
 {
     m_positionList = newList;
+    m_hasPositions = true;
+    emit hasPositionsChanged();
 }
+
+bool ChartObjectModel::hasPositions() const
+{
+    return m_hasPositions;
+}
+
+void ChartObjectModel::setHasPositions(bool newHasPositions)
+{
+    if (m_hasPositions == newHasPositions)
+        return;
+    m_hasPositions = newHasPositions;
+    emit hasPositionsChanged();
+}
+

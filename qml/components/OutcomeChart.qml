@@ -8,16 +8,17 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    property int  initialMoney: 1000
-    property real risk: 1
-    property int  maxX: 20
-    property int  minY: 0
-    property int  maxY: 20
-    property int  totalPos: 0
-    property int  successPos: 0
-    property int  failedPos: 0
-    property int  strategyGain: 0
-    property double  averageRtoR: 0
+    property real  initialMoney:    1000
+    property real  finalMoney:      0
+    property real  risk:            1
+    property real  maxX:            20
+    property real  minY:            0
+    property real  maxY:            20
+    property real  totalPos:        0
+    property real  successPos:      0
+    property real  failedPos:       0
+    property real  strategyGain:    0
+    property double  averageRtoR:   0
 
     ScrollView{
         anchors.fill: parent
@@ -80,6 +81,16 @@ Item {
                             font.pixelSize: GUIParameters.fontSizeLarge
                         }
                         Text {
+                            text: "Initial Equity: "
+                            color: GUIParameters.textOnPrimary
+                            font.pixelSize: GUIParameters.fontSizeLarge
+                        }
+                        Text {
+                            text: "Final Equity: "
+                            color: GUIParameters.textOnPrimary
+                            font.pixelSize: GUIParameters.fontSizeLarge
+                        }
+                        Text {
                             text: "Strategy Gain: "
                             color: GUIParameters.textOnPrimary
                             font.pixelSize: GUIParameters.fontSizeLarge
@@ -105,6 +116,16 @@ Item {
                         }
                         Text {
                             text: root.averageRtoR.toFixed(2)
+                            color: GUIParameters.textOnPrimary
+                            font.pixelSize: GUIParameters.fontSizeLarge
+                        }
+                        Text {
+                            text: root.initialMoney + " ($)"
+                            color: GUIParameters.textOnPrimary
+                            font.pixelSize: GUIParameters.fontSizeLarge
+                        }
+                        Text {
+                            text: root.finalMoney + " ($)"
                             color: GUIParameters.textOnPrimary
                             font.pixelSize: GUIParameters.fontSizeLarge
                         }
@@ -156,6 +177,7 @@ Item {
                         min: 0
                         max: root.maxX
                         labelFormat: "%.0f"
+                        titleText: "Number of positions"
                         tickCount: root.maxX < 20 ? root.maxX : 20
                         gridLineColor: Qt.rgba(0.5, 0.5, 0.5, 0.3)
                     }
@@ -163,6 +185,7 @@ Item {
                         id: valueAxisY
                         min: root.minY
                         max: root.maxY
+                        titleText: "Equity ($)"
                         tickCount: 15
                         gridLineColor: Qt.rgba(0.5, 0.5, 0.5, 0.3)
                     }
@@ -193,7 +216,7 @@ Item {
                     id: winChart
                     anchors.fill: parent
                     antialiasing: true
-                    legend.visible: false
+                    legend.visible: true
                     theme: GUIParameters.chartTheme
 
                     function applyTransparentStyle() {
@@ -356,9 +379,9 @@ Item {
             valueAxisX3.max = 23
 
             var maxCount = Math.max(
-                ...wins,
-                ...losses
-            )
+                        ...wins,
+                        ...losses
+                        )
 
             valueAxisY2.min = 0
             valueAxisY2.max = maxCount + 1
@@ -370,6 +393,7 @@ Item {
                 income += values[i].yValue * risk * (income/100)
                 incomeValues.push(income)
             }
+            root.finalMoney = income.toFixed(1)
             root.minY = Math.min(...incomeValues)
             root.maxY = Math.max(...incomeValues) * 1.05
             root.maxX = incomeValues.length + 1
@@ -390,6 +414,18 @@ Item {
             root.strategyGain = 0
         }
         function onCloseCsvFile() {
+            areaChart.clear()
+            winrateGauge.percentage = 0
+            root.totalPos = 0
+            root.successPos = 0
+            root.failedPos = 0
+            root.averageRtoR = 0
+            root.strategyGain = 0
+        }
+    }
+    Connections {
+        target: tdWorker
+        function onCandlesReady() {
             areaChart.clear()
             winrateGauge.percentage = 0
             root.totalPos = 0

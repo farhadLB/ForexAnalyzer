@@ -7,7 +7,7 @@ int PositionModel::rowCount(const QModelIndex &parent) const
 
 int PositionModel::columnCount(const QModelIndex &parent) const
 {
-    return 11;
+    return 10;
 }
 
 QVariant PositionModel::data(const QModelIndex &index, int role) const
@@ -29,7 +29,6 @@ QVariant PositionModel::data(const QModelIndex &index, int role) const
         case 7: return pos.ADX;
         case 8: return pos.PlusDI;
         case 9: return pos.MinusDI;
-        case 10: return pos.TrendAligned;
         }
     }
 
@@ -44,7 +43,6 @@ QVariant PositionModel::data(const QModelIndex &index, int role) const
     case ADXRole:           return pos.ADX;
     case PlusDIRole:        return pos.PlusDI;
     case MinusDIRole:       return pos.MinusDI;
-    case TrendAlignedRole:  return pos.TrendAligned;
     }
     return QVariant();
 }
@@ -63,7 +61,6 @@ QHash<int, QByteArray> PositionModel::roleNames() const
         {ADXRole,           "ADX"},
         {PlusDIRole,        "PlusDI"},
         {MinusDIRole,       "MinusDI"},
-        {TrendAlignedRole,  "TrendAligned"}
     };
 }
 
@@ -96,7 +93,6 @@ QVariant PositionModel::headerData(int section, Qt::Orientation orientation, int
         case 7: return "ADX";
         case 8: return "PlusDI";
         case 9: return "MinusDI";
-        case 10: return "TrendAligned";
         }
     }
     return QAbstractTableModel::headerData(section, orientation, role);
