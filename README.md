@@ -42,7 +42,7 @@ Requires Qt 6.8+ with the Quick, QuickControls2, Charts, Concurrent, Network, an
 ## Usage
 
 1. Launch the app.
-2. Load historical data either from a local CSV file or by entering a [Twelve Data](https://twelvedata.com/) API key to fetch and stream live candles.
+2. Load historical data either from a local CSV file (in sample csv folder or [HistData.com](https://histdata.com/)) or by entering a [Twelve Data](https://twelvedata.com/) API key to fetch and stream live candles.
 3. Choose a currency pair, timeframe, and strategy parameters (level lookback, entry threshold, stop-loss/take-profit lookback, reward-to-risk ratio).
 4. Run the calculation to generate a table of historical entry/stop/target levels, visualized directly on the candlestick chart.
 
